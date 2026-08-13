@@ -158,13 +158,13 @@ main {
   color: var(--main-text-color);
 }
 
-.bullet {
-  flex-shrink: 0;
-  color: var(--main-blue);
-  font-size: 1.2rem;
-  line-height: 1.1;
+.assignment input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--main-blue);
 }
-
 
 .footer {
   display: flex;
@@ -190,6 +190,8 @@ main {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  flex: 1 1 0;
+  width: 100%;
   min-width: 180px;
   padding: 0.7rem 1.2rem;
 

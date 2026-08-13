@@ -43,15 +43,15 @@ function App() {
           <div className="assignment-class">
             <h3>Class 1</h3>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Complete assignment 1</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Study for quiz</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Read chapter 2</span>
             </div>
           </div>
@@ -59,15 +59,15 @@ function App() {
           <div className="assignment-class">
             <h3>Class 2</h3>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Complete lab report</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Submit homework</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Review lecture notes</span>
             </div>
           </div>
@@ -75,15 +75,15 @@ function App() {
           <div className="assignment-class">
             <h3>Class 3</h3>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Finish project</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Complete reading</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Prepare for exam</span>
             </div>
           </div>
@@ -91,15 +91,15 @@ function App() {
           <div className="assignment-class">
             <h3>Class 4</h3>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Complete discussion post</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Finish worksheet</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Review study guide</span>
             </div>
           </div>
@@ -107,15 +107,15 @@ function App() {
           <div className="assignment-class">
             <h3>Class 5</h3>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Complete homework</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Study vocabulary</span>
             </div>
             <div className="assignment">
-              <span className="bullet">•</span>
+               <input type="checkbox" />
               <span>Submit assignment</span>
             </div>
           </div>
