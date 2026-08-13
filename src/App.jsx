@@ -1,120 +1,151 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+
+import lyLight from './assets/lyweek-light.jpg'
+import lyDark from './assets/lyweek-dark.jpg'
 import './App.css'
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <main>
+        <nav className="header">
+          <section className="logo-and-welcome">
+            <a href="#">
+              <img className="logo" src={lyLight} alt="LyWeek logo" />
+            </a>
+            <h2 className="welcome">Welcome back, Zakaria</h2>
+          </section>
 
-      <div className="ticks"></div>
+          <section className="week-and-nav">
+            <div className="week-heading">
+              <span className="week-text">
+                Semester Week <span className="week-number">1</span>
+              </span>
+              <p id="week-date">Mon Aug 1 -&gt; Sun Aug 7</p>
+            </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+            <div className="week-nav">
+              <button className="prev-week">
+                <i className="fa-solid fa-circle-left"></i>
+                <span>Previous week</span>
+              </button>
+              <button className="next-week">
+                <span>Next week</span>
+                <i className="fa-solid fa-circle-right"></i>
+              </button>
+            </div>
+          </section>
+        </nav>
+        <nav className="main-content">
+          <div className="assignment-class">
+            <h3>Class 1</h3>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Complete assignment 1</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Study for quiz</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Read chapter 2</span>
+            </div>
+          </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+          <div className="assignment-class">
+            <h3>Class 2</h3>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Complete lab report</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Submit homework</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Review lecture notes</span>
+            </div>
+          </div>
+
+          <div className="assignment-class">
+            <h3>Class 3</h3>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Finish project</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Complete reading</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Prepare for exam</span>
+            </div>
+          </div>
+
+          <div className="assignment-class">
+            <h3>Class 4</h3>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Complete discussion post</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Finish worksheet</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Review study guide</span>
+            </div>
+          </div>
+
+          <div className="assignment-class">
+            <h3>Class 5</h3>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Complete homework</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Study vocabulary</span>
+            </div>
+            <div className="assignment">
+              <span className="bullet">•</span>
+              <span>Submit assignment</span>
+            </div>
+          </div>
+        </nav>
+        <nav className="footer">
+          <section className="add-content">
+            <button className="add-assignment">
+              <i className="fa-solid fa-plus"></i>
+              <span>Add Assignment</span>
+            </button>
+
+            <button className="add-class">
+              <i className="fa-solid fa-plus"></i>
+              <span>Add Class</span>
+            </button>
+          </section>
+
+          <section className="misc-notes">
+            <textarea
+              className="notes-input"
+              placeholder="Write any miscellaneous notes here..."
+            ></textarea>
+
+            <button className="save-notes">
+              <i className="fa-solid fa-floppy-disk"></i>
+              <span>Save</span>
+            </button>
+          </section>
+        </nav>
+      </main>
     </>
   )
 }
