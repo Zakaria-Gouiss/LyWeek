@@ -142,11 +142,77 @@ main {
   box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
 }
 
-.assignment-class h3 {
-  margin: 0 0 0.25rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+.class-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.class-title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.class-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgba(56, 182, 255, 0.45);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(56, 182, 255, 0.08) 100%);
   color: var(--main-text-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.class-badge:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 182, 255, 0.75);
+  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
+}
+
+.class-badge:focus-visible {
+  outline: 2px solid rgba(56, 182, 255, 0.7);
+  outline-offset: 2px;
+}
+
+.class-toggle-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 1px solid rgba(56, 182, 255, 0.45);
+  border-radius: 5px;
+  background: #ffffff;
+  color: var(--main-blue);
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.class-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #4c4c4c;
+}
+
+.class-meta span {
+  position: relative;
+}
+
+.class-meta span:not(:last-child)::after {
+  content: '•';
+  margin-left: 0.75rem;
+  color: #8a8a8a;
 }
 
 .assignment {
