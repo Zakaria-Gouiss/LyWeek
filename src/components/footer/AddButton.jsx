@@ -1,0 +1,18 @@
+function AddButton({type}) {
+    if (type === "save")
+    {
+        return (
+            <button className="save-notes">
+              <i className="fa-solid fa-floppy-disk"></i>
+              <span>Save</span>
+            </button>
+        )
+    }
+  return (
+    <button className="add-button">
+        <i className="fa-solid fa-plus"></i>
+        <span>Add {type}</span>
+    </button>
+  );
+}
+export default AddButton;

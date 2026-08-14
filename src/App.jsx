@@ -5,6 +5,11 @@ import lyDark from './assets/lyweek-dark.jpg'
 import './index.css'
 import Assignment from './components/main-content/Assignment.jsx'
 import Class from './components/main-content/Class.jsx'
+import LogoWelcome from './components/header/LogoWelcome.jsx'
+import WeekInfo from './components/header/WeekInfo.jsx'
+import WeekButton from './components/header/WeekButton.jsx'
+import AddContent from './components/footer/AddButton.jsx'
+import NoteText from './components/footer/NoteText.jsx'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,29 +19,13 @@ function App() {
       <main>
         <nav className="header">
           <section className="logo-and-welcome">
-            <a href="#">
-              <img className="logo" src={lyLight} alt="LyWeek logo" />
-            </a>
-            <h2 className="welcome">Welcome back, Zakaria</h2>
+            <LogoWelcome userName="Zakaria" />
           </section>
-
           <section className="week-and-nav">
-            <div className="week-heading">
-              <span className="week-text">
-                Semester Week <span className="week-number">1</span>
-              </span>
-              <p id="week-date">Mon Aug 1 -&gt; Sun Aug 7</p>
-            </div>
-
+            <WeekInfo semesterStartDate="08-24" semesterEndDate="12-05" />
             <div className="week-nav">
-              <button className="prev-week">
-                <i className="fa-solid fa-circle-left"></i>
-                <span>Previous week</span>
-              </button>
-              <button className="next-week">
-                <span>Next week</span>
-                <i className="fa-solid fa-circle-right"></i>
-              </button>
+              <WeekButton position="left" />
+              <WeekButton position="right" />
             </div>
           </section>
         </nav>
@@ -48,27 +37,12 @@ function App() {
         </nav>
         <nav className="footer">
           <section className="add-content">
-            <button className="add-assignment">
-              <i className="fa-solid fa-plus"></i>
-              <span>Add Assignment</span>
-            </button>
-
-            <button className="add-class">
-              <i className="fa-solid fa-plus"></i>
-              <span>Add Class</span>
-            </button>
+            <AddContent type="Assignment" />
+            <AddContent type="Class" />
           </section>
-
           <section className="misc-notes">
-            <textarea
-              className="notes-input"
-              placeholder="Write any miscellaneous notes here..."
-            ></textarea>
-
-            <button className="save-notes">
-              <i className="fa-solid fa-floppy-disk"></i>
-              <span>Save</span>
-            </button>
+            <NoteText />
+            <AddContent type="save" />
           </section>
         </nav>
       </main>

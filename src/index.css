@@ -25,19 +25,28 @@ main {
 
 .logo-and-welcome {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
   gap: 1rem;
+  background-color: var(--main-blue);
+  padding: 0.3rem 0;
+  border-radius: 10px;
 }
 .logo {
   width: 50px;
+  border: 2px solid var(--light-color);
+  border-radius: 8%;
   height: 50px;
   object-fit: contain;
 }
 
 .welcome {
   margin: 0;
+  color: var(--light-color);
   font-size: 1.5rem;
   font-weight: 600;
+  text-shadow: 2px 2px 2px var(--dark-color);
 }
 
 .week-and-nav {
@@ -75,8 +84,8 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: min(100%, 420px);
-  gap: 0.5rem;
+  width: 100%;
+  gap: 0.1rem;
   margin: 0 auto;
 }
 
@@ -86,7 +95,7 @@ main {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-width: 150px;
+  flex: 1;
   padding: 0.6rem 0.9rem;
   border: 1px solid rgba(56, 182, 255, 0.35);
   border-radius: 999px;
@@ -182,7 +191,7 @@ main {
   outline-offset: 2px;
 }
 
-.class-toggle-box {
+#class-toggle-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -250,8 +259,7 @@ main {
   width: 100%;
 }
 
-.add-assignment,
-.add-class {
+.add-button{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -276,15 +284,14 @@ main {
               border-color 0.15s ease;
 }
 
-.add-assignment:hover,
-.add-class:hover {
+.add-button:hover
+ {
   transform: translateY(-1px);
   border-color: rgba(56, 182, 255, 0.7);
   box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
 }
 
-.add-assignment i,
-.add-class i {
+.add-button i {
   color: var(--main-blue);
 }
 
