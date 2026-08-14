@@ -1,19 +1,19 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import lyLight from './assets/lyweek-light.jpg'
-import lyDark from './assets/lyweek-dark.jpg'
-import './index.css'
-import Assignment from './components/main-content/Assignment.jsx'
-import Class from './components/main-content/Class.jsx'
-import LogoWelcome from './components/header/LogoWelcome.jsx'
-import WeekInfo from './components/header/WeekInfo.jsx'
-import WeekButton from './components/header/WeekButton.jsx'
-import AddContent from './components/footer/AddButton.jsx'
-import NoteText from './components/footer/NoteText.jsx'
-import {classes, assignments} from './data/fakeData.js'
+import lyLight from "./assets/lyweek-light.jpg";
+import lyDark from "./assets/lyweek-dark.jpg";
+import "./index.css";
+import Assignment from "./components/main-content/Assignment.jsx";
+import Class from "./components/main-content/Class.jsx";
+import LogoWelcome from "./components/header/LogoWelcome.jsx";
+import WeekInfo from "./components/header/WeekInfo.jsx";
+import WeekButton from "./components/header/WeekButton.jsx";
+import AddContent from "./components/footer/AddButton.jsx";
+import NoteText from "./components/footer/NoteText.jsx";
+import { classes, assignments } from "./data/fakeData.js";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -31,18 +31,19 @@ function App() {
           </section>
         </nav>
         <nav className="main-content">
-          {classes.map(course => (
+          {classes.map((course) => (
             <Class
-                key={course.id}
-                name={course.name}
-                courseCode={course.courseCode}
-                professor={course.professor}
-                courseHours={course.courseHours}
-                officeHours={course.officeHours}
-                assignments={assignments.filter(assignment => assignment.classId === course.id)}
+              key={course.id}
+              name={course.name}
+              courseCode={course.courseCode}
+              professor={course.professor}
+              courseHours={course.courseHours}
+              officeHours={course.officeHours}
+              assignments={assignments.filter(
+                (assignment) => assignment.classId === course.id,
+              )}
             />
-          ))
-          }
+          ))}
         </nav>
         <nav className="footer">
           <section className="add-content">
@@ -56,7 +57,7 @@ function App() {
         </nav>
       </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
