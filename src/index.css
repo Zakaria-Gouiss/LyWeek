@@ -191,7 +191,7 @@ main {
   outline-offset: 2px;
 }
 
-#class-toggle-box {
+.class-toggle-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;

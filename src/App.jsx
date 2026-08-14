@@ -10,6 +10,7 @@ import WeekInfo from './components/header/WeekInfo.jsx'
 import WeekButton from './components/header/WeekButton.jsx'
 import AddContent from './components/footer/AddButton.jsx'
 import NoteText from './components/footer/NoteText.jsx'
+import {classes, assignments} from './data/fakeData.js'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,10 +31,18 @@ function App() {
           </section>
         </nav>
         <nav className="main-content">
-          <Class name="Class 1" courseCode="CS101" professor="Dr. Smith" courseHours="MWF, 10:00 AM - 11:00 AM" officeHours="TR, 11:00 AM - 12:00 PM" />
-          <Class name="Class 2" courseCode="CS102" professor="Dr. Johnson" courseHours="TR, 2:00 PM - 3:00 PM" officeHours="F, 1:00 PM - 2:00 PM" />
-          <Class name="Class 3" courseCode="CS103" professor="Dr. Williams" courseHours="MWF, 1:00 PM - 2:00 PM" officeHours="TR, 2:00 PM - 3:00 PM" />
-          <Class name="Class 4" courseCode="CS104" professor="Dr. Brown" courseHours="TR, 10:00 AM - 11:00 AM" officeHours="M, 2:00 PM - 3:00 PM" />
+          {classes.map(course => (
+            <Class
+                key={course.id}
+                name={course.name}
+                courseCode={course.courseCode}
+                professor={course.professor}
+                courseHours={course.courseHours}
+                officeHours={course.officeHours}
+                assignments={assignments.filter(assignment => assignment.classId === course.id)}
+            />
+          ))
+          }
         </nav>
         <nav className="footer">
           <section className="add-content">
