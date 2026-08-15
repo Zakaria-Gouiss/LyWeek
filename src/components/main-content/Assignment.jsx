@@ -4,7 +4,7 @@ function Assignment({ name, priority, dueDate }) {
       <input type="checkbox" />
       {priority && <span>★ </span>}
       <span>{name}</span>
-      <span className="assignment-due-date">{dueDate}</span>
+      <span className="assignment-due-date">by {dueDate}</span>
     </div>
   );
 }
