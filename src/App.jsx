@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import lyLight from "./assets/lyweek-light.jpg";
 import lyDark from "./assets/lyweek-dark.jpg";
@@ -10,7 +10,7 @@ import WeekInfo from "./components/header/WeekInfo.jsx";
 import WeekButton from "./components/header/WeekButton.jsx";
 import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
-import { classes, assignments, semester } from "./data/fakeData.js";
+import { assignments, semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
@@ -29,7 +29,18 @@ function App() {
   const [assignmentToEdit, setAssignmentToEdit] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState(assignments);
-  const [classList, setClassList] = useState(classes);
+  const [classList, setClassList] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/classes")
+      .then((response) => response.json())
+      .then((data) => {
+        setClassList(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch classes:", error);
+      });
+  }, []);
 
   function handleAddAssignment(newAssignment) {
     setAssignmentList((currentAssignments) => [
@@ -40,10 +51,28 @@ function App() {
     setAssignmentModalOpen(false);
   }
 
-  function handleAddClass(newClass) {
-    setClassList((currentClasses) => [...currentClasses, newClass]);
+  async function handleAddClass(newClass) {
+    try {
+      const response = await fetch("http://localhost:5000/api/classes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newClass),
+      });
 
-    setClassModalOpen(false);
+      if (!response.ok) {
+        throw new Error("Failed to add class");
+      }
+
+      const savedClass = await response.json();
+
+      setClassList((currentClasses) => [...currentClasses, savedClass]);
+
+      setClassModalOpen(false);
+    } catch (error) {
+      console.error("Failed to add class:", error);
+    }
   }
 
   function handleEditAssignment(assignment) {
@@ -128,13 +157,7 @@ function App() {
         </nav>
         <nav className="main-content">
           {classList.map((course) => (
-            <Class
-              key={course.id}
-              {...course}
-              assignments={assignmentList}
-              onEditAssignment={handleEditAssignment}
-              onEditClass={handleEditClass}
-            />
+            <Class key={course.id} {...course} assignments={assignmentList} />
           ))}
         </nav>
         <nav className="footer">
