@@ -13,7 +13,7 @@ function LogoWelcome({ userName, darkMode, setDarkMode }) {
         >
           <img
             className="logo"
-            src={darkMode ? lyLight : lyDark}
+            src={darkMode ? lyDark : lyLight}
             alt="LyWeek logo"
           />
         </button>

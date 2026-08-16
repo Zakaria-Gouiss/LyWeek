@@ -88,13 +88,14 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 120px;
+  height: 120px;
   padding: 0.35rem;
   border: 2px solid rgba(255, 255, 255, 0.85);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 4px 12px rgba(15, 73, 105, 0.18);
+  cursor: pointer;
   
 }
 
@@ -329,7 +330,7 @@ main {
   width: 1.3rem;
   height: 1.3rem;
   padding: 0;
- border: 1px solid var(--blue-border);
+  border: 1px solid var(--blue-border);
   border-radius: 5px;
   background: var(--card-color);
   color: var(--main-blue);
