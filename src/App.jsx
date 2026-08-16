@@ -19,7 +19,7 @@ import SemesterModal from "./components/header/SemesterModal.jsx";
 
 function App() {
   const [viewingWeek, setViewingWeek] = useState(null);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [classModalOpen, setClassModalOpen] = useState(false);
   const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
