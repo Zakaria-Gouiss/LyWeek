@@ -1,4 +1,6 @@
 :root {
+  box-sizing: border-box;
+
   /* Core colors */
   --dark-color: #272727;
   --light-color: #f7fbff;
@@ -42,6 +44,11 @@ html,
 body {
     margin: 0;
     padding: 0;
+    background-color: var(--background-color);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 .dark {
@@ -762,13 +769,106 @@ main {
   transform: translateY(-1px);
 }
 
+@media (max-width: 900px) {
+  main {
+    padding: 1.25rem 0.9rem;
+  }
+
+  .logo-and-welcome,
+  .main-content,
+  .footer,
+  .week-nav {
+    width: min(100%, 760px);
+  }
+
+  .assignment-class {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .header {
+    gap: 0.85rem;
+  }
+
+  .week-title-row {
+    flex-wrap: wrap;
+  }
+
+  .week-nav {
+    width: min(100%, 620px);
+  }
+
+  .logo-and-welcome,
+  .main-content,
+  .footer {
+    width: 100%;
+  }
+
+  .main-content {
+    margin-top: 1.25rem;
+  }
+
+  .class-title-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .class-title-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+    min-width: 0;
+  }
+
+  .class-badge {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .class-onenote-btn {
+    width: auto;
+    margin-left: 0;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .class-meta {
+    gap: 0.4rem 0.6rem;
+  }
+
+  .class-meta span {
+    display: inline-block;
+  }
+
+  .class-meta span:not(:last-child)::after {
+    margin-left: 0.55rem;
+  }
+
+  .assignment {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .assignment-main {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .assignment-edit-btn {
+    margin-left: 0;
+  }
+}
+
 @media (max-width: 600px) {
   .add-content {
     flex-direction: column;
   }
 
-  .add-assignment,
-  .add-class {
+  .add-button {
     width: 100%;
   }
 
@@ -778,5 +878,247 @@ main {
 
   .save-notes {
     min-height: 45px;
+    width: 100%;
+  }
+
+  .notes-input {
+    min-height: 110px;
+  }
+
+  .assignment-modal-overlay {
+    padding: 0.75rem;
+  }
+
+  .assignment-modal {
+    width: min(100%, 440px);
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .assignment-modal-header {
+    gap: 0.75rem;
+  }
+
+  .assignment-modal-title {
+    font-size: 1.2rem;
+  }
+
+  .yes-no-group {
+    flex-direction: column;
+  }
+
+  .yes-no-option {
+    width: 100%;
+  }
+
+  .form-actions,
+  .modal-actions-split {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-submit,
+  .modal-delete {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  main {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .logo-and-welcome {
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+  }
+
+  .welcome {
+    font-size: 1.2rem;
+  }
+
+  .week-text {
+    font-size: 0.95rem;
+  }
+
+  #week-date {
+    font-size: 0.85rem;
+  }
+
+  .week-nav {
+    gap: 0.4rem;
+  }
+
+  .prev-week,
+  .next-week,
+  .add-button,
+  .save-notes,
+  .modal-submit,
+  .modal-delete {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .assignment-class {
+    padding: 0.8rem;
+  }
+
+  .class-badge {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .assignment {
+    gap: 0.5rem;
+  }
+
+  .assignment-name {
+    font-size: 0.9rem;
+  }
+
+  .assignment-priority {
+    font-size: 0.75rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.7rem 0.8rem;
+  }
+}
+
+@media (max-width: 350px) {
+  main {
+    padding: 0.6rem 0.45rem;
+  }
+
+  .header,
+  .week-nav,
+  .footer,
+  .main-content {
+    width: 100%;
+  }
+
+  .logo-button {
+    width: 64px;
+    height: 64px;
+  }
+
+  .week-nav {
+    gap: 0.3rem;
+  }
+
+  .prev-week,
+  .next-week,
+  .add-button,
+  .save-notes {
+    padding: 0.55rem 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  .class-title-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .class-title-controls {
+    display: contents;
+  }
+
+  .class-badge {
+    min-width: 0;
+    max-width: 100%;
+    padding: 0.38rem 0.55rem;
+    font-size: 0.72rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .class-onenote-btn {
+    padding: 0.38rem 0.45rem;
+    font-size: 0.6rem;
+    white-space: nowrap;
+  }
+
+  .class-meta {
+    gap: 0.3rem 0.45rem;
+    font-size: 0.68rem;
+  }
+
+  .class-meta span:not(:last-child)::after {
+    margin-left: 0.45rem;
+  }
+
+  .assignment {
+    gap: 0.4rem;
+  }
+
+  .assignment-main {
+    gap: 0.35rem;
+  }
+
+  .assignment-name {
+    font-size: 0.8rem;
+  }
+
+  .assignment-priority {
+    font-size: 0.7rem;
+  }
+
+  .assignment input[type='checkbox'] {
+    width: 14px;
+    height: 14px;
+  }
+
+  .add-content {
+    gap: 0.6rem;
+  }
+
+  .notes-input {
+    min-height: 100px;
+    padding: 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .assignment-modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .assignment-modal {
+    padding: 0.9rem;
+    border-radius: 12px;
+  }
+
+  .assignment-modal-title {
+    font-size: 1.05rem;
+  }
+
+  .modal-close {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 1.2rem;
+  }
+
+  .form-group label {
+    font-size: 0.8rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.65rem 0.7rem;
+    font-size: 0.84rem;
+  }
+
+  .yes-no-option {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .modal-submit,
+  .modal-delete {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
   }
 }
