@@ -336,10 +336,7 @@ main {
   color: var(--main-blue);
   font-size: 0.6rem;
   cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background-color 0.15s ease;
+
 }
 
 .class-edit-btn:hover{
