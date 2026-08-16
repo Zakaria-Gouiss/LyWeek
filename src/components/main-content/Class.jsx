@@ -12,6 +12,7 @@ function Class({
   onenoteUrl,
   onEditAssignment,
   onEditClass,
+  onToggleAssignment,
 }) {
   function openOneNote() {
     window.location.href = onenoteUrl;
@@ -91,11 +92,13 @@ function Class({
           classAssignments.map((assignment) => (
             <Assignment
               key={assignment.id}
+              id={assignment.id}
               name={assignment.name}
               priority={assignment.priority}
               dueDate={assignment.dueDate}
               completed={assignment.completed}
               onEdit={() => onEditAssignment(assignment)}
+              onToggle={onToggleAssignment}
             />
           ))}
       </div>
