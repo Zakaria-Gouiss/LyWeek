@@ -8,28 +8,43 @@ function Class({
   courseHours,
   officeHours,
   assignments,
+  onenoteUrl,
 }) {
+  function openOneNote() {
+    window.location.href = onenoteUrl;
+  }
+
   const [classExpanded, classSetExpanded] = useState(true);
   const [metaExpanded, metaSetExpanded] = useState(false);
   return (
     <div className="assignment-class">
       <div className="class-header">
         <div className="class-title-row">
+          <div className="class-title-controls">
+            <button
+              type="button"
+              className="class-badge"
+              onClick={() => classSetExpanded(!classExpanded)}
+            >
+              {name}
+            </button>
+            <button
+              className="class-meta-toggle-box"
+              aria-label="Expand/Collapse info"
+              onClick={() => metaSetExpanded(!metaExpanded)}
+            >
+              <i
+                className={`fa-solid fa-chevron-${metaExpanded ? "down" : "right"}`}
+              ></i>
+            </button>
+          </div>
+
           <button
             type="button"
-            className="class-badge"
-            onClick={() => classSetExpanded(!classExpanded)}
+            className="class-onenote-btn"
+            onClick={openOneNote}
           >
-            {name}
-          </button>
-          <button
-            className="class-meta-toggle-box"
-            aria-label="Expand/Collapse info"
-            onClick={() => metaSetExpanded(!metaExpanded)}
-          >
-            <i
-              className={`fa-solid fa-chevron-${metaExpanded ? "down" : "right"}`}
-            ></i>
+            Open in OneNote
           </button>
         </div>
         {classExpanded && metaExpanded && (

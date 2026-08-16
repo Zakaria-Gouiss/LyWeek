@@ -10,11 +10,13 @@ import WeekInfo from "./components/header/WeekInfo.jsx";
 import WeekButton from "./components/header/WeekButton.jsx";
 import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
-import { classes, assignments } from "./data/fakeData.js";
+import { classes, assignments, semester } from "./data/fakeData.js";
+import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
 
+  const [viewingWeek, setViewingWeek] = useState(currentWeek);
   return (
     <>
       <main>
@@ -23,7 +25,11 @@ function App() {
             <LogoWelcome userName="Zakaria" />
           </section>
           <section className="week-and-nav">
-            <WeekInfo semesterStartDate="08-24" semesterEndDate="12-05" />
+            <WeekInfo
+              semesterStartDate={semester.startDate}
+              semesterEndDate={semester.endDate}
+              week={viewingWeek}
+            />
             <div className="week-nav">
               <WeekButton position="left" />
               <WeekButton position="right" />
@@ -42,6 +48,7 @@ function App() {
               assignments={assignments.filter(
                 (assignment) => assignment.classId === course.id,
               )}
+              onenoteUrl={course.onenoteUrl}
             />
           ))}
         </nav>

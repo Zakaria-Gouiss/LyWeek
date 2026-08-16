@@ -6,6 +6,7 @@ export const classes = [
         professor: "Dr. Smith",
         courseHours: "MWF, 10:00 AM - 11:00 AM",
         officeHours: "TR, 11:00 AM - 12:00 PM",
+        onenoteUrl: "onenote:https://mymailnku-my.sharepoint.com/personal/gouissz1_mymail_nku_edu/Documents/Artificial%20Intelligence/",
     },
     {
         id: 2,
@@ -14,6 +15,7 @@ export const classes = [
         professor: "Dr. Johnson",
         courseHours: "TR, 2:00 PM - 3:00 PM",
         officeHours: "F, 1:00 PM - 2:00 PM",
+        onenoteUrl: "onenote:https://mymailnku-my.sharepoint.com/personal/gouissz1_mymail_nku_edu/Documents/Artificial%20Intelligence/",
     },
     {
         id: 3,
@@ -22,6 +24,7 @@ export const classes = [
         professor: "Dr. Williams",
         courseHours: "MWF, 1:00 PM - 2:00 PM",
         officeHours: "TR, 2:00 AM - 3:00 PM",
+        onenoteUrl: "onenote:https://mymailnku-my.sharepoint.com/personal/gouissz1_mymail_nku_edu/Documents/Artificial%20Intelligence/",
     },
     {
         id: 4,
@@ -30,6 +33,7 @@ export const classes = [
         professor: "Dr. Brown",
         courseHours: "TR, 10:00 AM - 11:00 AM",
         officeHours: "M, 2:00 PM - 3:00 PM",
+        onenoteUrl: "onenote:https://mymailnku-my.sharepoint.com/personal/gouissz1_mymail_nku_edu/Documents/Artificial%20Intelligence/",
     },
 ];
 
@@ -76,3 +80,7 @@ export const assignments = [
     },
 
 ];
+export const semester = {
+    startDate: "2026-08-24",
+    endDate: "2026-12-11"
+};
