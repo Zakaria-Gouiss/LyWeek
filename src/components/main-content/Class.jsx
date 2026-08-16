@@ -27,6 +27,13 @@ function Class({
           <span>{professor}</span>
           <span>Course hours: {courseHours}</span>
           <span>Office hours: {officeHours}</span>
+          <button
+            type="button"
+            className="class-edit-btn"
+            aria-label="Edit Class"
+          >
+            <i className="fa-solid fa-pencil"></i>
+          </button>
         </div>
         {assignments.map((assignment) => (
           <Assignment
