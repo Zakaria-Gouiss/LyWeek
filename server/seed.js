@@ -273,7 +273,7 @@ async function seed() {
 
     const classIds = [];
 
-    const numberOfClasses = randomInt(4, 7);
+    const numberOfClasses = randomInt(3, 6);
 
     // Shuffle classes so different classes
     // are selected every time.
@@ -355,7 +355,7 @@ async function seed() {
     // Assignments
     // -------------------------
 
-    const numberOfAssignments = randomInt(15, 30);
+    const numberOfAssignments = randomInt(8, 25);
 
     for (let i = 0; i < numberOfAssignments; i++) {
       const assignmentType =
