@@ -634,6 +634,7 @@ main {
 .yes-no-option input {
   margin: 0;
   accent-color: var(--main-blue);
+  
 }
 
 .form-actions {

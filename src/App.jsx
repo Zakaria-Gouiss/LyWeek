@@ -23,6 +23,7 @@ function App() {
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [classModalOpen, setClassModalOpen] = useState(false);
   const [assignmentList, setAssignmentList] = useState(assignments);
+  const [classList, setClassList] = useState(classes);
 
   function handleAddAssignment(newAssignment) {
     setAssignmentList((currentAssignments) => [
@@ -31,6 +32,12 @@ function App() {
     ]);
 
     setAssignmentModalOpen(false);
+  }
+
+  function handleAddClass(newClass) {
+    setClassList((currentClasses) => [...currentClasses, newClass]);
+
+    setClassModalOpen(false);
   }
   return (
     <>
@@ -60,7 +67,7 @@ function App() {
           </section>
         </nav>
         <nav className="main-content">
-          {classes.map((course) => (
+          {classList.map((course) => (
             <Class key={course.id} {...course} assignments={assignmentList} />
           ))}
         </nav>
@@ -79,13 +86,17 @@ function App() {
         </nav>
         {assignmentModalOpen && (
           <AddAssignmentModal
-            classes={classes}
+            classes={classList}
             onClose={() => setAssignmentModalOpen(false)}
             onAdd={handleAddAssignment}
           />
         )}
+
         {classModalOpen && (
-          <AddClassModal onClose={() => setClassModalOpen(false)} />
+          <AddClassModal
+            onClose={() => setClassModalOpen(false)}
+            onAdd={handleAddClass}
+          />
         )}
       </main>
     </>
