@@ -1,7 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
-
+pool.query("SELECT current_database()", (error, result) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log("Backend database:", result.rows[0]);
+  }
+});
 const app = express();
 const PORT = 5000;
 
