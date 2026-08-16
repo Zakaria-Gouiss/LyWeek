@@ -10,6 +10,8 @@ function Class({
   officeHours,
   assignments,
   onenoteUrl,
+  onEditAssignment,
+  onEditClass,
 }) {
   function openOneNote() {
     window.location.href = onenoteUrl;
@@ -68,6 +70,17 @@ function Class({
               type="button"
               className="class-edit-btn"
               aria-label="Edit Class"
+              onClick={() =>
+                onEditClass({
+                  id,
+                  name,
+                  courseCode,
+                  professor,
+                  courseHours,
+                  officeHours,
+                  onenoteUrl,
+                })
+              }
             >
               <i className="fa-solid fa-pencil"></i>
             </button>
@@ -82,6 +95,7 @@ function Class({
               priority={assignment.priority}
               dueDate={assignment.dueDate}
               completed={assignment.completed}
+              onEdit={() => onEditAssignment(assignment)}
             />
           ))}
       </div>

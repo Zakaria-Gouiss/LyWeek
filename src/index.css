@@ -55,6 +55,7 @@ body {
   --class-meta-bullet: #b8d9f3;
   --onenote-btn-bg: var(--dark-surface-alt);
   --onenote-btn-color: var(--light-text);
+  --dark-color: var(--light-color);
 }
 
 main {
@@ -609,7 +610,7 @@ main {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--dark-color);
   border-radius: 50%;
   background: red;
   color: var(--white);
@@ -693,7 +694,14 @@ main {
   margin-top: 0.2rem;
 }
 
-.modal-submit {
+.modal-actions-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.modal-submit,
+.modal-delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -707,7 +715,6 @@ main {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-
 .modal-submit {
   border: none;
   background: var(--main-blue);
@@ -715,7 +722,14 @@ main {
   box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
-.modal-submit:hover {
+.modal-delete {
+  border: 1px solid rgba(255, 92, 92, 0.35);
+  background: rgba(255, 92, 92, 0.08);
+  color: #d93b3b;
+}
+
+.modal-submit:hover,
+.modal-delete:hover {
   transform: translateY(-1px);
 }
 
