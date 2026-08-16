@@ -49,6 +49,42 @@ app.get("/api/semesters", async (req, res) => {
     });
   }
 });
+app.put("/api/semesters/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, startDate, endDate } = req.body;
+
+    const result = await pool.query(
+      `
+      UPDATE semesters
+      SET name = $1,
+          start_date = $2,
+          end_date = $3
+      WHERE id = $4
+      RETURNING
+        id,
+        name,
+        start_date AS "startDate",
+        end_date AS "endDate"
+      `,
+      [name, startDate, endDate, id],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Semester not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Failed to update semester",
+    });
+  }
+});
 app.get("/api/classes", async (req, res) => {
   try {
     const result = await pool.query(`

@@ -15,6 +15,7 @@ import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
 import EditAssignmentModal from "./components/main-content/EditAssignmentModal.jsx";
 import EditClassModal from "./components/main-content/EditClassModal.jsx";
+import SemesterModal from "./components/header/SemesterModal.jsx";
 
 function App() {
   const [viewingWeek, setViewingWeek] = useState(null);
@@ -23,6 +24,7 @@ function App() {
   const [classModalOpen, setClassModalOpen] = useState(false);
   const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
   const [editClassModalOpen, setEditClassModalOpen] = useState(false);
+  const [semesterModalOpen, setSemesterModalOpen] = useState(false);
   const [assignmentToEdit, setAssignmentToEdit] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState([]);
@@ -316,6 +318,44 @@ function App() {
       console.error("Failed to delete class:", error);
     }
   }
+
+  async function handleSaveSemester(updatedSemester) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/semesters/${updatedSemester.id ?? 1}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedSemester),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update semester");
+      }
+
+      const savedSemester = await response.json();
+      setSemester(savedSemester);
+      const nextWeek = getSemesterWeek(
+        new Date(savedSemester.startDate),
+        new Date(),
+      );
+      setViewingWeek(nextWeek);
+    } catch (error) {
+      console.error("Failed to update semester:", error);
+      setSemester(updatedSemester);
+      const nextWeek = getSemesterWeek(
+        new Date(updatedSemester.startDate),
+        new Date(),
+      );
+      setViewingWeek(nextWeek);
+    } finally {
+      setSemesterModalOpen(false);
+    }
+  }
+
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -331,6 +371,7 @@ function App() {
                 semesterStartDate={semester.startDate}
                 semesterEndDate={semester.endDate}
                 week={viewingWeek}
+                onEditSemester={() => setSemesterModalOpen(true)}
               />
             )}
           </section>
@@ -408,6 +449,14 @@ function App() {
               setEditClassModalOpen(false);
               setClassToEdit(null);
             }}
+          />
+        )}
+
+        {semesterModalOpen && semester && (
+          <SemesterModal
+            semester={semester}
+            onClose={() => setSemesterModalOpen(false)}
+            onSave={handleSaveSemester}
           />
         )}
       </main>

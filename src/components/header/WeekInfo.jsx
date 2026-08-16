@@ -1,6 +1,11 @@
 import { getWeekInfo } from "../../utils/dateUtils";
 
-function WeekInfo({ semesterStartDate, semesterEndDate, week }) {
+function WeekInfo({
+  semesterStartDate,
+  semesterEndDate,
+  week,
+  onEditSemester,
+}) {
   const { weekNumber, weekStart, weekEnd } = getWeekInfo(
     semesterStartDate,
     week,
@@ -8,9 +13,19 @@ function WeekInfo({ semesterStartDate, semesterEndDate, week }) {
 
   return (
     <div className="week-heading">
-      <span className="week-text">
-        Semester Week <span className="week-number">{weekNumber}</span>
-      </span>
+      <div className="week-title-row">
+        <span className="week-text">
+          Semester Week <span className="week-number">{weekNumber}</span>
+        </span>
+        <button
+          type="button"
+          className="week-edit-btn"
+          aria-label="Edit semester"
+          onClick={onEditSemester}
+        >
+          <i className="fa-solid fa-pencil"></i>
+        </button>
+      </div>
 
       <p id="week-date">
         {weekStart.toDateString()} -&gt; {weekEnd.toDateString()}
