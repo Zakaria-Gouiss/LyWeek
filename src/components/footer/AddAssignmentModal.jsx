@@ -1,4 +1,24 @@
-function AddAssignmentModal({ onClose }) {
+import { useState } from "react";
+
+function AddAssignmentModal({ onClose, onAdd, classes }) {
+  const [name, setName] = useState("");
+  const [classId, setClassId] = useState("");
+  const [priority, setPriority] = useState(false);
+  const [dueDate, setDueDate] = useState("");
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    const newAssignment = {
+      id: Date.now(),
+      classId: Number(classId),
+      name,
+      priority,
+      dueDate,
+      completed: false,
+    };
+
+    onAdd(newAssignment);
+  }
   return (
     <div className="assignment-modal-overlay">
       <div
@@ -21,7 +41,7 @@ function AddAssignmentModal({ onClose }) {
           </button>
         </div>
 
-        <form className="assignment-form">
+        <form className="assignment-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="assignment-name">Name</label>
             <input
@@ -29,19 +49,28 @@ function AddAssignmentModal({ onClose }) {
               name="assignment-name"
               type="text"
               placeholder="Enter assignment name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
               required
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="assignment-class">Class</label>
-            <input
+            <select
               id="assignment-class"
               name="assignment-class"
-              type="text"
-              placeholder="Enter class name"
+              onChange={(event) => setClassId(event.target.value)}
               required
-            />
+            >
+              <option value="">Select a class</option>
+
+              {classes.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -52,12 +81,18 @@ function AddAssignmentModal({ onClose }) {
                   type="radio"
                   name="assignment-priority"
                   value="yes"
+                  onChange={(event) => setPriority(true)}
                   required
                 />
                 <span>Yes</span>
               </label>
               <label className="yes-no-option">
-                <input type="radio" name="assignment-priority" value="no" />
+                <input
+                  type="radio"
+                  name="assignment-priority"
+                  value="no"
+                  onChange={(event) => setPriority(false)}
+                />
                 <span>No</span>
               </label>
             </div>
@@ -65,7 +100,12 @@ function AddAssignmentModal({ onClose }) {
 
           <div className="form-group">
             <label htmlFor="assignment-duedate">Due Date</label>
-            <select id="assignment-duedate" name="assignment-duedate" required>
+            <select
+              id="assignment-duedate"
+              name="assignment-duedate"
+              required
+              onChange={(event) => setDueDate(event.target.value)}
+            >
               <option value="">Select a day</option>
               <option value="Monday">Monday</option>
               <option value="Tuesday">Tuesday</option>

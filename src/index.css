@@ -526,6 +526,7 @@ main {
   justify-content: center;
   padding: 1rem;
   background: rgba(26, 26, 26, 0.42);
+  backdrop-filter: blur(4px);
   z-index: 1000;
 }
 
@@ -561,17 +562,14 @@ main {
   height: 2rem;
   border: 1px solid var(--border-color);
   border-radius: 50%;
-  background: transparent;
-  color: var(--text-color);
+  background: red;
+  color: var(--white);
   font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
 }
 
-.modal-close:hover{
-  transform: translateY(-1px);
-  background-color: var(--main-blue);
-}
+
 
 .assignment-form {
   display: flex;

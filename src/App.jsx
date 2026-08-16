@@ -20,7 +20,15 @@ function App() {
   const [viewingWeek, setViewingWeek] = useState(currentWeek);
   const [darkMode, setDarkMode] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [assignmentList, setAssignmentList] = useState(assignments);
+  function handleAddAssignment(newAssignment) {
+    setAssignmentList((currentAssignments) => [
+      ...currentAssignments,
+      newAssignment,
+    ]);
 
+    setModalOpen(false);
+  }
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -50,18 +58,7 @@ function App() {
         </nav>
         <nav className="main-content">
           {classes.map((course) => (
-            <Class
-              key={course.id}
-              name={course.name}
-              courseCode={course.courseCode}
-              professor={course.professor}
-              courseHours={course.courseHours}
-              officeHours={course.officeHours}
-              assignments={assignments.filter(
-                (assignment) => assignment.classId === course.id,
-              )}
-              onenoteUrl={course.onenoteUrl}
-            />
+            <Class key={course.id} {...course} assignments={assignmentList} />
           ))}
         </nav>
         <nav className="footer">
@@ -75,7 +72,11 @@ function App() {
           </section>
         </nav>
         {modalOpen && (
-          <AddAssignmentModal onClose={() => setModalOpen(false)} />
+          <AddAssignmentModal
+            classes={classes}
+            onClose={() => setModalOpen(false)}
+            onAdd={handleAddAssignment}
+          />
         )}
       </main>
     </>

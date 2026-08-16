@@ -2,6 +2,7 @@ import { useState } from "react";
 import Assignment from "./Assignment";
 
 function Class({
+  id,
   name,
   courseCode,
   professor,
@@ -16,6 +17,11 @@ function Class({
 
   const [classExpanded, classSetExpanded] = useState(true);
   const [metaExpanded, metaSetExpanded] = useState(false);
+
+  const classAssignments = assignments.filter(
+    (assignment) => assignment.classId === id,
+  );
+
   return (
     <div className="assignment-class">
       <div className="class-header">
@@ -28,13 +34,16 @@ function Class({
             >
               {name}
             </button>
+
             <button
               className="class-meta-toggle-box"
               aria-label="Expand/Collapse info"
               onClick={() => metaSetExpanded(!metaExpanded)}
             >
               <i
-                className={`fa-solid fa-chevron-${metaExpanded ? "down" : "right"}`}
+                className={`fa-solid fa-chevron-${
+                  metaExpanded ? "down" : "right"
+                }`}
               ></i>
             </button>
           </div>
@@ -47,12 +56,14 @@ function Class({
             Open in OneNote
           </button>
         </div>
+
         {classExpanded && metaExpanded && (
           <div className="class-meta">
             <span>{courseCode}</span>
             <span>{professor}</span>
             <span>Course hours: {courseHours}</span>
             <span>Office hours: {officeHours}</span>
+
             <button
               type="button"
               className="class-edit-btn"
@@ -62,9 +73,11 @@ function Class({
             </button>
           </div>
         )}
+
         {classExpanded &&
-          assignments.map((assignment) => (
+          classAssignments.map((assignment) => (
             <Assignment
+              key={assignment.id}
               name={assignment.name}
               priority={assignment.priority}
               dueDate={assignment.dueDate}
