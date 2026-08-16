@@ -12,11 +12,14 @@ import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
 import { classes, assignments, semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
+import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 
 function App() {
   const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
+
   const [viewingWeek, setViewingWeek] = useState(currentWeek);
   const [darkMode, setDarkMode] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <>
@@ -63,7 +66,7 @@ function App() {
         </nav>
         <nav className="footer">
           <section className="add-content">
-            <AddContent type="Assignment" />
+            <AddContent type="Assignment" onClick={() => setModalOpen(true)} />
             <AddContent type="Class" />
           </section>
           <section className="misc-notes">
@@ -71,6 +74,9 @@ function App() {
             <AddContent type="save" />
           </section>
         </nav>
+        {modalOpen && (
+          <AddAssignmentModal onClose={() => setModalOpen(false)} />
+        )}
       </main>
     </>
   );
