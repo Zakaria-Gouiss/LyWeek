@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import lyLight from "./assets/lyweek-light.jpg";
 import lyDark from "./assets/lyweek-dark.jpg";
@@ -10,7 +10,7 @@ import WeekInfo from "./components/header/WeekInfo.jsx";
 import WeekButton from "./components/header/WeekButton.jsx";
 import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
-import { classes, assignments, semester } from "./data/fakeData.js";
+import { semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
@@ -28,22 +28,110 @@ function App() {
   const [editClassModalOpen, setEditClassModalOpen] = useState(false);
   const [assignmentToEdit, setAssignmentToEdit] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
-  const [assignmentList, setAssignmentList] = useState(assignments);
-  const [classList, setClassList] = useState(classes);
+  const [assignmentList, setAssignmentList] = useState([]);
+  const [classList, setClassList] = useState([]);
+  const [notes, setNotes] = useState([]);
 
-  function handleAddAssignment(newAssignment) {
-    setAssignmentList((currentAssignments) => [
-      ...currentAssignments,
-      newAssignment,
-    ]);
+  useEffect(() => {
+    fetch("http://localhost:5000/api/classes")
+      .then((response) => response.json())
+      .then((data) => {
+        setClassList(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch classes:", error);
+      });
 
-    setAssignmentModalOpen(false);
+    fetch("http://localhost:5000/api/assignments")
+      .then((response) => response.json())
+      .then((data) => {
+        setAssignmentList(data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch assignments:", error);
+      });
+
+    fetch("http://localhost:5000/api/notes")
+      .then((response) => response.json())
+      .then((data) => {
+        setNotes(data.content);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch notes:", error);
+      });
+  }, []);
+
+  async function handleAddAssignment(newAssignment) {
+    try {
+      const response = await fetch("http://localhost:5000/api/assignments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newAssignment),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add assignment");
+      }
+
+      const savedAssignment = await response.json();
+
+      setAssignmentList((currentAssignments) => [
+        ...currentAssignments,
+        savedAssignment,
+      ]);
+
+      setAssignmentModalOpen(false);
+    } catch (error) {
+      console.error("Failed to add assignment:", error);
+    }
   }
+  async function handleSaveNotes() {
+    try {
+      const response = await fetch("http://localhost:5000/api/notes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: notes,
+        }),
+      });
 
-  function handleAddClass(newClass) {
-    setClassList((currentClasses) => [...currentClasses, newClass]);
+      if (!response.ok) {
+        throw new Error("Failed to save notes");
+      }
 
-    setClassModalOpen(false);
+      const savedNotes = await response.json();
+
+      setNotes(savedNotes.content);
+    } catch (error) {
+      console.error("Failed to save notes:", error);
+    }
+  }
+  async function handleAddClass(newClass) {
+    try {
+      const response = await fetch("http://localhost:5000/api/classes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newClass),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add class");
+      }
+
+      const savedClass = await response.json();
+
+      setClassList((currentClasses) => [...currentClasses, savedClass]);
+
+      setClassModalOpen(false);
+    } catch (error) {
+      console.error("Failed to add class:", error);
+    }
   }
 
   function handleEditAssignment(assignment) {
@@ -51,54 +139,166 @@ function App() {
     setEditAssignmentModalOpen(true);
   }
 
-  function handleSaveAssignment(updatedAssignment) {
-    setAssignmentList((currentAssignments) =>
-      currentAssignments.map((assignment) =>
-        assignment.id === updatedAssignment.id ? updatedAssignment : assignment,
-      ),
-    );
+  async function handleSaveAssignment(updatedAssignment) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/assignments/${updatedAssignment.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedAssignment),
+        },
+      );
 
-    setEditAssignmentModalOpen(false);
-    setAssignmentToEdit(null);
+      if (!response.ok) {
+        throw new Error("Failed to update assignment");
+      }
+
+      const savedAssignment = await response.json();
+
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.map((assignment) =>
+          assignment.id === savedAssignment.id ? savedAssignment : assignment,
+        ),
+      );
+
+      setEditAssignmentModalOpen(false);
+      setAssignmentToEdit(null);
+    } catch (error) {
+      console.error("Failed to update assignment:", error);
+    }
   }
 
-  function handleDeleteAssignment(assignmentId) {
-    setAssignmentList((currentAssignments) =>
-      currentAssignments.filter((assignment) => assignment.id !== assignmentId),
-    );
+  async function handleDeleteAssignment(assignmentId) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/assignments/${assignmentId}`,
+        {
+          method: "DELETE",
+        },
+      );
 
-    setEditAssignmentModalOpen(false);
-    setAssignmentToEdit(null);
+      if (!response.ok) {
+        throw new Error("Failed to delete assignment");
+      }
+
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.filter(
+          (assignment) => assignment.id !== assignmentId,
+        ),
+      );
+
+      setEditAssignmentModalOpen(false);
+      setAssignmentToEdit(null);
+    } catch (error) {
+      console.error("Failed to delete assignment:", error);
+    }
   }
 
   function handleEditClass(course) {
     setClassToEdit(course);
     setEditClassModalOpen(true);
   }
+  async function handleToggleAssignment(assignmentId, completed) {
+    try {
+      const assignment = assignmentList.find(
+        (assignment) => assignment.id === assignmentId,
+      );
 
-  function handleSaveClass(updatedClass) {
-    setClassList((currentClasses) =>
-      currentClasses.map((course) =>
-        course.id === updatedClass.id ? updatedClass : course,
-      ),
-    );
+      const response = await fetch(
+        `http://localhost:5000/api/assignments/${assignmentId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...assignment,
+            completed,
+          }),
+        },
+      );
 
-    setEditClassModalOpen(false);
-    setClassToEdit(null);
+      if (!response.ok) {
+        throw new Error("Failed to update assignment");
+      }
+
+      const updatedAssignment = await response.json();
+
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.map((assignment) =>
+          assignment.id === updatedAssignment.id
+            ? updatedAssignment
+            : assignment,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to update assignment:", error);
+    }
   }
 
-  function handleDeleteClass(classId) {
-    setClassList((currentClasses) =>
-      currentClasses.filter((course) => course.id !== classId),
-    );
-    setAssignmentList((currentAssignments) =>
-      currentAssignments.filter((assignment) => assignment.classId !== classId),
-    );
+  async function handleSaveClass(updatedClass) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/classes/${updatedClass.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedClass),
+        },
+      );
 
-    setEditClassModalOpen(false);
-    setClassToEdit(null);
+      if (!response.ok) {
+        throw new Error("Failed to update class");
+      }
+
+      const savedClass = await response.json();
+
+      setClassList((currentClasses) =>
+        currentClasses.map((course) =>
+          course.id === savedClass.id ? savedClass : course,
+        ),
+      );
+
+      setEditClassModalOpen(false);
+      setClassToEdit(null);
+    } catch (error) {
+      console.error("Failed to update class:", error);
+    }
   }
+  async function handleDeleteClass(classId) {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/classes/${classId}`,
+        {
+          method: "DELETE",
+        },
+      );
 
+      if (!response.ok) {
+        throw new Error("Failed to delete class");
+      }
+
+      setClassList((currentClasses) =>
+        currentClasses.filter((course) => course.id !== classId),
+      );
+
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.filter(
+          (assignment) => assignment.classId !== classId,
+        ),
+      );
+
+      setEditClassModalOpen(false);
+      setClassToEdit(null);
+    } catch (error) {
+      console.error("Failed to delete class:", error);
+    }
+  }
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -132,8 +332,9 @@ function App() {
               key={course.id}
               {...course}
               assignments={assignmentList}
-              onEditAssignment={handleEditAssignment}
               onEditClass={handleEditClass}
+              onEditAssignment={handleEditAssignment}
+              onToggleAssignment={handleToggleAssignment}
             />
           ))}
         </nav>
@@ -146,8 +347,9 @@ function App() {
             <AddContent type="Class" onClick={() => setClassModalOpen(true)} />
           </section>
           <section className="misc-notes">
-            <NoteText />
-            <AddContent type="save" />
+            <NoteText notes={notes} setNotes={setNotes} />
+
+            <AddContent type="save" onClick={handleSaveNotes} />
           </section>
         </nav>
         {assignmentModalOpen && (

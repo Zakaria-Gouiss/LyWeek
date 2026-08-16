@@ -1,21 +1,19 @@
-import { useState } from "react";
-
 function Assignment({
+  id,
   name,
   priority,
   dueDate,
-  completed: initalCompleted,
+  completed,
   onEdit,
+  onToggle,
 }) {
-  const [completed, setCompleted] = useState(initalCompleted);
-
   return (
     <div className="assignment">
       <div className="assignment-main">
         <input
           type="checkbox"
           checked={completed}
-          onChange={() => setCompleted(!completed)}
+          onChange={() => onToggle(id, !completed)}
         />
         {priority && <span className="assignment-priority">★</span>}
         <span className="assignment-name">{name}</span>

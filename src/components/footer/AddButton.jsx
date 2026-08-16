@@ -1,7 +1,7 @@
 function AddButton({ type, onClick }) {
   if (type === "save") {
     return (
-      <button className="save-notes">
+      <button className="save-notes" onClick={onClick}>
         <i className="fa-solid fa-floppy-disk"></i>
         <span>Save</span>
       </button>
