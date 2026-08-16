@@ -9,7 +9,8 @@ function Class({
   officeHours,
   assignments,
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [classExpanded, classSetExpanded] = useState(true);
+  const [metaExpanded, metaSetExpanded] = useState(false);
   return (
     <div className="assignment-class">
       <div className="class-header">
@@ -17,31 +18,36 @@ function Class({
           <button
             type="button"
             className="class-badge"
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => classSetExpanded(!classExpanded)}
           >
             {name}
           </button>
-          <span className="class-toggle-box" aria-label="Expand Class 1">
-            <i className="fa-solid fa-chevron-right"></i>
-          </span>
-          <span className="class-toggle-box" aria-label="Collapse Class 1">
-            <i className="fa-solid fa-chevron-down"></i>
-          </span>
-        </div>
-        <div className="class-meta">
-          <span>{courseCode}</span>
-          <span>{professor}</span>
-          <span>Course hours: {courseHours}</span>
-          <span>Office hours: {officeHours}</span>
           <button
-            type="button"
-            className="class-edit-btn"
-            aria-label="Edit Class"
+            className="class-meta-toggle-box"
+            aria-label="Expand/Collapse info"
+            onClick={() => metaSetExpanded(!metaExpanded)}
           >
-            <i className="fa-solid fa-pencil"></i>
+            <i
+              className={`fa-solid fa-chevron-${metaExpanded ? "down" : "right"}`}
+            ></i>
           </button>
         </div>
-        {expanded &&
+        {classExpanded && metaExpanded && (
+          <div className="class-meta">
+            <span>{courseCode}</span>
+            <span>{professor}</span>
+            <span>Course hours: {courseHours}</span>
+            <span>Office hours: {officeHours}</span>
+            <button
+              type="button"
+              className="class-edit-btn"
+              aria-label="Edit Class"
+            >
+              <i className="fa-solid fa-pencil"></i>
+            </button>
+          </div>
+        )}
+        {classExpanded &&
           assignments.map((assignment) => (
             <Assignment
               name={assignment.name}

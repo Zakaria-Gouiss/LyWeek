@@ -191,7 +191,7 @@ main {
   outline-offset: 2px;
 }
 
-.class-toggle-box {
+.class-meta-toggle-box {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -203,6 +203,7 @@ main {
   color: var(--main-blue);
   font-size: 0.6rem;
   line-height: 1;
+  cursor: pointer;
 }
 
 .class-meta {
