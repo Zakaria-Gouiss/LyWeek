@@ -33,6 +33,7 @@ function Class({
             name={assignment.name}
             priority={assignment.priority}
             dueDate={assignment.dueDate}
+            completed={assignment.completed}
           />
         ))}
       </div>

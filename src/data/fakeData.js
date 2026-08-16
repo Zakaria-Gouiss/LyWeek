@@ -40,6 +40,7 @@ export const assignments = [
         name: "Complete essay 1",
         priority: true,
         dueDate: "Tuesday",
+        completed: false,
     },
     {
         id: 2,
@@ -47,6 +48,7 @@ export const assignments = [
         name: "Study for quiz",
         priority: false,
         dueDate: "Friday",
+        completed: false,
     },
     {
         id: 3,
@@ -54,6 +56,7 @@ export const assignments = [
         name: "Read chapter 3",
         priority: false,
         dueDate: "Wednesday",
+        completed: false,
     },
     {
         id: 4,
@@ -61,6 +64,7 @@ export const assignments = [
         name: "Finish worksheet",
         priority: true,
         dueDate: "Monday",
+        completed: true,
     },
     {
         id: 5,
@@ -68,6 +72,7 @@ export const assignments = [
         name: "Exam 1",
         priority: true,
         dueDate: "Thursday",
+        completed: false,
     },
 
 ];
