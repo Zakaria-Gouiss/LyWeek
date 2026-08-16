@@ -13,21 +13,24 @@ import NoteText from "./components/footer/NoteText.jsx";
 import { classes, assignments, semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
+import AddClassModal from "./components/footer/AddClassModal.jsx";
 
 function App() {
   const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
 
   const [viewingWeek, setViewingWeek] = useState(currentWeek);
   const [darkMode, setDarkMode] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
+  const [classModalOpen, setClassModalOpen] = useState(false);
   const [assignmentList, setAssignmentList] = useState(assignments);
+
   function handleAddAssignment(newAssignment) {
     setAssignmentList((currentAssignments) => [
       ...currentAssignments,
       newAssignment,
     ]);
 
-    setModalOpen(false);
+    setAssignmentModalOpen(false);
   }
   return (
     <>
@@ -63,20 +66,26 @@ function App() {
         </nav>
         <nav className="footer">
           <section className="add-content">
-            <AddContent type="Assignment" onClick={() => setModalOpen(true)} />
-            <AddContent type="Class" />
+            <AddContent
+              type="Assignment"
+              onClick={() => setAssignmentModalOpen(true)}
+            />
+            <AddContent type="Class" onClick={() => setClassModalOpen(true)} />
           </section>
           <section className="misc-notes">
             <NoteText />
             <AddContent type="save" />
           </section>
         </nav>
-        {modalOpen && (
+        {assignmentModalOpen && (
           <AddAssignmentModal
             classes={classes}
-            onClose={() => setModalOpen(false)}
+            onClose={() => setAssignmentModalOpen(false)}
             onAdd={handleAddAssignment}
           />
+        )}
+        {classModalOpen && (
+          <AddClassModal onClose={() => setClassModalOpen(false)} />
         )}
       </main>
     </>
