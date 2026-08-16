@@ -342,14 +342,66 @@ main {
     background-color 0.15s ease;
 }
 
+.class-edit-btn:hover{
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
 
 .assignment {
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.75rem;
   color: var(--text-color);
   font-size: 0.95rem;
   line-height: 1.4;
+}
+
+.assignment-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.assignment-priority {
+  color: var(--main-blue);
+  font-size: 0.8rem;
+}
+
+.assignment-name {
+  overflow-wrap: anywhere;
+}
+
+
+
+.assignment-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  margin-left: auto;
+  border: 1px solid var(--blue-border);
+  border-radius: 5px;
+  background: var(--card-color);
+  color: var(--main-blue);
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.assignment-edit-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .assignment input[type='checkbox'] {

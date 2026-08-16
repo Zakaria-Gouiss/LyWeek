@@ -117,10 +117,9 @@ function AddClassModal({ onClose, onAdd }) {
               id="class-onenote-url"
               name="class-onenote-url"
               type="url"
-              placeholder="https://..."
+              placeholder="Example: onenote:https://..."
               value={oneNoteUrl}
               onChange={(event) => setOneNoteUrl(event.target.value)}
-              required
             />
           </div>
 
