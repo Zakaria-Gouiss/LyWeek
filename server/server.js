@@ -378,10 +378,10 @@ app.delete("/api/assignments/:id", async (req, res) => {
 app.get("/api/notes", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, content FROM notes WHERE id = 1",
+      "SELECT * FROM notes ORDER BY id"
     );
 
-    res.json(result.rows[0]);
+    res.json(result.rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({

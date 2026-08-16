@@ -29,7 +29,7 @@ function App() {
   const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState([]);
   const [classList, setClassList] = useState([]);
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState("");
   const [semester, setSemester] = useState(null);
 
   useEffect(() => {
@@ -73,7 +73,7 @@ function App() {
     fetch("http://localhost:5000/api/notes")
       .then((response) => response.json())
       .then((data) => {
-        setNotes(data.content);
+        setNotes(data[0]?.content || "");
       })
       .catch((error) => {
         console.error("Failed to fetch notes:", error);
@@ -368,6 +368,7 @@ function App() {
           <section className="week-and-nav">
             {semester && viewingWeek !== null && (
               <WeekInfo
+                semesterName={semester.name}
                 semesterStartDate={semester.startDate}
                 semesterEndDate={semester.endDate}
                 week={viewingWeek}
