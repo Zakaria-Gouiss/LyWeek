@@ -31,8 +31,14 @@ function App() {
               week={viewingWeek}
             />
             <div className="week-nav">
-              <WeekButton position="left" />
-              <WeekButton position="right" />
+              <WeekButton
+                position="left"
+                onClick={() => setViewingWeek(viewingWeek - 1)}
+              />
+              <WeekButton
+                position="right"
+                onClick={() => setViewingWeek(viewingWeek + 1)}
+              />
             </div>
           </section>
         </nav>
