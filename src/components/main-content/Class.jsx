@@ -13,7 +13,13 @@ function Class({
   onEditAssignment,
   onEditClass,
   onToggleAssignment,
+  color,
 }) {
+  const badgeColor =
+    typeof color === "string" &&
+    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color)
+      ? color
+      : "var(--card-color)";
   function openOneNote() {
     window.location.href = onenoteUrl;
   }
@@ -33,6 +39,9 @@ function Class({
             <button
               type="button"
               className="class-badge"
+              style={{
+                backgroundColor: badgeColor,
+              }}
               onClick={() => classSetExpanded(!classExpanded)}
             >
               {name}
@@ -80,6 +89,7 @@ function Class({
                   courseHours,
                   officeHours,
                   onenoteUrl,
+                  color,
                 })
               }
             >

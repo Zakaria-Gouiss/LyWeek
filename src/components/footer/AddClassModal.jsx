@@ -7,6 +7,21 @@ function AddClassModal({ onClose, onAdd }) {
   const [courseHours, setCourseHours] = useState("");
   const [officeHours, setOfficeHours] = useState("");
   const [oneNoteUrl, setOneNoteUrl] = useState("");
+  const [color, setColor] = useState("");
+
+  function normalizeHexColor(value) {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return null;
+    }
+
+    const withHash = trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+
+    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(withHash)
+      ? withHash
+      : null;
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -19,6 +34,7 @@ function AddClassModal({ onClose, onAdd }) {
       courseHours,
       officeHours,
       onenoteUrl: oneNoteUrl,
+      color: normalizeHexColor(color),
     };
 
     onAdd(newClass);
@@ -118,6 +134,19 @@ function AddClassModal({ onClose, onAdd }) {
               placeholder="Example: onenote:https://..."
               value={oneNoteUrl}
               onChange={(event) => setOneNoteUrl(event.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="class-color">Add Color</label>
+            <input
+              id="class-color"
+              name="class-color"
+              type="text"
+              value={color}
+              placeholder="#3B82F6"
+              pattern="#?[0-9A-Fa-f]{3,6}"
+              onChange={(event) => setColor(event.target.value)}
             />
           </div>
 

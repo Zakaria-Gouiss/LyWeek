@@ -25,6 +25,37 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function randomHexColor() {
+  const hue = Math.floor(Math.random() * 360);
+  const saturation = 70 + Math.floor(Math.random() * 20);
+  const lightness = 48 + Math.floor(Math.random() * 12);
+
+  const h = hue / 360;
+  const s = saturation / 100;
+  const l = lightness / 100;
+
+  function hueToRgb(p, q, t) {
+    let temp = t;
+    if (temp < 0) temp += 1;
+    if (temp > 1) temp -= 1;
+    if (temp < 1 / 6) return p + (q - p) * 6 * temp;
+    if (temp < 1 / 2) return q;
+    if (temp < 2 / 3) return p + (q - p) * (2 / 3 - temp) * 6;
+    return p;
+  }
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const r = Math.round(hueToRgb(p, q, h + 1 / 3) * 255);
+  const g = Math.round(hueToRgb(p, q, h) * 255);
+  const b = Math.round(hueToRgb(p, q, h - 1 / 3) * 255);
+
+  return `#${[r, g, b]
+    .map((channel) => channel.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase()}`;
+}
+
 // -------------------------
 // Fake data
 // -------------------------
@@ -251,28 +282,64 @@ async function seed() {
     );
 
     for (let i = 0; i < numberOfClasses; i++) {
+      const classColor = randomHexColor();
+      const colorColumnExists = await client.query(`
+        SELECT EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_name = 'classes' AND column_name = 'color'
+        ) AS "hasColorColumn"
+      `);
+
+      const hasColorColumn = colorColumnExists.rows[0]?.hasColorColumn ?? false;
+
       const result = await client.query(
-        `
-        INSERT INTO classes
-          (
-            name,
-            course_code,
-            professor,
-            course_hours,
-            office_hours,
-            onenote_url
-          )
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id
-        `,
-        [
-          shuffledClasses[i],
-          courseCodes[i],
-          randomItem(professors),
-          randomItem(courseHours),
-          randomItem(officeHours),
-          "https://onenote.com/",
-        ],
+        hasColorColumn
+          ? `
+            INSERT INTO classes
+              (
+                name,
+                course_code,
+                professor,
+                course_hours,
+                office_hours,
+                onenote_url,
+                color
+              )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id
+          `
+          : `
+            INSERT INTO classes
+              (
+                name,
+                course_code,
+                professor,
+                course_hours,
+                office_hours,
+                onenote_url
+              )
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING id
+          `,
+        hasColorColumn
+          ? [
+              shuffledClasses[i],
+              courseCodes[i],
+              randomItem(professors),
+              randomItem(courseHours),
+              randomItem(officeHours),
+              "https://onenote.com/",
+              classColor,
+            ]
+          : [
+              shuffledClasses[i],
+              courseCodes[i],
+              randomItem(professors),
+              randomItem(courseHours),
+              randomItem(officeHours),
+              "https://onenote.com/",
+            ],
       );
 
       const classId = result.rows[0].id;

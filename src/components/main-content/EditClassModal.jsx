@@ -7,6 +7,21 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
   const [courseHours, setCourseHours] = useState(course?.courseHours ?? "");
   const [officeHours, setOfficeHours] = useState(course?.officeHours ?? "");
   const [onenoteUrl, setOneNoteUrl] = useState(course?.onenoteUrl ?? "");
+  const [color, setColor] = useState(course?.color ?? "");
+
+  function normalizeHexColor(value) {
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      return null;
+    }
+
+    const withHash = trimmed.startsWith("#") ? trimmed : `#${trimmed}`;
+
+    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(withHash)
+      ? withHash
+      : null;
+  }
 
   useEffect(() => {
     setName(course?.name ?? "");
@@ -15,6 +30,7 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
     setCourseHours(course?.courseHours ?? "");
     setOfficeHours(course?.officeHours ?? "");
     setOneNoteUrl(course?.onenoteUrl ?? "");
+    setColor(course?.color ?? "");
   }, [course]);
 
   function handleSubmit(event) {
@@ -28,6 +44,7 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
       courseHours,
       officeHours,
       onenoteUrl,
+      color: normalizeHexColor(color),
     };
 
     onSave(updatedCourse);
@@ -137,6 +154,19 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
               value={onenoteUrl}
               onChange={(event) => setOneNoteUrl(event.target.value)}
               placeholder="Example: onenote:https://..."
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="edit-class-color">Add Color</label>
+            <input
+              id="edit-class-color"
+              name="edit-class-color"
+              type="text"
+              value={color}
+              pattern="#?[0-9A-Fa-f]{3,6}"
+              onChange={(event) => setColor(event.target.value)}
+              placeholder="#3B82F6"
             />
           </div>
 

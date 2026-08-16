@@ -85,19 +85,45 @@ app.put("/api/semesters/:id", async (req, res) => {
     });
   }
 });
+async function hasClassColorColumn() {
+  const result = await pool.query(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_name = 'classes' AND column_name = 'color'
+    ) AS "hasColorColumn"
+  `);
+
+  return result.rows[0]?.hasColorColumn ?? false;
+}
+
 app.get("/api/classes", async (req, res) => {
   try {
+    const hasColor = await hasClassColorColumn();
+
     const result = await pool.query(`
-  SELECT
-    id,
-    name,
-    course_code AS "courseCode",
-    professor,
-    course_hours AS "courseHours",
-    office_hours AS "officeHours",
-    onenote_url AS "onenoteUrl"
-  FROM classes
-`);
+      SELECT
+        id,
+        name,
+        course_code AS "courseCode",
+        professor,
+        course_hours AS "courseHours",
+        office_hours AS "officeHours",
+        onenote_url AS "onenoteUrl"${
+          hasColor ? ", color AS \"color\"" : ""
+        }
+      FROM classes
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Failed to fetch classes",
+    });
+  }
+});
 app.post("/api/classes", async (req, res) => {
   try {
     const {
@@ -107,32 +133,46 @@ app.post("/api/classes", async (req, res) => {
       courseHours,
       officeHours,
       onenoteUrl,
+      color,
     } = req.body;
 
-    const result = await pool.query(
+    const hasColor = await hasClassColorColumn();
+    const query = hasColor
+      ? `
+        INSERT INTO classes
+          (name, course_code, professor, course_hours, office_hours, onenote_url, color)
+        VALUES
+          ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING
+          id,
+          name,
+          course_code AS "courseCode",
+          professor,
+          course_hours AS "courseHours",
+          office_hours AS "officeHours",
+          onenote_url AS "onenoteUrl",
+          color
       `
-      INSERT INTO classes
-        (name, course_code, professor, course_hours, office_hours, onenote_url)
-      VALUES
-        ($1, $2, $3, $4, $5, $6)
-      RETURNING
-        id,
-        name,
-        course_code AS "courseCode",
-        professor,
-        course_hours AS "courseHours",
-        office_hours AS "officeHours",
-        onenote_url AS "onenoteUrl"
-      `,
-      [
-        name,
-        courseCode,
-        professor,
-        courseHours,
-        officeHours,
-        onenoteUrl,
-      ],
-    );
+      : `
+        INSERT INTO classes
+          (name, course_code, professor, course_hours, office_hours, onenote_url)
+        VALUES
+          ($1, $2, $3, $4, $5, $6)
+        RETURNING
+          id,
+          name,
+          course_code AS "courseCode",
+          professor,
+          course_hours AS "courseHours",
+          office_hours AS "officeHours",
+          onenote_url AS "onenoteUrl"
+      `;
+
+    const params = hasColor
+      ? [name, courseCode, professor, courseHours, officeHours, onenoteUrl, color]
+      : [name, courseCode, professor, courseHours, officeHours, onenoteUrl];
+
+    const result = await pool.query(query, params);
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
@@ -154,38 +194,57 @@ app.put("/api/classes/:id", async (req, res) => {
       courseHours,
       officeHours,
       onenoteUrl,
+      color,
     } = req.body;
 
-    const result = await pool.query(
+    const hasColor = await hasClassColorColumn();
+    const query = hasColor
+      ? `
+        UPDATE classes
+        SET
+          name = $1,
+          course_code = $2,
+          professor = $3,
+          course_hours = $4,
+          office_hours = $5,
+          onenote_url = $6,
+          color = $7
+        WHERE id = $8
+        RETURNING
+          id,
+          name,
+          course_code AS "courseCode",
+          professor,
+          course_hours AS "courseHours",
+          office_hours AS "officeHours",
+          onenote_url AS "onenoteUrl",
+          color
       `
-      UPDATE classes
-      SET
-        name = $1,
-        course_code = $2,
-        professor = $3,
-        course_hours = $4,
-        office_hours = $5,
-        onenote_url = $6
-      WHERE id = $7
-      RETURNING
-        id,
-        name,
-        course_code AS "courseCode",
-        professor,
-        course_hours AS "courseHours",
-        office_hours AS "officeHours",
-        onenote_url AS "onenoteUrl"
-      `,
-      [
-        name,
-        courseCode,
-        professor,
-        courseHours,
-        officeHours,
-        onenoteUrl,
-        id,
-      ],
-    );
+      : `
+        UPDATE classes
+        SET
+          name = $1,
+          course_code = $2,
+          professor = $3,
+          course_hours = $4,
+          office_hours = $5,
+          onenote_url = $6
+        WHERE id = $7
+        RETURNING
+          id,
+          name,
+          course_code AS "courseCode",
+          professor,
+          course_hours AS "courseHours",
+          office_hours AS "officeHours",
+          onenote_url AS "onenoteUrl"
+      `;
+
+    const params = hasColor
+      ? [name, courseCode, professor, courseHours, officeHours, onenoteUrl, color, id]
+      : [name, courseCode, professor, courseHours, officeHours, onenoteUrl, id];
+
+    const result = await pool.query(query, params);
 
     if (result.rows.length === 0) {
       return res.status(404).json({
@@ -407,14 +466,6 @@ app.put("/api/notes", async (req, res) => {
   }
 });
 
-    res.json(result.rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "Failed to fetch classes",
-    });
-  }
-});
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
