@@ -15,15 +15,18 @@ import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 
 function App() {
   const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
-
   const [viewingWeek, setViewingWeek] = useState(currentWeek);
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
     <>
-      <main>
+      <main className={darkMode ? "dark" : ""}>
         <nav className="header">
-          <section className="logo-and-welcome">
-            <LogoWelcome userName="Zakaria" />
-          </section>
+          <LogoWelcome
+            userName="Zakaria"
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+          />
           <section className="week-and-nav">
             <WeekInfo
               semesterStartDate={semester.startDate}

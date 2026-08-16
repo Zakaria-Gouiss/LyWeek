@@ -1,13 +1,26 @@
-import lyLight from '../../assets/lyweek-light.jpg'
-function LogoWelcome({ userName }) {
-    return (
-        <section className="logo-and-welcome">
-            <a href="#">
-                <img className="logo" src={lyLight} alt="LyWeek logo" />
-            </a>
-            <h2 className="welcome">Welcome back, {userName}</h2>
-        </section>
-        
-    );
+import lyLight from "../../assets/lyweek-light.jpg";
+import lyDark from "../../assets/lyweek-dark.jpg";
+
+function LogoWelcome({ userName, darkMode, setDarkMode }) {
+  return (
+    <>
+      <section className="logo-and-welcome">
+        <button
+          type="button"
+          className="logo-button"
+          onClick={() => setDarkMode((prev) => !prev)}
+          aria-label="Toggle dark mode"
+        >
+          <img
+            className="logo"
+            src={darkMode ? lyLight : lyDark}
+            alt="LyWeek logo"
+          />
+        </button>
+        <h2 className="welcome">Welcome back, {userName}</h2>
+      </section>
+    </>
+  );
 }
+
 export default LogoWelcome;

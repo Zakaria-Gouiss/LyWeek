@@ -1,18 +1,67 @@
 :root {
-    --dark-color: #272727;
-    --light-color: #F1FAFF;
-    --main-blue: #38b6ff;
-    --main-text-color: #1A1A1A;
-    background-color: var(--light-color);
-    font-family: 'Kanit', sans-serif;
-    font-weight: 400;
-    color: var(--main-text-color);
+  /* Core colors */
+  --dark-color: #272727;
+  --light-color: #f7fbff;
+  --white: #ffffff;
+
+  /* Primary accent */
+  --main-blue: #38b6ff;
+  --main-blue-strong: #2a9fe0;
+  --blue-ice: #eaf8ff;
+  --dark-surface-alt: #1f2a35;
+
+  /* Text */
+  --main-text-color: #1a1a1a;
+  --light-text: #f1faff;
+  --text-secondary: #4c4c4c;
+  --text-muted: #8a8a8a;
+  --placeholder-color: #777777;
+  --class-meta-text: var(--text-secondary);
+  --class-meta-bullet: var(--text-muted);
+  --onenote-btn-bg: var(--blue-ice);
+  --onenote-btn-color: var(--main-blue-strong);
+
+  /* Borders / shadows */
+  --border-color: #d0d0d0;
+  --dark-border: #555555;
+  --blue-border: rgba(56, 182, 255, 0.35);
+  --blue-shadow: rgba(56, 182, 255, 0.32);
+  --shadow: rgba(26, 26, 26, 0.05);
+
+  /* Theme colors */
+  --background-color: var(--light-color);
+  --text-color: var(--main-text-color);
+  --card-color: var(--white);
+
+  font-family: 'Kanit', sans-serif;
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.dark {
+  --background-color: var(--main-text-color);
+  --text-color: var(--light-text);
+  --card-color: var(--dark-surface);
+  --border-color: var(--dark-border);
+  --dark-surface: #333333;
+  --dark-surface-alt: #1f2a35;
+  --class-meta-text: #dfeeff;
+  --class-meta-bullet: #b8d9f3;
+  --onenote-btn-bg: var(--dark-surface-alt);
+  --onenote-btn-color: var(--light-text);
 }
 
 main {
   min-height: 100vh;
   padding: 1.5rem 1.25rem;
-  background: #f7fbff;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .header {
@@ -29,24 +78,38 @@ main {
   align-items: center;
   width: 87%;
   gap: 1rem;
-  background-color: var(--main-blue);
+  background-color: var(--card-color);
   padding: 0.3rem 0;
   border-radius: 10px;
+  border: 2px solid var(--blue-border);
 }
+
+.logo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  padding: 0.35rem;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(15, 73, 105, 0.18);
+  
+}
+
 .logo {
-  width: 50px;
-  border: 2px solid var(--light-color);
-  border-radius: 8%;
-  height: 50px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 .welcome {
   margin: 0;
-  color: var(--light-color);
+  color: var(--text-color);
   font-size: 1.5rem;
   font-weight: 600;
-  text-shadow: 2px 2px 2px var(--dark-color);
+  text-shadow: 0px 2px 18px var(--blue-shadow);
 }
 
 .week-and-nav {
@@ -67,16 +130,15 @@ main {
 }
 
 .week-text {
+  margin: 0 auto;
   font-size: 1.05rem;
   font-weight: 600;
   text-align: center;
-  margin: 0 auto;
 }
 
 #week-date {
   margin: 0;
   font-size: 0.95rem;
-  color: #2d2d2d;
   text-align: center;
 }
 
@@ -97,39 +159,32 @@ main {
   gap: 0.5rem;
   flex: 1;
   padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(56, 182, 255, 0.35);
+  border: 1px solid var(--blue-border);
   border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
-  font-weight: 600;
-  color: #1a1a1a;
+  background: var(--card-color);
+  box-shadow: 0 2px 8px var(--shadow);
+  color: var(--text-color);
+  font-family: inherit;
+  font-weight: 400;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .prev-week:hover,
 .next-week:hover {
   transform: translateY(-1px);
-  border-color: rgba(56, 182, 255, 0.7);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
-}
-
-.prev-week {
-  margin-right: 0;
-}
-
-.next-week {
-  margin-left: 0;
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .prev-week i,
 .next-week i {
   font-size: 1.1rem;
-  color: #38b6ff;
+  color: var(--main-blue);
 }
-
-
-
 
 .main-content {
   display: flex;
@@ -144,10 +199,10 @@ main {
   flex-direction: column;
   gap: 0.75rem;
   padding: 1.25rem;
-  background: #ffffff;
-  border: 1px solid rgba(56, 182, 255, 0.25);
+  background: var(--card-color);
+  border: 1px solid var(--blue-border);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .class-header {
@@ -176,15 +231,29 @@ main {
   align-items: center;
   justify-content: center;
   padding: 0.45rem 0.9rem;
-  border: 1px solid rgba(56, 182, 255, 0.45);
+  border: 1px solid var(--blue-border);
   border-radius: 10px;
-  background: linear-gradient(180deg, #ffffff 0%, rgba(56, 182, 255, 0.08) 100%);
-  color: var(--main-text-color);
+  background: var(--card-color);
+  color: var(--text-color);
   font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 700;
+  text-decoration: underline;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.class-badge:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.class-badge:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
 }
 
 .class-onenote-btn {
@@ -193,37 +262,29 @@ main {
   justify-content: center;
   margin-left: auto;
   padding: 0.45rem 0.8rem;
-  border: 1px solid rgba(56, 182, 255, 0.6);
+  border: 1px solid var(--blue-border);
   border-radius: 8px;
-  background: linear-gradient(180deg, #eaf8ff 0%, #dff3ff 100%);
-  color: var(--main-blue);
+  background: var(--onenote-btn-bg);
+  color: var(--onenote-btn-color);
   font-family: inherit;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.01em;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .class-onenote-btn:hover {
   transform: translateY(-1px);
-  border-color: rgba(56, 182, 255, 0.8);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .class-onenote-btn:focus-visible {
-  outline: 2px solid rgba(56, 182, 255, 0.7);
-  outline-offset: 2px;
-}
-
-.class-badge:hover {
-  transform: translateY(-1px);
-  border-color: rgba(56, 182, 255, 0.75);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
-}
-
-.class-badge:focus-visible {
-  outline: 2px solid rgba(56, 182, 255, 0.7);
+  outline: 2px solid var(--main-blue);
   outline-offset: 2px;
 }
 
@@ -233,9 +294,9 @@ main {
   justify-content: center;
   width: 1.2rem;
   height: 1.2rem;
-  border: 1px solid rgba(56, 182, 255, 0.45);
+  border: 1px solid var(--blue-border);
   border-radius: 5px;
-  background: #ffffff;
+  background: var(--card-color);
   color: var(--main-blue);
   font-size: 0.6rem;
   line-height: 1;
@@ -246,9 +307,9 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem 0.75rem;
+  color: var(--class-meta-text);
   font-size: 0.75rem;
   line-height: 1.5;
-  color: #4c4c4c;
 }
 
 .class-meta span {
@@ -258,7 +319,7 @@ main {
 .class-meta span:not(:last-child)::after {
   content: '•';
   margin-left: 0.75rem;
-  color: #8a8a8a;
+  color: var(--class-meta-bullet);
 }
 
 .class-edit-btn {
@@ -268,45 +329,85 @@ main {
   width: 1.3rem;
   height: 1.3rem;
   padding: 0;
-  border: 1px solid var(--main-blue);
-  border-radius: 4px;
-  background: var(--main-blue);
-  color: #ffffff;
+ border: 1px solid var(--blue-border);
+  border-radius: 5px;
+  background: var(--card-color);
+  color: var(--main-blue);
   font-size: 0.6rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
 
-.class-edit-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(56, 182, 255, 0.3);
-  background-color: #2a9fe0;
-}
-
-.class-edit-btn:focus-visible {
-  outline: 2px solid rgba(56, 182, 255, 0.7);
-  outline-offset: 2px;
-}
 
 .assignment {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
+  color: var(--text-color);
   font-size: 0.95rem;
   line-height: 1.4;
-  color: var(--main-text-color);
 }
 
-.assignment input[type="checkbox"] {
+.assignment input[type='checkbox'] {
   width: 16px;
   height: 16px;
   margin: 0;
   cursor: pointer;
-  accent-color: var(--main-blue);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--white);
+  display: grid;
+  place-content: center;
 }
 
+.assignment input[type='checkbox']::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  transform: scale(0);
+  background-color: var(--main-text-color);
+  clip-path: polygon(
+    14% 44%,
+    0 59%,
+    38% 100%,
+    100% 16%,
+    84% 0%,
+    38% 75%
+  );
+}
 
+.assignment input[type='checkbox']:checked {
+  background-color: var(--main-blue);
+  border-color: var(--main-blue);
+}
 
+.assignment input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+.dark .assignment input[type='checkbox'] {
+  background-color: var(--card-color);
+  border-color: var(--dark-border);
+}
+
+.dark .assignment input[type='checkbox']::before {
+  background-color: var(--white);
+}
+
+.dark .assignment input[type='checkbox']:checked {
+  background-color: var(--main-blue);
+  border-color: var(--main-blue);
+}
+
+.assignment input[type='checkbox']:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
 
 .footer {
   display: flex;
@@ -325,40 +426,36 @@ main {
   width: 100%;
 }
 
-.add-button{
+.add-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   flex: 1 1 0;
   padding: 0.7rem 1.2rem;
-
-  border: 1px solid rgba(56, 182, 255, 0.35);
+  border: 1px solid var(--blue-border);
   border-radius: 999px;
-  background: #ffffff;
-
-  color: var(--main-text-color);
+  background: var(--card-color);
+  color: var(--text-color);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-
   cursor: pointer;
-  transition: transform 0.15s ease,
-              box-shadow 0.15s ease,
-              border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.add-button:hover
- {
+.add-button:hover {
   transform: translateY(-1px);
-  border-color: rgba(56, 182, 255, 0.7);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .add-button i {
   color: var(--main-blue);
 }
-
 
 .misc-notes {
   display: flex;
@@ -371,60 +468,53 @@ main {
   flex: 1;
   min-height: 120px;
   padding: 1rem;
-
   resize: vertical;
-
-  border: 1px solid rgba(56, 182, 255, 0.35);
+  border: 1px solid var(--blue-border);
   border-radius: 12px;
-  background: #ffffff;
-
-  color: var(--main-text-color);
+  background: var(--card-color);
+  color: var(--text-color);
   font-family: inherit;
   font-size: 0.95rem;
-
   outline: none;
-  box-shadow: 0 2px 8px rgba(26, 26, 26, 0.05);
-  transition: border-color 0.15s ease,
-              box-shadow 0.15s ease;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .notes-input:focus {
   border-color: var(--main-blue);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.12);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .notes-input::placeholder {
-  color: #777;
+  color: var(--placeholder-color);
 }
 
 .save-notes {
   align-self: stretch;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-
   min-width: 100px;
   padding: 0.75rem 1rem;
-
   border: none;
   border-radius: 12px;
   background: var(--main-blue);
-
-  color: #ffffff;
+  color: var(--white);
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-
   cursor: pointer;
-  transition: transform 0.15s ease,
-              box-shadow 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .save-notes:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(56, 182, 255, 0.25);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 @media (max-width: 600px) {
