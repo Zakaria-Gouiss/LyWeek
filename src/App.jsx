@@ -12,12 +12,23 @@ import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
 import { classes, assignments, semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
+import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 
 function App() {
   const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
+
   const [viewingWeek, setViewingWeek] = useState(currentWeek);
   const [darkMode, setDarkMode] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [assignmentList, setAssignmentList] = useState(assignments);
+  function handleAddAssignment(newAssignment) {
+    setAssignmentList((currentAssignments) => [
+      ...currentAssignments,
+      newAssignment,
+    ]);
 
+    setModalOpen(false);
+  }
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -47,23 +58,12 @@ function App() {
         </nav>
         <nav className="main-content">
           {classes.map((course) => (
-            <Class
-              key={course.id}
-              name={course.name}
-              courseCode={course.courseCode}
-              professor={course.professor}
-              courseHours={course.courseHours}
-              officeHours={course.officeHours}
-              assignments={assignments.filter(
-                (assignment) => assignment.classId === course.id,
-              )}
-              onenoteUrl={course.onenoteUrl}
-            />
+            <Class key={course.id} {...course} assignments={assignmentList} />
           ))}
         </nav>
         <nav className="footer">
           <section className="add-content">
-            <AddContent type="Assignment" />
+            <AddContent type="Assignment" onClick={() => setModalOpen(true)} />
             <AddContent type="Class" />
           </section>
           <section className="misc-notes">
@@ -71,6 +71,13 @@ function App() {
             <AddContent type="save" />
           </section>
         </nav>
+        {modalOpen && (
+          <AddAssignmentModal
+            classes={classes}
+            onClose={() => setModalOpen(false)}
+            onAdd={handleAddAssignment}
+          />
+        )}
       </main>
     </>
   );
