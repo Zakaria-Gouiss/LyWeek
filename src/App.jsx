@@ -14,6 +14,8 @@ import { classes, assignments, semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
+import EditAssignmentModal from "./components/main-content/EditAssignmentModal.jsx";
+import EditClassModal from "./components/main-content/EditClassModal.jsx";
 
 function App() {
   const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
@@ -22,6 +24,10 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [classModalOpen, setClassModalOpen] = useState(false);
+  const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
+  const [editClassModalOpen, setEditClassModalOpen] = useState(false);
+  const [assignmentToEdit, setAssignmentToEdit] = useState(null);
+  const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState(assignments);
   const [classList, setClassList] = useState(classes);
 
@@ -39,6 +45,60 @@ function App() {
 
     setClassModalOpen(false);
   }
+
+  function handleEditAssignment(assignment) {
+    setAssignmentToEdit(assignment);
+    setEditAssignmentModalOpen(true);
+  }
+
+  function handleSaveAssignment(updatedAssignment) {
+    setAssignmentList((currentAssignments) =>
+      currentAssignments.map((assignment) =>
+        assignment.id === updatedAssignment.id ? updatedAssignment : assignment,
+      ),
+    );
+
+    setEditAssignmentModalOpen(false);
+    setAssignmentToEdit(null);
+  }
+
+  function handleDeleteAssignment(assignmentId) {
+    setAssignmentList((currentAssignments) =>
+      currentAssignments.filter((assignment) => assignment.id !== assignmentId),
+    );
+
+    setEditAssignmentModalOpen(false);
+    setAssignmentToEdit(null);
+  }
+
+  function handleEditClass(course) {
+    setClassToEdit(course);
+    setEditClassModalOpen(true);
+  }
+
+  function handleSaveClass(updatedClass) {
+    setClassList((currentClasses) =>
+      currentClasses.map((course) =>
+        course.id === updatedClass.id ? updatedClass : course,
+      ),
+    );
+
+    setEditClassModalOpen(false);
+    setClassToEdit(null);
+  }
+
+  function handleDeleteClass(classId) {
+    setClassList((currentClasses) =>
+      currentClasses.filter((course) => course.id !== classId),
+    );
+    setAssignmentList((currentAssignments) =>
+      currentAssignments.filter((assignment) => assignment.classId !== classId),
+    );
+
+    setEditClassModalOpen(false);
+    setClassToEdit(null);
+  }
+
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -68,7 +128,13 @@ function App() {
         </nav>
         <nav className="main-content">
           {classList.map((course) => (
-            <Class key={course.id} {...course} assignments={assignmentList} />
+            <Class
+              key={course.id}
+              {...course}
+              assignments={assignmentList}
+              onEditAssignment={handleEditAssignment}
+              onEditClass={handleEditClass}
+            />
           ))}
         </nav>
         <nav className="footer">
@@ -96,6 +162,31 @@ function App() {
           <AddClassModal
             onClose={() => setClassModalOpen(false)}
             onAdd={handleAddClass}
+          />
+        )}
+
+        {editAssignmentModalOpen && assignmentToEdit && (
+          <EditAssignmentModal
+            assignment={assignmentToEdit}
+            classes={classList}
+            onSave={handleSaveAssignment}
+            onDelete={handleDeleteAssignment}
+            onClose={() => {
+              setEditAssignmentModalOpen(false);
+              setAssignmentToEdit(null);
+            }}
+          />
+        )}
+
+        {editClassModalOpen && classToEdit && (
+          <EditClassModal
+            course={classToEdit}
+            onSave={handleSaveClass}
+            onDelete={handleDeleteClass}
+            onClose={() => {
+              setEditClassModalOpen(false);
+              setClassToEdit(null);
+            }}
           />
         )}
       </main>

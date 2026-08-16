@@ -94,7 +94,6 @@ function AddClassModal({ onClose, onAdd }) {
               value={courseHours}
               onChange={(event) => setCourseHours(event.target.value)}
               placeholder="Example: MTWRF, 1:00 PM - 2:00 PM"
-              required
             />
           </div>
 
@@ -107,7 +106,6 @@ function AddClassModal({ onClose, onAdd }) {
               placeholder="Example: MTWRF, 1:00 PM - 2:00 PM"
               value={officeHours}
               onChange={(event) => setOfficeHours(event.target.value)}
-              required
             />
           </div>
 

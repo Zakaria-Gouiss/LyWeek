@@ -1,6 +1,12 @@
 import { useState } from "react";
 
-function Assignment({ name, priority, dueDate, completed: initalCompleted }) {
+function Assignment({
+  name,
+  priority,
+  dueDate,
+  completed: initalCompleted,
+  onEdit,
+}) {
   const [completed, setCompleted] = useState(initalCompleted);
 
   return (
@@ -20,6 +26,7 @@ function Assignment({ name, priority, dueDate, completed: initalCompleted }) {
         type="button"
         className="assignment-edit-btn"
         aria-label="Edit Assignment"
+        onClick={onEdit}
       >
         <i className="fa-solid fa-pencil"></i>
       </button>
