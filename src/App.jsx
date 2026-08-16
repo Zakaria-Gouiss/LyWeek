@@ -10,7 +10,6 @@ import WeekInfo from "./components/header/WeekInfo.jsx";
 import WeekButton from "./components/header/WeekButton.jsx";
 import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
-import { semester } from "./data/fakeData.js";
 import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
@@ -18,9 +17,7 @@ import EditAssignmentModal from "./components/main-content/EditAssignmentModal.j
 import EditClassModal from "./components/main-content/EditClassModal.jsx";
 
 function App() {
-  const currentWeek = getSemesterWeek(new Date(semester.startDate), new Date());
-
-  const [viewingWeek, setViewingWeek] = useState(currentWeek);
+  const [viewingWeek, setViewingWeek] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [classModalOpen, setClassModalOpen] = useState(false);
@@ -31,8 +28,28 @@ function App() {
   const [assignmentList, setAssignmentList] = useState([]);
   const [classList, setClassList] = useState([]);
   const [notes, setNotes] = useState([]);
+  const [semester, setSemester] = useState(null);
 
   useEffect(() => {
+    fetch("http://localhost:5000/api/semesters")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("SEMESTER DATA:", data);
+
+        setSemester(data);
+
+        const currentWeek = getSemesterWeek(
+          new Date(data.startDate),
+          new Date(),
+        );
+
+        console.log("CURRENT WEEK:", currentWeek);
+
+        setViewingWeek(currentWeek);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch semester:", error);
+      });
     fetch("http://localhost:5000/api/classes")
       .then((response) => response.json())
       .then((data) => {
@@ -309,22 +326,24 @@ function App() {
             setDarkMode={setDarkMode}
           />
           <section className="week-and-nav">
-            <WeekInfo
-              semesterStartDate={semester.startDate}
-              semesterEndDate={semester.endDate}
-              week={viewingWeek}
-            />
-            <div className="week-nav">
-              <WeekButton
-                position="left"
-                onClick={() => setViewingWeek(viewingWeek - 1)}
+            {semester && viewingWeek !== null && (
+              <WeekInfo
+                semesterStartDate={semester.startDate}
+                semesterEndDate={semester.endDate}
+                week={viewingWeek}
               />
-              <WeekButton
-                position="right"
-                onClick={() => setViewingWeek(viewingWeek + 1)}
-              />
-            </div>
+            )}
           </section>
+          <div className="week-nav">
+            <WeekButton
+              position="left"
+              onClick={() => setViewingWeek(viewingWeek - 1)}
+            />
+            <WeekButton
+              position="right"
+              onClick={() => setViewingWeek(viewingWeek + 1)}
+            />
+          </div>
         </nav>
         <nav className="main-content">
           {classList.map((course) => (

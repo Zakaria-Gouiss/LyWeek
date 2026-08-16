@@ -29,6 +29,26 @@ app.get("/test-db", async (req, res) => {
     res.status(500).send("Database connection failed");
   }
 });
+app.get("/api/semesters", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        id,
+        name,
+        start_date AS "startDate",
+        end_date AS "endDate"
+      FROM semesters
+      WHERE id = 1
+    `);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to fetch semesters",
+    });
+  }
+});
 app.get("/api/classes", async (req, res) => {
   try {
     const result = await pool.query(`

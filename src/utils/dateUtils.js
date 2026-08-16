@@ -4,25 +4,21 @@ export function getSemesterWeek(startDate, currentDate) {
     return Math.floor(days / 7) + 1; 
 }
 export function getWeekInfo(semesterStartDate, weekNumber) {
-    const [year, month, day] = semesterStartDate
-        .split("-")
-        .map(Number);
+  const weekStart = new Date(semesterStartDate);
 
-    const weekStart = new Date(year, month - 1, day);
+  weekStart.setDate(
+    weekStart.getDate() + (weekNumber - 1) * 7
+  );
 
-    weekStart.setDate(
-        weekStart.getDate() + (weekNumber - 1) * 7
-    );
+  const weekEnd = new Date(weekStart);
 
-    const weekEnd = new Date(weekStart);
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
 
-    weekEnd.setDate(
-        weekEnd.getDate() + 6
-    );
-
-    return {
-        weekNumber,
-        weekStart,
-        weekEnd
-    };
+  return {
+    weekNumber,
+    weekStart,
+    weekEnd,
+  };
 }
