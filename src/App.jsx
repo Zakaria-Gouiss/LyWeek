@@ -19,6 +19,28 @@ import SemesterModal from "./components/header/SemesterModal.jsx";
 import LoginPage from "./components/auth/LoginPage.jsx";
 import RegisterPage from "./components/auth/RegisterPage.jsx";
 
+// API imports
+import {
+  checkAuthentication,
+  login,
+  register,
+  logout,
+} from "./utils/api/auth.js";
+import { getSemesters, updateSemester } from "./utils/api/semesters.js";
+import {
+  getClasses,
+  createClass,
+  updateClass,
+  deleteClass,
+} from "./utils/api/classes.js";
+import {
+  getAssignments,
+  createAssignment,
+  updateAssignment,
+  deleteAssignment,
+} from "./utils/api/assignments.js";
+import { getNotes, updateNotes } from "./utils/api/notes.js";
+
 function App() {
   const [viewingWeek, setViewingWeek] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -48,18 +70,11 @@ function App() {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
   useEffect(() => {
-    async function checkAuthentication() {
+    async function setupAuth() {
       try {
-        const response = await fetch("http://localhost:5000/api/me", {
-          credentials: "include",
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-
-          console.log("AUTH USER:", data);
-
-          setUser(data);
+        const user = await checkAuthentication();
+        if (user) {
+          setUser(user);
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
@@ -72,7 +87,7 @@ function App() {
       }
     }
 
-    checkAuthentication();
+    setupAuth();
   }, []);
 
   async function handleLogin(loginData) {
@@ -80,25 +95,8 @@ function App() {
     setAuthError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: loginData.email,
-          password: loginData.password,
-        }),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
-      setUser(data);
+      const user = await login(loginData.email, loginData.password);
+      setUser(user);
       setIsAuthenticated(true);
       setAuthView("login");
     } catch (error) {
@@ -114,30 +112,9 @@ function App() {
     setAuthError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          name: registerData.name,
-          email: registerData.email,
-          password: registerData.password,
-          semesterName: registerData.semesterName,
-          semesterStartDate: registerData.semesterStartDate,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
-      }
-
-      console.log("REGISTERED USER:", data);
-
-      setUser(data);
+      const user = await register(registerData);
+      console.log("REGISTERED USER:", user);
+      setUser(user);
       setIsAuthenticated(true);
     } catch (error) {
       setAuthError(error.message || "Registration failed");
@@ -152,72 +129,40 @@ function App() {
       return;
     }
 
-    fetch("http://localhost:5000/api/semesters", {
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("SEMESTER DATA:", data);
+    async function fetchInitialData() {
+      try {
+        const [semesterData, classesData, assignmentsData, notesData] =
+          await Promise.all([
+            getSemesters(),
+            getClasses(),
+            getAssignments(),
+            getNotes(),
+          ]);
 
-        setSemester(data);
+        console.log("SEMESTER DATA:", semesterData);
+        setSemester(semesterData);
 
         const currentWeek = getSemesterWeek(
-          new Date(data.startDate),
+          new Date(semesterData.startDate),
           new Date(),
         );
 
         console.log("CURRENT WEEK:", currentWeek);
-
         setViewingWeek(currentWeek);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch semester:", error);
-      });
-    fetch("http://localhost:5000/api/classes", {
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setClassList(data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch classes:", error);
-      });
+        setClassList(classesData);
+        setAssignmentList(assignmentsData);
+        setNotes(notesData[0]?.content || "");
+      } catch (error) {
+        console.error("Failed to fetch initial data:", error);
+      }
+    }
 
-    fetch("http://localhost:5000/api/assignments", {
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setAssignmentList(data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch assignments:", error);
-      });
-
-    fetch("http://localhost:5000/api/notes", {
-      credentials: "include",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setNotes(data[0]?.content || "");
-      })
-      .catch((error) => {
-        console.error("Failed to fetch notes:", error);
-      });
+    fetchInitialData();
   }, [isAuthenticated]);
 
   async function handleLogout() {
     try {
-      const response = await fetch("http://localhost:5000/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to log out");
-      }
-
+      await logout();
       setUser(null);
       setIsAuthenticated(false);
       setSemester(null);
@@ -230,26 +175,11 @@ function App() {
   }
   async function handleAddAssignment(newAssignment) {
     try {
-      const response = await fetch("http://localhost:5000/api/assignments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(newAssignment),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add assignment");
-      }
-
-      const savedAssignment = await response.json();
-
+      const savedAssignment = await createAssignment(newAssignment);
       setAssignmentList((currentAssignments) => [
         ...currentAssignments,
         savedAssignment,
       ]);
-
       setAssignmentModalOpen(false);
     } catch (error) {
       console.error("Failed to add assignment:", error);
@@ -257,23 +187,7 @@ function App() {
   }
   async function handleSaveNotes() {
     try {
-      const response = await fetch("http://localhost:5000/api/notes", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          content: notes,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save notes");
-      }
-
-      const savedNotes = await response.json();
-
+      const savedNotes = await updateNotes(notes);
       setNotes(savedNotes.content);
     } catch (error) {
       console.error("Failed to save notes:", error);
@@ -281,23 +195,8 @@ function App() {
   }
   async function handleAddClass(newClass) {
     try {
-      const response = await fetch("http://localhost:5000/api/classes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(newClass),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to add class");
-      }
-
-      const savedClass = await response.json();
-
+      const savedClass = await createClass(newClass);
       setClassList((currentClasses) => [...currentClasses, savedClass]);
-
       setClassModalOpen(false);
     } catch (error) {
       console.error("Failed to add class:", error);
@@ -311,23 +210,10 @@ function App() {
 
   async function handleSaveAssignment(updatedAssignment) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/assignments/${updatedAssignment.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(updatedAssignment),
-        },
+      const savedAssignment = await updateAssignment(
+        updatedAssignment.id,
+        updatedAssignment,
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to update assignment");
-      }
-
-      const savedAssignment = await response.json();
 
       setAssignmentList((currentAssignments) =>
         currentAssignments.map((assignment) =>
@@ -344,24 +230,12 @@ function App() {
 
   async function handleDeleteAssignment(assignmentId) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/assignments/${assignmentId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete assignment");
-      }
-
+      await deleteAssignment(assignmentId);
       setAssignmentList((currentAssignments) =>
         currentAssignments.filter(
           (assignment) => assignment.id !== assignmentId,
         ),
       );
-
       setEditAssignmentModalOpen(false);
       setAssignmentToEdit(null);
     } catch (error) {
@@ -373,32 +247,17 @@ function App() {
     setClassToEdit(course);
     setEditClassModalOpen(true);
   }
+
   async function handleToggleAssignment(assignmentId, completed) {
     try {
       const assignment = assignmentList.find(
         (assignment) => assignment.id === assignmentId,
       );
 
-      const response = await fetch(
-        `http://localhost:5000/api/assignments/${assignmentId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            ...assignment,
-            completed,
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update assignment");
-      }
-
-      const updatedAssignment = await response.json();
+      const updatedAssignment = await updateAssignment(assignmentId, {
+        ...assignment,
+        completed,
+      });
 
       setAssignmentList((currentAssignments) =>
         currentAssignments.map((assignment) =>
@@ -414,60 +273,30 @@ function App() {
 
   async function handleSaveClass(updatedClass) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/classes/${updatedClass.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(updatedClass),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update class");
-      }
-
-      const savedClass = await response.json();
-
+      const savedClass = await updateClass(updatedClass.id, updatedClass);
       setClassList((currentClasses) =>
         currentClasses.map((course) =>
           course.id === savedClass.id ? savedClass : course,
         ),
       );
-
       setEditClassModalOpen(false);
       setClassToEdit(null);
     } catch (error) {
       console.error("Failed to update class:", error);
     }
   }
+
   async function handleDeleteClass(classId) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/classes/${classId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete class");
-      }
-
+      await deleteClass(classId);
       setClassList((currentClasses) =>
         currentClasses.filter((course) => course.id !== classId),
       );
-
       setAssignmentList((currentAssignments) =>
         currentAssignments.filter(
           (assignment) => assignment.classId !== classId,
         ),
       );
-
       setEditClassModalOpen(false);
       setClassToEdit(null);
     } catch (error) {
@@ -477,23 +306,10 @@ function App() {
 
   async function handleSaveSemester(updatedSemester) {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/semesters/${updatedSemester.id ?? 1}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(updatedSemester),
-        },
+      const savedSemester = await updateSemester(
+        updatedSemester.id ?? 1,
+        updatedSemester,
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to update semester");
-      }
-
-      const savedSemester = await response.json();
       setSemester(savedSemester);
       const nextWeek = getSemesterWeek(
         new Date(savedSemester.startDate),
