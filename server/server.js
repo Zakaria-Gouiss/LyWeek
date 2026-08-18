@@ -15,6 +15,12 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
+console.log("About to start Express...");
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
 
 app.get("/", (req, res) => {
   res.send("LyWeek backend is running");
@@ -31,6 +37,7 @@ app.get("/test-db", async (req, res) => {
 });
 app.get("/api/semesters", async (req, res) => {
   try {
+    const userId = 1;
     const result = await pool.query(`
       SELECT
         id,
@@ -38,8 +45,9 @@ app.get("/api/semesters", async (req, res) => {
         start_date AS "startDate",
         end_date AS "endDate"
       FROM semesters
-      WHERE id = 1
-    `);
+      WHERE user_id = $1`,
+      [userId],
+    );
 
     res.json(result.rows[0]);
   } catch (error) {
@@ -51,6 +59,7 @@ app.get("/api/semesters", async (req, res) => {
 });
 app.put("/api/semesters/:id", async (req, res) => {
   try {
+    const userId = 1;
     const { id } = req.params;
     const { name, startDate, endDate } = req.body;
 
@@ -60,14 +69,14 @@ app.put("/api/semesters/:id", async (req, res) => {
       SET name = $1,
           start_date = $2,
           end_date = $3
-      WHERE id = $4
+      WHERE id = $4 AND user_id = $5
       RETURNING
         id,
         name,
         start_date AS "startDate",
         end_date AS "endDate"
       `,
-      [name, startDate, endDate, id],
+      [name, startDate, endDate, id, userId],
     );
 
     if (result.rows.length === 0) {
@@ -85,6 +94,43 @@ app.put("/api/semesters/:id", async (req, res) => {
     });
   }
 });
+app.post("/api/semesters", async (req, res) => {
+  try {
+    const userId = 1;
+    const { name, startDate, endDate } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO semesters
+        (name, start_date, end_date, user_id)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, start_date AS "startDate",
+                 end_date AS "endDate";`,
+      [name, startDate, endDate, userId],
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create semester" });
+  }
+});
+app.delete("/api/semesters/:id", async (req, res) => {
+  try {
+    const userId = 1;
+    const { id } = req.params;
+
+    await pool.query(
+      `DELETE FROM semesters
+       WHERE id = $1 AND user_id = $2;`,
+      [id, userId],
+    );
+
+    res.json({ message: "Semester deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete semester" });
+  }
+});
 async function hasClassColorColumn() {
   const result = await pool.query(`
     SELECT EXISTS (
@@ -99,33 +145,29 @@ async function hasClassColorColumn() {
 
 app.get("/api/classes", async (req, res) => {
   try {
-    const hasColor = await hasClassColorColumn();
+    const userId = 1;
 
-    const result = await pool.query(`
-      SELECT
-        id,
-        name,
-        course_code AS "courseCode",
-        professor,
-        course_hours AS "courseHours",
+    const result = await pool.query(
+      `SELECT id, name, course_code AS "courseCode",
+        professor, course_hours AS "courseHours",
         office_hours AS "officeHours",
-        onenote_url AS "onenoteUrl"${
-          hasColor ? ", color AS \"color\"" : ""
-        }
-      FROM classes
-    `);
+        onenote_url AS "onenoteUrl",
+        color
+       FROM classes
+       WHERE user_id = $1;`,
+      [userId],
+    );
 
     res.json(result.rows);
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch classes",
-    });
+    res.status(500).json({ error: "Failed to fetch classes" });
   }
 });
 app.post("/api/classes", async (req, res) => {
   try {
+    const userId = 1;
+
     const {
       name,
       courseCode,
@@ -134,57 +176,41 @@ app.post("/api/classes", async (req, res) => {
       officeHours,
       onenoteUrl,
       color,
+      semesterId,
     } = req.body;
 
-    const hasColor = await hasClassColorColumn();
-    const query = hasColor
-      ? `
-        INSERT INTO classes
-          (name, course_code, professor, course_hours, office_hours, onenote_url, color)
-        VALUES
-          ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING
-          id,
-          name,
-          course_code AS "courseCode",
-          professor,
-          course_hours AS "courseHours",
-          office_hours AS "officeHours",
-          onenote_url AS "onenoteUrl",
-          color
-      `
-      : `
-        INSERT INTO classes
-          (name, course_code, professor, course_hours, office_hours, onenote_url)
-        VALUES
-          ($1, $2, $3, $4, $5, $6)
-        RETURNING
-          id,
-          name,
-          course_code AS "courseCode",
-          professor,
-          course_hours AS "courseHours",
-          office_hours AS "officeHours",
-          onenote_url AS "onenoteUrl"
-      `;
+    const result = await pool.query(
+      `INSERT INTO classes
+        (name, course_code, professor, course_hours,
+         office_hours, onenote_url, color, semester_id, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING id, name, course_code AS "courseCode",
+                 professor, course_hours AS "courseHours",
+                 office_hours AS "officeHours",
+                 onenote_url AS "onenoteUrl",
+                 color, semester_id AS "semesterId";`,
+      [
+        name,
+        courseCode,
+        professor,
+        courseHours,
+        officeHours,
+        onenoteUrl,
+        color,
+        semesterId,
+        userId,
+      ],
+    );
 
-    const params = hasColor
-      ? [name, courseCode, professor, courseHours, officeHours, onenoteUrl, color]
-      : [name, courseCode, professor, courseHours, officeHours, onenoteUrl];
-
-    const result = await pool.query(query, params);
-
-    res.status(201).json(result.rows[0]);
+    res.json(result.rows[0]);
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to create class",
-    });
+    res.status(500).json({ error: "Failed to create class" });
   }
 });
 app.put("/api/classes/:id", async (req, res) => {
   try {
+    const userId = 1;
     const { id } = req.params;
 
     const {
@@ -195,249 +221,151 @@ app.put("/api/classes/:id", async (req, res) => {
       officeHours,
       onenoteUrl,
       color,
+      semesterId,
     } = req.body;
 
-    const hasColor = await hasClassColorColumn();
-    const query = hasColor
-      ? `
-        UPDATE classes
-        SET
-          name = $1,
-          course_code = $2,
-          professor = $3,
-          course_hours = $4,
-          office_hours = $5,
-          onenote_url = $6,
-          color = $7
-        WHERE id = $8
-        RETURNING
-          id,
-          name,
-          course_code AS "courseCode",
-          professor,
-          course_hours AS "courseHours",
-          office_hours AS "officeHours",
-          onenote_url AS "onenoteUrl",
-          color
-      `
-      : `
-        UPDATE classes
-        SET
-          name = $1,
-          course_code = $2,
-          professor = $3,
-          course_hours = $4,
-          office_hours = $5,
-          onenote_url = $6
-        WHERE id = $7
-        RETURNING
-          id,
-          name,
-          course_code AS "courseCode",
-          professor,
-          course_hours AS "courseHours",
-          office_hours AS "officeHours",
-          onenote_url AS "onenoteUrl"
-      `;
-
-    const params = hasColor
-      ? [name, courseCode, professor, courseHours, officeHours, onenoteUrl, color, id]
-      : [name, courseCode, professor, courseHours, officeHours, onenoteUrl, id];
-
-    const result = await pool.query(query, params);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Class not found",
-      });
-    }
+    const result = await pool.query(
+      `UPDATE classes
+       SET name = $1,
+           course_code = $2,
+           professor = $3,
+           course_hours = $4,
+           office_hours = $5,
+           onenote_url = $6,
+           color = $7,
+           semester_id = $8
+       WHERE id = $9 AND user_id = $10
+       RETURNING id, name, course_code AS "courseCode",
+                 professor, course_hours AS "courseHours",
+                 office_hours AS "officeHours",
+                 onenote_url AS "onenoteUrl",
+                 color, semester_id AS "semesterId";`,
+      [
+        name,
+        courseCode,
+        professor,
+        courseHours,
+        officeHours,
+        onenoteUrl,
+        color,
+        semesterId,
+        id,
+        userId,
+      ],
+    );
 
     res.json(result.rows[0]);
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to update class",
-    });
+    res.status(500).json({ error: "Failed to update class" });
   }
 });
 app.delete("/api/classes/:id", async (req, res) => {
   try {
+    const userId = 1;
     const { id } = req.params;
 
-    const result = await pool.query(
-      "DELETE FROM classes WHERE id = $1 RETURNING id",
-      [id],
+    await pool.query(
+      `DELETE FROM classes
+       WHERE id = $1 AND user_id = $2;`,
+      [id, userId],
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Class not found",
-      });
-    }
-
-    res.json({
-      message: "Class deleted successfully",
-      id: result.rows[0].id,
-    });
+    res.json({ message: "Class deleted" });
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to delete class",
-    });
+    res.status(500).json({ error: "Failed to delete class" });
   }
 });
 app.get("/api/assignments", async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT
-        id,
-        class_id AS "classId",
-        name,
-        priority,
-        due_date AS "dueDate",
-        completed
-      FROM assignments
-    `);
+    const userId = 1;
+
+    const result = await pool.query(
+      `SELECT id, class_id AS "classId",
+              name, priority, due_date AS "dueDate",
+              completed
+       FROM assignments
+       WHERE user_id = $1
+       ORDER BY due_date;`,
+      [userId],
+    );
 
     res.json(result.rows);
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to fetch assignments",
-    });
+    res.status(500).json({ error: "Failed to fetch assignments" });
   }
 });
 app.post("/api/assignments", async (req, res) => {
   try {
-    const {
-      classId,
-      name,
-      priority,
-      dueDate,
-      completed,
-    } = req.body;
+    const userId = 1;
+    const { classId, name, priority, dueDate, completed } = req.body;
 
     const result = await pool.query(
-      `
-      INSERT INTO assignments
-        (class_id, name, priority, due_date, completed)
-      VALUES
-        ($1, $2, $3, $4, $5)
-      RETURNING
-        id,
-        class_id AS "classId",
-        name,
-        priority,
-        due_date AS "dueDate",
-        completed
-      `,
-      [
-        classId,
-        name,
-        priority,
-        dueDate,
-        completed ?? false,
-      ],
+      `INSERT INTO assignments
+        (class_id, name, priority, due_date, completed, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id, class_id AS "classId",
+                 name, priority, due_date AS "dueDate",
+                 completed;`,
+      [classId, name, priority, dueDate, completed, userId],
     );
-
-    res.status(201).json(result.rows[0]);
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      error: "Failed to create assignment",
-    });
-  }
-});
-app.put("/api/assignments/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const {
-      classId,
-      name,
-      priority,
-      dueDate,
-      completed,
-    } = req.body;
-
-    const result = await pool.query(
-      `
-      UPDATE assignments
-      SET
-        class_id = $1,
-        name = $2,
-        priority = $3,
-        due_date = $4,
-        completed = $5
-      WHERE id = $6
-      RETURNING
-        id,
-        class_id AS "classId",
-        name,
-        priority,
-        due_date AS "dueDate",
-        completed
-      `,
-      [
-        classId,
-        name,
-        priority,
-        dueDate,
-        completed,
-        id,
-      ],
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Assignment not found",
-      });
-    }
 
     res.json(result.rows[0]);
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: "Failed to create assignment" });
+  }
+});
+app.put("/api/assignments/:id", async (req, res) => {
+  try {
+    const userId = 1;
+    const { id } = req.params;
+    const { classId, name, priority, dueDate, completed } = req.body;
 
-    res.status(500).json({
-      error: "Failed to update assignment",
-    });
+    const result = await pool.query(
+      `UPDATE assignments
+       SET class_id = $1,
+           name = $2,
+           priority = $3,
+           due_date = $4,
+           completed = $5
+       WHERE id = $6 AND user_id = $7
+       RETURNING id, class_id AS "classId",
+                 name, priority, due_date AS "dueDate",
+                 completed;`,
+      [classId, name, priority, dueDate, completed, id, userId],
+    );
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update assignment" });
   }
 });
 app.delete("/api/assignments/:id", async (req, res) => {
   try {
+    const userId = 1;
     const { id } = req.params;
 
-    const result = await pool.query(
-      "DELETE FROM assignments WHERE id = $1 RETURNING id",
-      [id],
+    await pool.query(
+      `DELETE FROM assignments
+       WHERE id = $1 AND user_id = $2;`,
+      [id, userId],
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Assignment not found",
-      });
-    }
-
-    res.json({
-      message: "Assignment deleted successfully",
-      id: result.rows[0].id,
-    });
+    res.json({ message: "Assignment deleted" });
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      error: "Failed to delete assignment",
-    });
+    res.status(500).json({ error: "Failed to delete assignment" });
   }
 });
 app.get("/api/notes", async (req, res) => {
   try {
+    const userId = 1;
     const result = await pool.query(
-      "SELECT * FROM notes ORDER BY id"
+      "SELECT * FROM notes WHERE user_id = $1 ORDER BY id", [userId]
     );
 
     res.json(result.rows);
@@ -451,11 +379,21 @@ app.get("/api/notes", async (req, res) => {
 app.put("/api/notes", async (req, res) => {
   try {
     const { content } = req.body;
+    const userId = 1;
 
     const result = await pool.query(
-      "UPDATE notes SET content = $1 WHERE id = 1 RETURNING id, content",
-      [content],
+      `UPDATE notes
+       SET content = $1
+       WHERE id = 1 AND user_id = $2
+       RETURNING id, content`,
+      [content, userId],
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Notes not found",
+      });
+    }
 
     res.json(result.rows[0]);
   } catch (error) {
@@ -465,8 +403,3 @@ app.put("/api/notes", async (req, res) => {
     });
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
