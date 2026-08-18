@@ -33,3 +33,5 @@
 
 - The semester takes the users current time to generate a week range and the current week number is based in respect to the semester start date
 - Modals that add/modify/delete classes and assignments are automatically linked to the database to ensure consistent data
+- run "npm run seed --{#}" in the server directory to auto populate fake data, where {#} is replaced with the user number
+- similarily, run "npm run clear -- {#}" in the server directory to clear that users database
