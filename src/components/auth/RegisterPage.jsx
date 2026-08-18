@@ -4,6 +4,7 @@ import lyLight from "../../assets/lyweek-light.jpg";
 
 function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -26,6 +27,7 @@ function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
     }
 
     onRegister({
+      name: form.name,
       email: form.email,
       password: form.password,
     });
@@ -42,11 +44,25 @@ function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
           <p className="login-kicker">LyWeek</p>
           <h1>Create account</h1>
           <p className="login-subtitle">
-            Register to start planning your semester.
+            Register to start planning your semester!
           </p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="register-name">Name</label>
+            <input
+              id="register-name"
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Your first name"
+              autoComplete="name"
+              required
+            />
+          </div>
+
           <div className="form-group">
             <label htmlFor="register-email">Email</label>
             <input

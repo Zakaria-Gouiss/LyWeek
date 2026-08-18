@@ -55,6 +55,11 @@ function App() {
         });
 
         if (response.ok) {
+          const data = await response.json();
+
+          console.log("AUTH USER:", data);
+
+          setUser(data);
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
@@ -116,20 +121,22 @@ function App() {
         },
         credentials: "include",
         body: JSON.stringify({
+          name: registerData.name,
           email: registerData.email,
           password: registerData.password,
         }),
       });
 
-      const data = await response.json().catch(() => ({}));
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || "Registration failed");
       }
 
+      console.log("REGISTERED USER:", data);
+
       setUser(data);
       setIsAuthenticated(true);
-      setAuthView("login");
     } catch (error) {
       setAuthError(error.message || "Registration failed");
       setIsAuthenticated(false);
@@ -209,6 +216,7 @@ function App() {
         throw new Error("Failed to log out");
       }
 
+      setUser(null);
       setIsAuthenticated(false);
       setSemester(null);
       setClassList([]);

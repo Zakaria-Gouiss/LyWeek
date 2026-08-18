@@ -106,6 +106,7 @@ app.post("/api/register", async (req, res) => {
 
     res.status(201).json({
       id: user.id,
+      name: user.name,
       email: user.email,
     });
   } catch (error) {
@@ -207,7 +208,7 @@ app.get("/api/me", requireAuth, async (req, res) => {
 });
 app.get("/api/semesters", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const result = await pool.query(`
       SELECT
         id,
@@ -229,7 +230,7 @@ app.get("/api/semesters", requireAuth, async (req, res) => {
 });
 app.put("/api/semesters/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
     const { name, startDate, endDate } = req.body;
 
@@ -266,7 +267,7 @@ app.put("/api/semesters/:id", requireAuth, async (req, res) => {
 });
 app.post("/api/semesters", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { name, startDate, endDate } = req.body;
 
     const result = await pool.query(
@@ -286,7 +287,7 @@ app.post("/api/semesters", requireAuth, async (req, res) => {
 });
 app.delete("/api/semesters/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
 
     await pool.query(
@@ -315,7 +316,7 @@ async function hasClassColorColumn() {
 
 app.get("/api/classes", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
 
     const result = await pool.query(
       `SELECT id, name, course_code AS "courseCode",
@@ -336,7 +337,7 @@ app.get("/api/classes", requireAuth, async (req, res) => {
 });
 app.post("/api/classes", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
 
     const {
       name,
@@ -380,7 +381,7 @@ app.post("/api/classes", requireAuth, async (req, res) => {
 });
 app.put("/api/classes/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
 
     const {
@@ -432,7 +433,7 @@ app.put("/api/classes/:id", requireAuth, async (req, res) => {
 });
 app.delete("/api/classes/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
 
     await pool.query(
@@ -449,7 +450,7 @@ app.delete("/api/classes/:id", requireAuth, async (req, res) => {
 });
 app.get("/api/assignments", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
 
     const result = await pool.query(
       `SELECT id, class_id AS "classId",
@@ -469,7 +470,7 @@ app.get("/api/assignments", requireAuth, async (req, res) => {
 });
 app.post("/api/assignments", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { classId, name, priority, dueDate, completed } = req.body;
 
     const result = await pool.query(
@@ -490,7 +491,7 @@ app.post("/api/assignments", requireAuth, async (req, res) => {
 });
 app.put("/api/assignments/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
     const { classId, name, priority, dueDate, completed } = req.body;
 
@@ -516,7 +517,7 @@ app.put("/api/assignments/:id", requireAuth, async (req, res) => {
 });
 app.delete("/api/assignments/:id", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const { id } = req.params;
 
     await pool.query(
@@ -533,7 +534,7 @@ app.delete("/api/assignments/:id", requireAuth, async (req, res) => {
 });
 app.get("/api/notes", requireAuth, async (req, res) => {
   try {
-    const userId = 1;
+    const userId = req.session.userId;
     const result = await pool.query(
       "SELECT * FROM notes WHERE user_id = $1 ORDER BY id", [userId]
     );
@@ -549,7 +550,7 @@ app.get("/api/notes", requireAuth, async (req, res) => {
 app.put("/api/notes", requireAuth, async (req, res) => {
   try {
     const { content } = req.body;
-    const userId = 1;
+    const userId = req.session.userId;
 
     const result = await pool.query(
       `UPDATE notes
