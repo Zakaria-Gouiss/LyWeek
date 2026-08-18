@@ -1,7 +1,7 @@
 import lyLight from "../../assets/lyweek-light.jpg";
 import lyDark from "../../assets/lyweek-dark.jpg";
 
-function LogoWelcome({ userName, darkMode, setDarkMode }) {
+function LogoWelcome({ userName, darkMode, setDarkMode, onLogout }) {
   return (
     <>
       <section className="logo-and-welcome">
@@ -18,6 +18,9 @@ function LogoWelcome({ userName, darkMode, setDarkMode }) {
           />
         </button>
         <h2 className="welcome">Welcome back, {userName}</h2>
+        <button type="button" className="logout-button" onClick={onLogout}>
+          Logout
+        </button>
       </section>
     </>
   );

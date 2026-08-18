@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const session = require("express-session");
+const bcrypt = require("bcrypt");
 const cors = require("cors");
 const pool = require("./db");
 pool.query("SELECT current_database()", (error, result) => {
@@ -12,8 +14,34 @@ pool.query("SELECT current_database()", (error, result) => {
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
+function requireAuth(req, res, next) {
+  if (!req.session.userId) {
+    return res.status(401).json({
+      error: "Not authenticated",
+    });
+  }
+
+  next();
+}
 
 console.log("About to start Express...");
 
@@ -26,6 +54,7 @@ app.get("/", (req, res) => {
   res.send("LyWeek backend is running");
 });
 
+
 app.get("/test-db", async (req, res) => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -35,7 +64,148 @@ app.get("/test-db", async (req, res) => {
     res.status(500).send("Database connection failed");
   }
 });
-app.get("/api/semesters", async (req, res) => {
+app.post("/api/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+  return res.status(400).json({
+    error: "Name, email, and password are required",
+  });
+}
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        error: "Password must be at least 8 characters",
+      });
+    }
+
+    const existingUser = await pool.query(
+      "SELECT id FROM users WHERE email = $1",
+      [email],
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({
+        error: "Email is already registered",
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const result = await pool.query(
+      `INSERT INTO users (name, email, pass_hash)
+       VALUES ($1, $2, $3)
+       RETURNING id, name, email`,
+      [name, email, passwordHash],
+    );
+
+    const user = result.rows[0];
+
+    req.session.userId = user.id;
+
+    res.status(201).json({
+      id: user.id,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to create account",
+    });
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password are required",
+      });
+    }
+
+    const result = await pool.query(
+      `SELECT id, name, email, pass_hash
+       FROM users
+       WHERE email = $1`,
+      [email],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    const user = result.rows[0];
+
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user.pass_hash,
+    );
+
+    if (!passwordMatches) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    req.session.userId = user.id;
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to log in",
+    });
+  }
+});
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      console.error(error);
+      return res.status(500).json({
+        error: "Failed to log out",
+      });
+    }
+
+    res.clearCookie("connect.sid");
+
+    res.json({
+      message: "Logged out",
+    });
+  });
+});
+app.get("/api/me", requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email
+       FROM users
+       WHERE id = $1`,
+      [req.session.userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        error: "User not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to fetch user",
+    });
+  }
+});
+app.get("/api/semesters", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const result = await pool.query(`
@@ -57,7 +227,7 @@ app.get("/api/semesters", async (req, res) => {
     });
   }
 });
-app.put("/api/semesters/:id", async (req, res) => {
+app.put("/api/semesters/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -94,7 +264,7 @@ app.put("/api/semesters/:id", async (req, res) => {
     });
   }
 });
-app.post("/api/semesters", async (req, res) => {
+app.post("/api/semesters", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { name, startDate, endDate } = req.body;
@@ -114,7 +284,7 @@ app.post("/api/semesters", async (req, res) => {
     res.status(500).json({ error: "Failed to create semester" });
   }
 });
-app.delete("/api/semesters/:id", async (req, res) => {
+app.delete("/api/semesters/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -143,7 +313,7 @@ async function hasClassColorColumn() {
   return result.rows[0]?.hasColorColumn ?? false;
 }
 
-app.get("/api/classes", async (req, res) => {
+app.get("/api/classes", requireAuth, async (req, res) => {
   try {
     const userId = 1;
 
@@ -164,7 +334,7 @@ app.get("/api/classes", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch classes" });
   }
 });
-app.post("/api/classes", async (req, res) => {
+app.post("/api/classes", requireAuth, async (req, res) => {
   try {
     const userId = 1;
 
@@ -208,7 +378,7 @@ app.post("/api/classes", async (req, res) => {
     res.status(500).json({ error: "Failed to create class" });
   }
 });
-app.put("/api/classes/:id", async (req, res) => {
+app.put("/api/classes/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -260,7 +430,7 @@ app.put("/api/classes/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update class" });
   }
 });
-app.delete("/api/classes/:id", async (req, res) => {
+app.delete("/api/classes/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -277,7 +447,7 @@ app.delete("/api/classes/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete class" });
   }
 });
-app.get("/api/assignments", async (req, res) => {
+app.get("/api/assignments", requireAuth, async (req, res) => {
   try {
     const userId = 1;
 
@@ -297,7 +467,7 @@ app.get("/api/assignments", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch assignments" });
   }
 });
-app.post("/api/assignments", async (req, res) => {
+app.post("/api/assignments", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { classId, name, priority, dueDate, completed } = req.body;
@@ -318,7 +488,7 @@ app.post("/api/assignments", async (req, res) => {
     res.status(500).json({ error: "Failed to create assignment" });
   }
 });
-app.put("/api/assignments/:id", async (req, res) => {
+app.put("/api/assignments/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -344,7 +514,7 @@ app.put("/api/assignments/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to update assignment" });
   }
 });
-app.delete("/api/assignments/:id", async (req, res) => {
+app.delete("/api/assignments/:id", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const { id } = req.params;
@@ -361,7 +531,7 @@ app.delete("/api/assignments/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete assignment" });
   }
 });
-app.get("/api/notes", async (req, res) => {
+app.get("/api/notes", requireAuth, async (req, res) => {
   try {
     const userId = 1;
     const result = await pool.query(
@@ -376,7 +546,7 @@ app.get("/api/notes", async (req, res) => {
     });
   }
 });
-app.put("/api/notes", async (req, res) => {
+app.put("/api/notes", requireAuth, async (req, res) => {
   try {
     const { content } = req.body;
     const userId = 1;

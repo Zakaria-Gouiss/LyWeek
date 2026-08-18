@@ -16,9 +16,16 @@ import AddClassModal from "./components/footer/AddClassModal.jsx";
 import EditAssignmentModal from "./components/main-content/EditAssignmentModal.jsx";
 import EditClassModal from "./components/main-content/EditClassModal.jsx";
 import SemesterModal from "./components/header/SemesterModal.jsx";
+import LoginPage from "./components/auth/LoginPage.jsx";
+import RegisterPage from "./components/auth/RegisterPage.jsx";
 
 function App() {
   const [viewingWeek, setViewingWeek] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState("");
+  const [authView, setAuthView] = useState("login");
+  const [user, setUser] = useState(null);
 
   const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
   const [classModalOpen, setClassModalOpen] = useState(false);
@@ -40,9 +47,105 @@ function App() {
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
   }, [darkMode]);
+  useEffect(() => {
+    async function checkAuthentication() {
+      try {
+        const response = await fetch("http://localhost:5000/api/me", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Failed to check authentication:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setAuthLoading(false);
+      }
+    }
+
+    checkAuthentication();
+  }, []);
+
+  async function handleLogin(loginData) {
+    setAuthLoading(true);
+    setAuthError("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      setUser(data);
+      setIsAuthenticated(true);
+      setAuthView("login");
+    } catch (error) {
+      setAuthError(error.message || "Login failed");
+      setIsAuthenticated(false);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  async function handleRegister(registerData) {
+    setAuthLoading(true);
+    setAuthError("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: registerData.email,
+          password: registerData.password,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      setUser(data);
+      setIsAuthenticated(true);
+      setAuthView("login");
+    } catch (error) {
+      setAuthError(error.message || "Registration failed");
+      setIsAuthenticated(false);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/semesters")
+    if (!isAuthenticated) {
+      return;
+    }
+
+    fetch("http://localhost:5000/api/semesters", {
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         console.log("SEMESTER DATA:", data);
@@ -61,7 +164,9 @@ function App() {
       .catch((error) => {
         console.error("Failed to fetch semester:", error);
       });
-    fetch("http://localhost:5000/api/classes")
+    fetch("http://localhost:5000/api/classes", {
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         setClassList(data);
@@ -70,7 +175,9 @@ function App() {
         console.error("Failed to fetch classes:", error);
       });
 
-    fetch("http://localhost:5000/api/assignments")
+    fetch("http://localhost:5000/api/assignments", {
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         setAssignmentList(data);
@@ -79,7 +186,9 @@ function App() {
         console.error("Failed to fetch assignments:", error);
       });
 
-    fetch("http://localhost:5000/api/notes")
+    fetch("http://localhost:5000/api/notes", {
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         setNotes(data[0]?.content || "");
@@ -87,8 +196,28 @@ function App() {
       .catch((error) => {
         console.error("Failed to fetch notes:", error);
       });
-  }, []);
+  }, [isAuthenticated]);
 
+  async function handleLogout() {
+    try {
+      const response = await fetch("http://localhost:5000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log out");
+      }
+
+      setIsAuthenticated(false);
+      setSemester(null);
+      setClassList([]);
+      setAssignmentList([]);
+      setNotes("");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+    }
+  }
   async function handleAddAssignment(newAssignment) {
     try {
       const response = await fetch("http://localhost:5000/api/assignments", {
@@ -96,6 +225,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(newAssignment),
       });
 
@@ -122,6 +252,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           content: notes,
         }),
@@ -145,6 +276,7 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(newClass),
       });
 
@@ -176,6 +308,7 @@ function App() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify(updatedAssignment),
         },
       );
@@ -205,6 +338,7 @@ function App() {
         `http://localhost:5000/api/assignments/${assignmentId}`,
         {
           method: "DELETE",
+          credentials: "include",
         },
       );
 
@@ -242,6 +376,7 @@ function App() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             ...assignment,
             completed,
@@ -276,6 +411,7 @@ function App() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify(updatedClass),
         },
       );
@@ -304,6 +440,7 @@ function App() {
         `http://localhost:5000/api/classes/${classId}`,
         {
           method: "DELETE",
+          credentials: "include",
         },
       );
 
@@ -337,6 +474,7 @@ function App() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify(updatedSemester),
         },
       );
@@ -364,15 +502,46 @@ function App() {
       setSemesterModalOpen(false);
     }
   }
+  if (authLoading) {
+    return null;
+  }
+  if (!isAuthenticated) {
+    return (
+      <main className={darkMode ? "dark" : ""}>
+        {authView === "login" ? (
+          <LoginPage
+            onLogin={handleLogin}
+            loading={authLoading}
+            error={authError}
+            onSwitchToRegister={() => {
+              setAuthError("");
+              setAuthView("register");
+            }}
+          />
+        ) : (
+          <RegisterPage
+            onRegister={handleRegister}
+            loading={authLoading}
+            error={authError}
+            onSwitchToLogin={() => {
+              setAuthError("");
+              setAuthView("login");
+            }}
+          />
+        )}
+      </main>
+    );
+  }
 
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
         <nav className="header">
           <LogoWelcome
-            userName="Zakaria"
+            userName={user?.name}
             darkMode={darkMode}
             setDarkMode={setDarkMode}
+            onLogout={handleLogout}
           />
           <section className="week-and-nav">
             {semester && viewingWeek !== null && (
