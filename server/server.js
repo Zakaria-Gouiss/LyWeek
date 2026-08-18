@@ -66,13 +66,13 @@ app.get("/test-db", async (req, res) => {
 });
 app.post("/api/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, semesterName, semesterStartDate } = req.body;
 
-    if (!name || !email || !password) {
-  return res.status(400).json({
-    error: "Name, email, and password are required",
-  });
-}
+    if (!name || !email || !password || !semesterName || !semesterStartDate) {
+      return res.status(400).json({
+        error: "Name, email, password, semester name, and semester start date are required",
+      });
+    }
 
     if (password.length < 8) {
       return res.status(400).json({
@@ -102,12 +102,35 @@ app.post("/api/register", async (req, res) => {
 
     const user = result.rows[0];
 
+    const startDate = new Date(semesterStartDate);
+    if (Number.isNaN(startDate.getTime())) {
+      return res.status(400).json({
+        error: "Semester start date is invalid",
+      });
+    }
+
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 112);
+
+    const semesterResult = await pool.query(
+      `INSERT INTO semesters (name, start_date, end_date, user_id)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, start_date AS "startDate", end_date AS "endDate"`,
+      [
+        semesterName,
+        startDate.toISOString().slice(0, 10),
+        endDate.toISOString().slice(0, 10),
+        user.id,
+      ],
+    );
+
     req.session.userId = user.id;
 
     res.status(201).json({
       id: user.id,
       name: user.name,
       email: user.email,
+      semester: semesterResult.rows[0],
     });
   } catch (error) {
     console.error(error);

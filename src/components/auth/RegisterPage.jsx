@@ -1,8 +1,18 @@
 import { useState } from "react";
 
 import lyLight from "../../assets/lyweek-light.jpg";
+import lyDark from "../../assets/lyweek-dark.jpg";
 
-function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
+function RegisterPage({
+  onRegister,
+  loading,
+  error,
+  onSwitchToLogin,
+  darkMode,
+  setDarkMode,
+}) {
+  const [semesterName, setSemesterName] = useState("");
+  const [semesterStartDate, setSemesterStartDate] = useState("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -30,6 +40,8 @@ function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
       name: form.name,
       email: form.email,
       password: form.password,
+      semesterName,
+      semesterStartDate,
     });
   }
 
@@ -37,7 +49,18 @@ function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
     <section className="login-shell">
       <div className="login-card">
         <div className="login-branding">
-          <img src={lyLight} alt="LyWeek logo" className="login-logo" />
+          <button
+            type="button"
+            className="login-logo-button"
+            onClick={() => setDarkMode((previousMode) => !previousMode)}
+            aria-label="Toggle dark mode"
+          >
+            <img
+              src={darkMode ? lyDark : lyLight}
+              alt="LyWeek logo"
+              className="login-logo"
+            />
+          </button>
         </div>
 
         <div className="login-copy">
@@ -61,6 +84,34 @@ function RegisterPage({ onRegister, loading, error, onSwitchToLogin }) {
               autoComplete="name"
               required
             />
+          </div>
+          <div className="form-row form-row-two">
+            <div className="form-group">
+              <label htmlFor="semester-name">Semester Name</label>
+              <select
+                id="semester-name"
+                value={semesterName}
+                onChange={(e) => setSemesterName(e.target.value)}
+                required
+              >
+                <option value="">Select a semester</option>
+                <option value="Fall">Fall</option>
+                <option value="Winter">Winter</option>
+                <option value="Spring">Spring</option>
+                <option value="Summer">Summer</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="semester-start-date">Semester Start Date</label>
+              <input
+                id="semester-start-date"
+                type="date"
+                value={semesterStartDate}
+                onChange={(e) => setSemesterStartDate(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
           <div className="form-group">

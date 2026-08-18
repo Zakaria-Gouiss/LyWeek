@@ -63,6 +63,11 @@ body {
   --onenote-btn-bg: var(--dark-surface-alt);
   --onenote-btn-color: var(--light-text);
   --dark-color: var(--light-color);
+  --date-icon-filter: brightness(0) invert(1);
+}
+
+:root {
+  --date-icon-filter: brightness(0) invert(0);
 }
 
 main {
@@ -92,6 +97,16 @@ main {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+}
+
+.login-logo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .login-logo {
@@ -853,6 +868,25 @@ main {
 
 .form-group input::placeholder {
   color: var(--placeholder-color);
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1;
+  filter: var(--date-icon-filter, invert(0));
+}
+
+.form-group select:invalid,
+.form-group input[type="date"]:invalid {
+  color: var(--placeholder-color);
+}
+
+.form-group select option[value=""] {
+  color: var(--placeholder-color);
+}
+
+.form-group select option:not([value=""]) {
+  color: var(--text-color);
 }
 
 .yes-no-group {

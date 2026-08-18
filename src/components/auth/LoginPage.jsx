@@ -1,8 +1,16 @@
 import { useState } from "react";
 
 import lyLight from "../../assets/lyweek-light.jpg";
+import lyDark from "../../assets/lyweek-dark.jpg";
 
-function LoginPage({ onLogin, loading, error, onSwitchToRegister }) {
+function LoginPage({
+  onLogin,
+  loading,
+  error,
+  onSwitchToRegister,
+  darkMode,
+  setDarkMode,
+}) {
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -26,7 +34,18 @@ function LoginPage({ onLogin, loading, error, onSwitchToRegister }) {
     <section className="login-shell">
       <div className="login-card">
         <div className="login-branding">
-          <img src={lyLight} alt="LyWeek logo" className="login-logo" />
+          <button
+            type="button"
+            className="login-logo-button"
+            onClick={() => setDarkMode((previousMode) => !previousMode)}
+            aria-label="Toggle dark mode"
+          >
+            <img
+              src={darkMode ? lyDark : lyLight}
+              alt="LyWeek logo"
+              className="login-logo"
+            />
+          </button>
         </div>
 
         <div className="login-copy">

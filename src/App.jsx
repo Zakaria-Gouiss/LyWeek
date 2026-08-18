@@ -124,6 +124,8 @@ function App() {
           name: registerData.name,
           email: registerData.email,
           password: registerData.password,
+          semesterName: registerData.semesterName,
+          semesterStartDate: registerData.semesterStartDate,
         }),
       });
 
@@ -521,6 +523,8 @@ function App() {
             onLogin={handleLogin}
             loading={authLoading}
             error={authError}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
             onSwitchToRegister={() => {
               setAuthError("");
               setAuthView("register");
@@ -531,6 +535,8 @@ function App() {
             onRegister={handleRegister}
             loading={authLoading}
             error={authError}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
             onSwitchToLogin={() => {
               setAuthError("");
               setAuthView("login");
