@@ -12,37 +12,45 @@ const pool = new Pool({
 async function clearDatabase() {
   const client = await pool.connect();
 
+  const userId = Number(process.argv[2]);
+
+  if (!userId) {
+    console.error("Please provide a user ID.");
+    console.error("Example: node clear.js 1");
+    process.exit(1);
+  }
+
   try {
-    console.log("Clearing database...");
+    console.log(`Clearing data for user ${userId}...`);
 
     await client.query("BEGIN");
 
-    // Delete child tables first because of foreign keys
-    await client.query("DELETE FROM assignments");
-    await client.query("DELETE FROM classes");
-    await client.query("DELETE FROM semesters");
-    await client.query("DELETE FROM notes");
-
-    // Reset IDs
+    // Delete only this user's data
     await client.query(
-      "ALTER SEQUENCE assignments_id_seq RESTART WITH 1",
+      "DELETE FROM assignments WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE classes_id_seq RESTART WITH 1",
+      "DELETE FROM classes WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE semesters_id_seq RESTART WITH 1",
+      "DELETE FROM semesters WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE notes_id_seq RESTART WITH 1",
+      "DELETE FROM notes WHERE user_id = $1",
+      [userId],
     );
 
     await client.query("COMMIT");
 
-    console.log("Database cleared successfully.");
+    console.log(
+      `Database data for user ${userId} cleared successfully.`,
+    );
   } catch (error) {
     await client.query("ROLLBACK");
 

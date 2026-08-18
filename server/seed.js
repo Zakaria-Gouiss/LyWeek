@@ -199,38 +199,42 @@ const noteContents = [
 async function seed() {
   const client = await pool.connect();
 
+  // Get user ID from command line
+  const userId = Number(process.argv[2]);
+
+  if (!userId) {
+    console.error("Please provide a user ID.");
+    console.error("Example: node seed.js 1");
+    process.exit(1);
+  }
+
   try {
-    console.log("Starting database seed...");
+    console.log(`Starting database seed for user ${userId}...`);
 
     await client.query("BEGIN");
 
     // -------------------------
-    // Clear development data
-    // -------------------------
-
-    await client.query("DELETE FROM assignments");
-    await client.query("DELETE FROM classes");
-    await client.query("DELETE FROM semesters");
-    await client.query("DELETE FROM notes");
-
-    // -------------------------
-    // Reset auto-increment IDs
+    // Clear only this user's data
     // -------------------------
 
     await client.query(
-      "ALTER SEQUENCE assignments_id_seq RESTART WITH 1",
+      "DELETE FROM assignments WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE classes_id_seq RESTART WITH 1",
+      "DELETE FROM classes WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE semesters_id_seq RESTART WITH 1",
+      "DELETE FROM semesters WHERE user_id = $1",
+      [userId],
     );
 
     await client.query(
-      "ALTER SEQUENCE notes_id_seq RESTART WITH 1",
+      "DELETE FROM notes WHERE user_id = $1",
+      [userId],
     );
 
     // -------------------------
@@ -242,30 +246,23 @@ async function seed() {
     const semesterResult = await client.query(
       `
       INSERT INTO semesters
-        (name, start_date, end_date)
-      VALUES ($1, $2, $3)
+        (name, start_date, end_date, user_id)
+      VALUES ($1, $2, $3, $4)
       RETURNING id
       `,
       [
         semester.name,
         semester.startDate,
         semester.endDate,
+        userId,
       ],
     );
 
     const semesterId = semesterResult.rows[0].id;
 
-    console.log(
-      `Created semester: ${semester.name}`,
-    );
-
-    console.log(
-      `Start date: ${semester.startDate}`,
-    );
-
-    console.log(
-      `End date: ${semester.endDate}`,
-    );
+    console.log(`Created semester: ${semester.name}`);
+    console.log(`Start date: ${semester.startDate}`);
+    console.log(`End date: ${semester.endDate}`);
 
     // -------------------------
     // Classes
@@ -275,23 +272,25 @@ async function seed() {
 
     const numberOfClasses = randomInt(3, 6);
 
-    // Shuffle classes so different classes
-    // are selected every time.
     const shuffledClasses = [...classNames].sort(
       () => Math.random() - 0.5,
     );
 
+    // Check color column once instead of every loop
+    const colorColumnExists = await client.query(`
+      SELECT EXISTS (
+        SELECT 1
+        FROM information_schema.columns
+        WHERE table_name = 'classes'
+        AND column_name = 'color'
+      ) AS "hasColorColumn"
+    `);
+
+    const hasColorColumn =
+      colorColumnExists.rows[0]?.hasColorColumn ?? false;
+
     for (let i = 0; i < numberOfClasses; i++) {
       const classColor = randomHexColor();
-      const colorColumnExists = await client.query(`
-        SELECT EXISTS (
-          SELECT 1
-          FROM information_schema.columns
-          WHERE table_name = 'classes' AND column_name = 'color'
-        ) AS "hasColorColumn"
-      `);
-
-      const hasColorColumn = colorColumnExists.rows[0]?.hasColorColumn ?? false;
 
       const result = await client.query(
         hasColorColumn
@@ -304,9 +303,10 @@ async function seed() {
                 course_hours,
                 office_hours,
                 onenote_url,
-                color
+                color,
+                user_id
               )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
           `
           : `
@@ -317,9 +317,10 @@ async function seed() {
                 professor,
                 course_hours,
                 office_hours,
-                onenote_url
+                onenote_url,
+                user_id
               )
-            VALUES ($1, $2, $3, $4, $5, $6)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id
           `,
         hasColorColumn
@@ -331,6 +332,7 @@ async function seed() {
               randomItem(officeHours),
               "https://onenote.com/",
               classColor,
+              userId,
             ]
           : [
               shuffledClasses[i],
@@ -339,6 +341,7 @@ async function seed() {
               randomItem(courseHours),
               randomItem(officeHours),
               "https://onenote.com/",
+              userId,
             ],
       );
 
@@ -358,26 +361,17 @@ async function seed() {
     const numberOfAssignments = randomInt(8, 25);
 
     for (let i = 0; i < numberOfAssignments; i++) {
-      const assignmentType =
-        randomItem(assignmentTypes);
-
-      const subject =
-        randomItem(assignmentSubjects);
+      const assignmentType = randomItem(assignmentTypes);
+      const subject = randomItem(assignmentSubjects);
 
       const assignmentName =
         `${subject} ${assignmentType}`;
 
-      // Pick one of the classes that was
-      // actually created above.
       const classId = randomItem(classIds);
 
-      // Random true/false
       const priority = randomBool();
-
-      // Random true/false
       const completed = randomBool();
 
-      // Assignment due day is now a STRING.
       const dueDate = randomItem(weekdays);
 
       await client.query(
@@ -388,9 +382,10 @@ async function seed() {
             name,
             priority,
             due_date,
-            completed
+            completed,
+            user_id
           )
-        VALUES ($1, $2, $3, $4, $5)
+        VALUES ($1, $2, $3, $4, $5, $6)
         `,
         [
           classId,
@@ -398,6 +393,7 @@ async function seed() {
           priority,
           dueDate,
           completed,
+          userId,
         ],
       );
     }
@@ -410,32 +406,28 @@ async function seed() {
     // Notes
     // -------------------------
 
-    // -------------------------
-// Notes
-// -------------------------
+    const numberOfNoteLines = randomInt(3, 7);
 
-const numberOfNoteLines = randomInt(3, 7);
+    const shuffledNotes = [...noteContents].sort(
+      () => Math.random() - 0.5,
+    );
 
-const shuffledNotes = [...noteContents].sort(
-  () => Math.random() - 0.5,
-);
+    const noteContent = shuffledNotes
+      .slice(0, numberOfNoteLines)
+      .join("\n");
 
-const noteContent = shuffledNotes
-  .slice(0, numberOfNoteLines)
-  .join("\n");
+    await client.query(
+      `
+      INSERT INTO notes
+        (content, user_id)
+      VALUES ($1, $2)
+      `,
+      [noteContent, userId],
+    );
 
-await client.query(
-  `
-  INSERT INTO notes
-    (content)
-  VALUES ($1)
-  `,
-  [noteContent],
-);
-
-console.log(
-  `Created 1 notes row with ${numberOfNoteLines} lines`,
-);
+    console.log(
+      `Created 1 notes row with ${numberOfNoteLines} lines`,
+    );
 
     // -------------------------
     // Commit
@@ -446,6 +438,7 @@ console.log(
     console.log("");
     console.log("Database seeded successfully.");
     console.log("");
+    console.log(`User ID: ${userId}`);
     console.log(`Semester ID: ${semesterId}`);
     console.log(`Semester: ${semester.name}`);
     console.log(`Start: ${semester.startDate}`);
@@ -453,8 +446,8 @@ console.log(
     console.log(`Classes: ${numberOfClasses}`);
     console.log(`Assignments: ${numberOfAssignments}`);
     console.log(
-  `Created 1 notes row with ${numberOfNoteLines} lines`,
-);
+      `Notes: ${numberOfNoteLines} lines`,
+    );
   } catch (error) {
     await client.query("ROLLBACK");
 
