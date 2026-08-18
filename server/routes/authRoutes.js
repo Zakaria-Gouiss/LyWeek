@@ -104,7 +104,11 @@ router.post("/login", async (req, res) => {
     }
 
     const user = result.rows[0];
-
+await pool.query(
+  `INSERT INTO notes (content, user_id)
+   VALUES ($1, $2)`,
+  ["", user.id],
+);
     const passwordMatches = await bcrypt.compare(password, user.pass_hash);
 
     if (!passwordMatches) {

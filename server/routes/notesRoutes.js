@@ -38,7 +38,7 @@ router.put("/", requireAuth, async (req, res) => {
     const result = await pool.query(
       `UPDATE notes
        SET content = $1
-       WHERE id = 1 AND user_id = $2
+       WHERE user_id = $2
        RETURNING id, content`,
       [content, userId],
     );
