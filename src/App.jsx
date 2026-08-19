@@ -142,10 +142,7 @@ function App() {
         console.log("SEMESTER DATA:", semesterData);
         setSemester(semesterData);
 
-        const currentWeek = getSemesterWeek(
-          new Date(semesterData.startDate),
-          new Date(),
-        );
+        const currentWeek = getSemesterWeek(semesterData.startDate, new Date());
 
         console.log("CURRENT WEEK:", currentWeek);
         setViewingWeek(currentWeek);
@@ -311,18 +308,12 @@ function App() {
         updatedSemester,
       );
       setSemester(savedSemester);
-      const nextWeek = getSemesterWeek(
-        new Date(savedSemester.startDate),
-        new Date(),
-      );
+      const nextWeek = getSemesterWeek(savedSemester.startDate, new Date());
       setViewingWeek(nextWeek);
     } catch (error) {
       console.error("Failed to update semester:", error);
       setSemester(updatedSemester);
-      const nextWeek = getSemesterWeek(
-        new Date(updatedSemester.startDate),
-        new Date(),
-      );
+      const nextWeek = getSemesterWeek(updatedSemester.startDate, new Date());
       setViewingWeek(nextWeek);
     } finally {
       setSemesterModalOpen(false);

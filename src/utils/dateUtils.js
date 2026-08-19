@@ -1,25 +1,31 @@
 function parseLocalDate(date) {
   if (typeof date === "string") {
     const [year, month, day] = date.split("-").map(Number);
-
     return new Date(year, month - 1, day);
   }
 
   return new Date(date);
 }
 
-export function getSemesterWeek(startDate, currentDate) {
-  const start = parseLocalDate(startDate);
-  const current = parseLocalDate(currentDate);
+function getMonday(date) {
+  const monday = new Date(date);
+  const day = monday.getDay();
 
-  // Normalize semester start to Monday
-  const day = start.getDay(); // Sunday = 0, Monday = 1, etc.
   const daysToMonday = day === 0 ? -6 : 1 - day;
 
-  start.setDate(start.getDate() + daysToMonday);
+  monday.setDate(monday.getDate() + daysToMonday);
 
-  const difference = current.getTime() - start.getTime();
-  const days = Math.floor(
+  return monday;
+}
+
+export function getSemesterWeek(startDate, currentDate) {
+  const semesterStart = getMonday(parseLocalDate(startDate));
+  const current = getMonday(parseLocalDate(currentDate));
+
+  const difference =
+    current.getTime() - semesterStart.getTime();
+
+  const days = Math.round(
     difference / (1000 * 60 * 60 * 24),
   );
 
@@ -27,23 +33,21 @@ export function getSemesterWeek(startDate, currentDate) {
 }
 
 export function getWeekInfo(semesterStartDate, weekNumber) {
-  const weekStart = parseLocalDate(semesterStartDate);
-
-  // Normalize semester start to Monday
-  const day = weekStart.getDay();
-  const daysToMonday = day === 0 ? -6 : 1 - day;
-
-  weekStart.setDate(
-    weekStart.getDate() + daysToMonday,
+  const semesterStart = getMonday(
+    parseLocalDate(semesterStartDate),
   );
 
-  // Move to requested week
+  const weekStart = new Date(semesterStart);
+
   weekStart.setDate(
     weekStart.getDate() + (weekNumber - 1) * 7,
   );
 
   const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 6);
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6,
+  );
 
   return {
     weekNumber,
