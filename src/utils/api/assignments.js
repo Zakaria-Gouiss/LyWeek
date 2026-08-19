@@ -1,7 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL;;
+const API_URL = import.meta.env.VITE_API_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX || "";
 
 export async function getAssignments() {
-  const response = await fetch(`${API_URL}/assignments`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/assignments`, {
     credentials: "include",
   });
 
@@ -13,7 +14,7 @@ export async function getAssignments() {
 }
 
 export async function createAssignment(assignmentData) {
-  const response = await fetch(`${API_URL}/assignments`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/assignments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +31,7 @@ export async function createAssignment(assignmentData) {
 }
 
 export async function updateAssignment(assignmentId, updatedAssignment) {
-  const response = await fetch(`${API_URL}/assignments/${assignmentId}`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/assignments/${assignmentId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +48,7 @@ export async function updateAssignment(assignmentId, updatedAssignment) {
 }
 
 export async function deleteAssignment(assignmentId) {
-  const response = await fetch(`${API_URL}/assignments/${assignmentId}`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/assignments/${assignmentId}`, {
     method: "DELETE",
     credentials: "include",
   });

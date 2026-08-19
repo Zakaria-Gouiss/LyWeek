@@ -1,7 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL;;
+const API_URL = import.meta.env.VITE_API_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX || "";
 
 export async function getSemesters() {
-  const response = await fetch(`${API_URL}/semesters`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/semesters`, {
     credentials: "include",
   });
 
@@ -13,7 +14,7 @@ export async function getSemesters() {
 }
 
 export async function updateSemester(semesterId, updatedSemester) {
-  const response = await fetch(`${API_URL}/semesters/${semesterId}`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/semesters/${semesterId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +31,7 @@ export async function updateSemester(semesterId, updatedSemester) {
 }
 
 export async function createSemester(semesterData) {
-  const response = await fetch(`${API_URL}/semesters`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/semesters`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -47,7 +48,7 @@ export async function createSemester(semesterData) {
 }
 
 export async function deleteSemester(semesterId) {
-  const response = await fetch(`${API_URL}/semesters/${semesterId}`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/semesters/${semesterId}`, {
     method: "DELETE",
     credentials: "include",
   });

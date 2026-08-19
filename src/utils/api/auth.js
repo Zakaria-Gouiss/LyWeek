@@ -1,8 +1,9 @@
-const API_URL = import.meta.env.VITE_API_URL;;
+const API_URL = import.meta.env.VITE_API_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX || "";
 
 export async function checkAuthentication() {
   try {
-   const response = await fetch(`${API_URL}/me`, {
+   const response = await fetch(`${API_URL}${API_PREFIX}/me`, {
   credentials: "include",
 });
 
@@ -17,7 +18,7 @@ export async function checkAuthentication() {
 }
 
 export async function login(email, password) {
-  const response = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/login`, {
   method: "POST",
   credentials: "include",
   headers: {
@@ -36,7 +37,7 @@ export async function login(email, password) {
 }
 
 export async function register(registerData) {
-  const response = await fetch(`${API_URL}/register`, {
+ const response = await fetch(`${API_URL}${API_PREFIX}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -61,7 +62,7 @@ export async function register(registerData) {
 }
 
 export async function logout() {
-  const response = await fetch(`${API_URL}/logout`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/logout`, {
     method: "POST",
     credentials: "include",
   });

@@ -1,7 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL;;
+const API_URL = import.meta.env.VITE_API_URL;
+const API_PREFIX = import.meta.env.VITE_API_PREFIX || "";
 
 export async function getNotes() {
-  const response = await fetch(`${API_URL}/notes`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/notes`, {
     credentials: "include",
   });
 
@@ -13,7 +14,7 @@ export async function getNotes() {
 }
 
 export async function updateNotes(content) {
-  const response = await fetch(`${API_URL}/notes`, {
+  const response = await fetch(`${API_URL}${API_PREFIX}/notes`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
