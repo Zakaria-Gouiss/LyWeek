@@ -16,14 +16,17 @@ function requireAuth(req, res, next) {
 router.get("/", requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
-    const result = await pool.query(`
+
+    const result = await pool.query(
+      `
       SELECT
         id,
         name,
-        start_date AS "startDate",
-        end_date AS "endDate"
+        TO_CHAR(start_date, 'YYYY-MM-DD') AS "startDate",
+        TO_CHAR(end_date, 'YYYY-MM-DD') AS "endDate"
       FROM semesters
-      WHERE user_id = $1`,
+      WHERE user_id = $1
+      `,
       [userId],
     );
 
@@ -52,8 +55,8 @@ router.put("/:id", requireAuth, async (req, res) => {
       RETURNING
         id,
         name,
-        start_date AS "startDate",
-        end_date AS "endDate"
+        TO_CHAR(start_date, 'YYYY-MM-DD') AS "startDate",
+        TO_CHAR(end_date, 'YYYY-MM-DD') AS "endDate"
       `,
       [name, startDate, endDate, id, userId],
     );
