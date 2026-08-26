@@ -1,10 +1,11 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
+import ElectronApp from "./ElectronApp.jsx";
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const isElectron =
+  new URLSearchParams(window.location.search).get("electron") === "true";
+console.log(navigator.userAgent);
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>{isElectron ? <ElectronApp /> : <App />}</React.StrictMode>,
+);

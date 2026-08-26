@@ -8,7 +8,7 @@ function createWindow() {
   icon: path.join(__dirname, "../src/assets/lyweek.ico"),
 });
 
-  win.loadURL("https://lyweek.vercel.app");
+  win.loadURL("https://lyweek.vercel.app?electron=true");
 }
 
 app.whenReady().then(() => {
