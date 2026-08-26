@@ -1327,3 +1327,85 @@ main {
     font-size: 0.8rem;
   }
 }
+
+/* ================================
+   ELECTRON COMPACT LAYOUT
+   ================================ */
+
+.electron-app {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.electron-header {
+  flex-shrink: 0;
+  padding: 6px 10px;
+}
+
+.electron-main-content {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 4px 8px;
+}
+
+.electron-footer {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 6px 8px;
+}
+
+.electron-add-content {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.electron-notes {
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Make the Electron version generally smaller */
+.electron-app button {
+  font-size: 12px;
+  padding: 4px 7px;
+}
+
+.electron-app input,
+.electron-app textarea,
+.electron-app select {
+  font-size: 12px;
+}
+
+.electron-app .class {
+  margin-bottom: 6px;
+}
+
+.electron-app .assignment {
+  padding: 4px 6px;
+  font-size: 12px;
+}
+
+/* Compact header */
+.electron-header h1,
+.electron-header h2,
+.electron-header p {
+  margin: 0;
+  font-size: 14px;
+}
