@@ -350,12 +350,14 @@ function ElectronApp() {
   return (
     <main className={`electron-app ${darkMode ? "dark" : ""}`}>
       <nav className="electron-header">
-        <LogoWelcome
-          userName={user?.name}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          onLogout={handleLogout}
-        />
+        <div className="electron-header-content">
+          <LogoWelcome
+            userName={user?.name}
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            onLogout={handleLogout}
+          />
+        </div>
       </nav>
 
       <nav className="electron-main-content">

@@ -1341,9 +1341,66 @@ main {
   flex-direction: column;
 }
 
+/* ================================
+   ELECTRON COMPACT HEADER
+   ================================ */
+
 .electron-header {
   flex-shrink: 0;
-  padding: 6px 10px;
+  position: relative;
+
+  width: 100%;
+  padding: 4px 8px;
+
+  display: flex;
+  align-items: center;
+
+  border: none;
+  box-shadow: none;
+}
+
+.electron-header-content {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  /* Prevent the normal large LogoWelcome sizing */
+  transform: scale(0.7);
+  transform-origin: left center;
+
+  height: 32px;
+}
+
+/* Prevent LogoWelcome from taking over the whole top */
+.electron-header .logo-welcome,
+.electron-header .welcome,
+.electron-header section {
+  max-height: 32px;
+}
+
+/* Keep the Electron header from becoming sticky */
+.electron-app .electron-header {
+  position: relative !important;
+  top: auto !important;
+  z-index: 1;
+}
+
+/* Compact buttons */
+.electron-header button {
+  padding: 3px 6px;
+  font-size: 11px;
+}
+
+/* Compact text */
+.electron-header h1,
+.electron-header h2,
+.electron-header h3,
+.electron-header p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.1;
 }
 
 .electron-main-content {
@@ -1402,10 +1459,3 @@ main {
   font-size: 12px;
 }
 
-/* Compact header */
-.electron-header h1,
-.electron-header h2,
-.electron-header p {
-  margin: 0;
-  font-size: 14px;
-}
