@@ -3,8 +3,9 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
   packagerConfig: {
-    asar: true,
-  },
+  asar: true,
+  icon: "./src/assets/lyweek",
+},
   rebuildConfig: {},
   makers: [
     {
