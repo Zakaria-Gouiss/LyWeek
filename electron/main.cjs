@@ -1,5 +1,5 @@
 const path = require("path");
-const { app, BrowserWindow, nativeImage } = require("electron");
+const { app, BrowserWindow } = require("electron");
 
 const iconPath = path.join(__dirname, "../src/assets/lyweek.ico");
 
@@ -12,10 +12,16 @@ function createWindow() {
 
   win.setAppDetails({
     appId: "com.lyweek.LyWeek",
-    appIconPath: path.join(__dirname, "../src/assets/lyweek.ico"),
+    appIconPath: iconPath,
   });
 
-  win.loadURL("https://lyweek.vercel.app?electron=true");
+  // Development: use local Vite server
+  // Production: use deployed Vercel app
+  if (!app.isPackaged) {
+    win.loadURL("http://localhost:5173?electron=true");
+  } else {
+    win.loadURL("https://lyweek.vercel.app?electron=true");
+  }
 }
 
 app.whenReady().then(() => {

@@ -1385,7 +1385,6 @@ main {
   flex: 1;
 
   font-size: 0.85rem;
-  font-weight: 600;
 
   text-align: left;
   white-space: nowrap;
@@ -1430,30 +1429,6 @@ main {
   padding: 4px 8px;
 }
 
-.electron-footer {
-  flex-shrink: 0;
-
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 6px 8px;
-}
-
-.electron-add-content {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.electron-notes {
-  flex: 1;
-  min-width: 0;
-
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 
 /* Make the Electron version generally smaller */
 .electron-app button {
@@ -1475,4 +1450,293 @@ main {
   padding: 4px 6px;
   font-size: 12px;
 }
+/* ================================
+   ELECTRON COMPACT FOOTER
+   ================================ */
 
+.electron-app .electron-footer {
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+
+  width: 100%;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 8px;
+}
+
+/* Equal-size Electron footer buttons */
+.electron-app .electron-add-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.electron-app .electron-add-content button {
+  width: 90px;
+  height: 30px;
+  padding: 3px 6px;
+  font-size: 10px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+/* Notes + save button */
+.electron-app .electron-notes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  flex: 1;
+  min-width: 0;
+}
+
+/* Small notes box */
+.electron-app .electron-notes textarea {
+  flex: 1;
+
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  min-height: 28px;
+  max-height: 28px;
+
+  padding: 4px 6px;
+
+  font-size: 11px;
+  line-height: 1.2;
+
+  resize: none;
+}
+
+/* Make footer buttons compact */
+.electron-app .electron-footer button {
+  min-height: 26px;
+
+  padding: 3px 7px;
+
+  font-size: 10px;
+}
+
+/* Prevent footer from behaving like a sticky/fixed element */
+.electron-app .electron-footer,
+.electron-app .electron-footer * {
+  position: relative;
+}
+
+.electron-app .electron-footer {
+  z-index: 1;
+}
+
+/* ================================
+   ELECTRON LOGIN / REGISTER
+   ================================ */
+
+.electron-app .login-shell {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px;
+
+  overflow-y: auto;
+}
+
+/* Compact card */
+.electron-app .login-card {
+  width: 100%;
+  max-width: 330px;
+
+  padding: 14px 16px;
+
+  border-radius: 10px;
+}
+
+/* Smaller logo area */
+.electron-app .login-branding {
+  margin-bottom: 6px;
+}
+
+.electron-app .login-logo-button {
+  width: 42px;
+  height: 42px;
+
+  padding: 3px;
+  border-radius: 9px;
+}
+
+.electron-app .login-logo {
+  width: 100%;
+  height: 100%;
+}
+
+/* Smaller title section */
+.electron-app .login-copy {
+  margin-bottom: 10px;
+}
+
+.electron-app .login-kicker {
+  font-size: 0.65rem;
+  margin: 0 0 2px;
+}
+
+.electron-app .login-copy h1 {
+  font-size: 1.15rem;
+  margin: 0 0 3px;
+}
+
+.electron-app .login-subtitle {
+  font-size: 0.68rem;
+  margin: 0;
+}
+
+/* Compact form */
+.electron-app .login-form {
+  gap: 7px;
+}
+
+.electron-app .form-group {
+  gap: 3px;
+}
+
+.electron-app .form-group label {
+  font-size: 0.65rem;
+}
+
+.electron-app .form-group input,
+.electron-app .form-group select {
+  height: 29px;
+
+  padding: 4px 7px;
+
+  font-size: 0.7rem;
+}
+
+/* Registration two-column row */
+.electron-app .form-row-two {
+  gap: 6px;
+}
+
+/* Buttons */
+.electron-app .login-submit {
+  height: 30px;
+
+  padding: 4px 8px;
+
+  font-size: 0.7rem;
+}
+
+.electron-app .auth-toggle-link {
+  padding: 2px;
+
+  font-size: 0.65rem;
+}
+
+/* Error */
+.electron-app .login-error {
+  margin: 2px 0;
+
+  font-size: 0.65rem;
+}
+
+/* No sticky/fixed positioning */
+.electron-app .login-shell,
+.electron-app .login-card {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
+}
+/* ================================
+   ELECTRON ADD CLASS MODAL
+   ================================ */
+
+.electron-app .assignment-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px;
+
+  z-index: 1000;
+}
+
+.electron-app .assignment-modal {
+  width: 100%;
+  max-width: 360px;
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  padding: 12px;
+
+  border-radius: 9px;
+}
+
+/* Header */
+.electron-app .assignment-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 8px;
+}
+
+.electron-app .assignment-modal-title {
+  margin: 0;
+
+  font-size: 1rem;
+}
+
+.electron-app .modal-close {
+  width: 24px;
+  height: 24px;
+
+  padding: 0;
+
+  font-size: 16px;
+}
+
+/* Form */
+.electron-app .assignment-form {
+  gap: 6px;
+}
+
+.electron-app .assignment-form .form-group {
+  gap: 2px;
+}
+
+.electron-app .assignment-form label {
+  font-size: 0.65rem;
+}
+
+.electron-app .assignment-form input {
+  width: 100%;
+  height: 27px;
+
+  padding: 4px 6px;
+
+  font-size: 0.68rem;
+}
+
+/* Actions */
+.electron-app .form-actions {
+  margin-top: 5px;
+}
+
+.electron-app .modal-submit {
+  width: 100%;
+  height: 29px;
+
+  padding: 4px 8px;
+
+  font-size: 0.7rem;
+}
