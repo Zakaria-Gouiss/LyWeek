@@ -13,7 +13,7 @@ function Assignment({
         <input
           type="checkbox"
           checked={completed}
-          onChange={() => onToggle(id, !completed)}
+          onChange={() => onToggle(id)}
         />
         {priority && <span className="assignment-priority">★</span>}
         <span className="assignment-name">{name}</span>

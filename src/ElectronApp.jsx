@@ -243,29 +243,21 @@ function ElectronApp() {
     }
   }
 
-  async function handleToggleAssignment(assignmentId, completed) {
-    try {
-      const assignment = assignmentList.find(
-        (assignment) => assignment.id === assignmentId,
-      );
+  async function handleToggleAssignment(assignmentId) {
+    // Visually check the box first
+    setAssignmentList((currentAssignments) =>
+      currentAssignments.map((assignment) =>
+        assignment.id === assignmentId
+          ? { ...assignment, completed: true }
+          : assignment,
+      ),
+    );
 
-      if (!assignment) return;
+    // Wait 1 second
+    await new Promise((resolve) => setTimeout(resolve, 390));
 
-      const updatedAssignment = await updateAssignment(assignmentId, {
-        ...assignment,
-        completed,
-      });
-
-      setAssignmentList((currentAssignments) =>
-        currentAssignments.map((assignment) =>
-          assignment.id === updatedAssignment.id
-            ? updatedAssignment
-            : assignment,
-        ),
-      );
-    } catch (error) {
-      console.error("Failed to update assignment:", error);
-    }
+    // Then delete it
+    await handleDeleteAssignment(assignmentId);
   }
 
   function handleEditClass(course) {

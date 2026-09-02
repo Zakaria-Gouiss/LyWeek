@@ -245,27 +245,21 @@ function App() {
     setEditClassModalOpen(true);
   }
 
-  async function handleToggleAssignment(assignmentId, completed) {
-    try {
-      const assignment = assignmentList.find(
-        (assignment) => assignment.id === assignmentId,
-      );
+  async function handleToggleAssignment(assignmentId) {
+    // Visually check the box first
+    setAssignmentList((currentAssignments) =>
+      currentAssignments.map((assignment) =>
+        assignment.id === assignmentId
+          ? { ...assignment, completed: true }
+          : assignment,
+      ),
+    );
 
-      const updatedAssignment = await updateAssignment(assignmentId, {
-        ...assignment,
-        completed,
-      });
+    // Wait 1 second
+    await new Promise((resolve) => setTimeout(resolve, 390));
 
-      setAssignmentList((currentAssignments) =>
-        currentAssignments.map((assignment) =>
-          assignment.id === updatedAssignment.id
-            ? updatedAssignment
-            : assignment,
-        ),
-      );
-    } catch (error) {
-      console.error("Failed to update assignment:", error);
-    }
+    // Then delete it
+    await handleDeleteAssignment(assignmentId);
   }
 
   async function handleSaveClass(updatedClass) {
