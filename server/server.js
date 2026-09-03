@@ -75,6 +75,9 @@ app.get("/test-db", async (req, res) => {
   }
 });
 
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", authRoutes); // For backward compatibility with /api/login, /api/register, /api/logout, /api/me
