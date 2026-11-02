@@ -17,7 +17,9 @@ function Assignment({
         />
         {priority && <span className="assignment-priority">★</span>}
         <span className="assignment-name">{name}</span>
-        <span className="assignment-due-date">by {dueDate}</span>
+        {dueDate && (
+          <span className="assignment-due-date">by {dueDate}</span>
+        )}
       </div>
 
       <button

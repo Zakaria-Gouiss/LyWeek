@@ -38,6 +38,7 @@ router.post("/", requireAuth, async (req, res) => {
   try {
     const userId = req.session.userId;
     const { classId, name, priority, dueDate, completed } = req.body;
+    const normalizedDueDate = dueDate || null;
 
     const result = await pool.query(
       `INSERT INTO assignments
@@ -46,7 +47,7 @@ router.post("/", requireAuth, async (req, res) => {
        RETURNING id, class_id AS "classId",
                  name, priority, due_date AS "dueDate",
                  completed;`,
-      [classId, name, priority, dueDate, completed, userId],
+      [classId, name, priority, normalizedDueDate, completed, userId],
     );
 
     res.json(result.rows[0]);
@@ -61,6 +62,7 @@ router.put("/:id", requireAuth, async (req, res) => {
     const userId = req.session.userId;
     const { id } = req.params;
     const { classId, name, priority, dueDate, completed } = req.body;
+    const normalizedDueDate = dueDate || null;
 
     const result = await pool.query(
       `UPDATE assignments
@@ -73,7 +75,7 @@ router.put("/:id", requireAuth, async (req, res) => {
        RETURNING id, class_id AS "classId",
                  name, priority, due_date AS "dueDate",
                  completed;`,
-      [classId, name, priority, dueDate, completed, id, userId],
+      [classId, name, priority, normalizedDueDate, completed, id, userId],
     );
 
     res.json(result.rows[0]);

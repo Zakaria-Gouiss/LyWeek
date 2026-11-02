@@ -99,11 +99,11 @@ function AddAssignmentModal({ onClose, onAdd, classes }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="assignment-duedate">Due Date</label>
+            <label htmlFor="assignment-duedate">Due Date (optional)</label>
             <select
               id="assignment-duedate"
               name="assignment-duedate"
-              required
+              value={dueDate}
               onChange={(event) => setDueDate(event.target.value)}
             >
               <option value="">Select a day</option>
