@@ -10,7 +10,8 @@ function Class({
   officeHours,
   assignments,
   onenoteUrl,
-  onEditAssignment,
+  onEditAssignments,
+  onAddAssignment,
   onEditClass,
   onToggleAssignment,
   color,
@@ -57,6 +58,23 @@ function Class({
                   metaExpanded ? "down" : "right"
                 }`}
               ></i>
+            </button>
+          </div>
+
+          <div className="course-assignment-actions">
+            <button
+              type="button"
+              className="course-assignment-action"
+              onClick={() => onEditAssignments(id)}
+            >
+              Edit Assignment
+            </button>
+            <button
+              type="button"
+              className="course-assignment-action"
+              onClick={() => onAddAssignment(id)}
+            >
+              Add Assignment
             </button>
           </div>
 
@@ -107,7 +125,6 @@ function Class({
               priority={assignment.priority}
               dueDate={assignment.dueDate}
               completed={assignment.completed}
-              onEdit={() => onEditAssignment(assignment)}
               onToggle={onToggleAssignment}
             />
           ))}

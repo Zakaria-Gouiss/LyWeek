@@ -1,10 +1,18 @@
 import { useState } from "react";
 
-function AddAssignmentModal({ onClose, onAdd, classes }) {
+function AddAssignmentModal({
+  onClose,
+  onAdd,
+  classes,
+  initialClassId = null,
+}) {
   const [name, setName] = useState("");
-  const [classId, setClassId] = useState("");
+  const [classId, setClassId] = useState(
+    initialClassId === null ? "" : String(initialClassId),
+  );
   const [priority, setPriority] = useState(false);
   const [dueDate, setDueDate] = useState("");
+  const classLocked = initialClassId !== null;
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -60,8 +68,10 @@ function AddAssignmentModal({ onClose, onAdd, classes }) {
             <select
               id="assignment-class"
               name="assignment-class"
+              value={classId}
               onChange={(event) => setClassId(event.target.value)}
-              required
+              required={!classLocked}
+              disabled={classLocked}
             >
               <option value="">Select a class</option>
 

@@ -433,12 +433,55 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.course-assignment-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  flex: 1 1 0;
+  min-width: 0;
+  gap: 0.4rem;
+}
+
+.course-assignment-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 8px;
+  background: var(--card-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.course-assignment-action:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.course-assignment-action:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
 }
 
 .class-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+  max-width: 13rem;
   padding: 0.45rem 0.9rem;
   border: 1px solid var(--blue-border);
   border-radius: 10px;
@@ -447,6 +490,9 @@ main {
   font-family: inherit;
   font-size: 0.95rem;
   text-decoration: underline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     transform 0.15s ease,
@@ -469,7 +515,8 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
+  flex: 0 0 auto;
+  margin-left: 0;
   padding: 0.45rem 0.8rem;
   border: 1px solid var(--blue-border);
   border-radius: 8px;
@@ -582,32 +629,6 @@ main {
 }
 
 
-
-.assignment-edit-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.3rem;
-  height: 1.3rem;
-  padding: 0;
-  margin-left: auto;
-  border: 1px solid var(--blue-border);
-  border-radius: 5px;
-  background: var(--card-color);
-  color: var(--main-blue);
-  font-size: 0.6rem;
-  cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.assignment-edit-btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--main-blue);
-  box-shadow: 0 4px 12px var(--blue-shadow);
-}
 
 .assignment input[type='checkbox'] {
   width: 16px;
@@ -840,6 +861,10 @@ main {
   gap: 0.3rem;
 }
 
+.form-group.is-disabled {
+  opacity: 0.5;
+}
+
 .form-group label {
   color: var(--text-color);
   font-size: 0.9rem;
@@ -864,6 +889,15 @@ main {
 .form-group select:focus {
   border-color: var(--main-blue);
   box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.12);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  cursor: not-allowed;
+}
+
+.form-group.is-disabled .yes-no-option {
+  cursor: not-allowed;
 }
 
 .form-group input::placeholder {
@@ -944,6 +978,12 @@ main {
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
+.modal-submit:disabled,
+.modal-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .modal-submit {
   border: none;
   background: var(--main-blue);
@@ -1013,13 +1053,23 @@ main {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     min-width: 0;
   }
 
   .class-badge {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
+    max-width: 9rem;
+  }
+
+  .course-assignment-actions {
+    gap: 0.3rem;
+  }
+
+  .course-assignment-action {
+    padding: 0.4rem 0.35rem;
+    font-size: 0.72rem;
   }
 
   .class-onenote-btn {
@@ -1046,11 +1096,6 @@ main {
   .assignment-main {
     flex: 1 1 auto;
     min-width: 0;
-  }
-
-  .assignment-edit-btn {
-    flex: 0 0 auto;
-    margin-left: 0;
   }
 }
 
@@ -1219,24 +1264,34 @@ main {
   }
 
   .class-title-row {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
+    display: flex;
     gap: 0.35rem;
   }
 
   .class-title-controls {
-    display: contents;
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
   }
 
   .class-badge {
     min-width: 0;
-    max-width: 100%;
+    max-width: 6rem;
     padding: 0.38rem 0.55rem;
     font-size: 0.72rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .course-assignment-actions {
+    flex: 1 1 0;
+    gap: 0.25rem;
+  }
+
+  .course-assignment-action {
+    padding: 0.35rem 0.25rem;
+    font-size: 0.62rem;
   }
 
   .class-meta {

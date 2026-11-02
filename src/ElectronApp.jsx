@@ -49,7 +49,8 @@ function ElectronApp() {
   const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
   const [editClassModalOpen, setEditClassModalOpen] = useState(false);
 
-  const [assignmentToEdit, setAssignmentToEdit] = useState(null);
+  const [assignmentClassId, setAssignmentClassId] = useState(null);
+  const [editAssignmentClassId, setEditAssignmentClassId] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
 
   const [assignmentList, setAssignmentList] = useState([]);
@@ -175,9 +176,20 @@ function ElectronApp() {
       ]);
 
       setAssignmentModalOpen(false);
+      setAssignmentClassId(null);
     } catch (error) {
       console.error("Failed to add assignment:", error);
     }
+  }
+
+  function handleOpenAddAssignment(classId = null) {
+    setAssignmentClassId(classId);
+    setAssignmentModalOpen(true);
+  }
+
+  function handleCloseAddAssignment() {
+    setAssignmentModalOpen(false);
+    setAssignmentClassId(null);
   }
 
   async function handleAddClass(newClass) {
@@ -201,8 +213,8 @@ function ElectronApp() {
     }
   }
 
-  function handleEditAssignment(assignment) {
-    setAssignmentToEdit(assignment);
+  function handleEditAssignments(classId) {
+    setEditAssignmentClassId(classId);
     setEditAssignmentModalOpen(true);
   }
 
@@ -220,7 +232,7 @@ function ElectronApp() {
       );
 
       setEditAssignmentModalOpen(false);
-      setAssignmentToEdit(null);
+      setEditAssignmentClassId(null);
     } catch (error) {
       console.error("Failed to update assignment:", error);
     }
@@ -237,7 +249,7 @@ function ElectronApp() {
       );
 
       setEditAssignmentModalOpen(false);
-      setAssignmentToEdit(null);
+      setEditAssignmentClassId(null);
     } catch (error) {
       console.error("Failed to delete assignment:", error);
     }
@@ -359,7 +371,8 @@ function ElectronApp() {
             {...course}
             assignments={assignmentList}
             onEditClass={handleEditClass}
-            onEditAssignment={handleEditAssignment}
+            onEditAssignments={handleEditAssignments}
+            onAddAssignment={handleOpenAddAssignment}
             onToggleAssignment={handleToggleAssignment}
           />
         ))}
@@ -369,7 +382,7 @@ function ElectronApp() {
         <section className="electron-add-content">
           <AddContent
             type="Assignment"
-            onClick={() => setAssignmentModalOpen(true)}
+            onClick={() => handleOpenAddAssignment()}
           />
 
           <AddContent type="Class" onClick={() => setClassModalOpen(true)} />
@@ -385,7 +398,8 @@ function ElectronApp() {
       {assignmentModalOpen && (
         <AddAssignmentModal
           classes={classList}
-          onClose={() => setAssignmentModalOpen(false)}
+          initialClassId={assignmentClassId}
+          onClose={handleCloseAddAssignment}
           onAdd={handleAddAssignment}
         />
       )}
@@ -397,18 +411,23 @@ function ElectronApp() {
         />
       )}
 
-      {editAssignmentModalOpen && assignmentToEdit && (
-        <EditAssignmentModal
-          assignment={assignmentToEdit}
-          classes={classList}
-          onSave={handleSaveAssignment}
-          onDelete={handleDeleteAssignment}
-          onClose={() => {
-            setEditAssignmentModalOpen(false);
-            setAssignmentToEdit(null);
-          }}
-        />
-      )}
+      {editAssignmentModalOpen &&
+        classList.some((course) => course.id === editAssignmentClassId) && (
+          <EditAssignmentModal
+            course={classList.find(
+              (course) => course.id === editAssignmentClassId,
+            )}
+            assignments={assignmentList.filter(
+              (assignment) => assignment.classId === editAssignmentClassId,
+            )}
+            onSave={handleSaveAssignment}
+            onDelete={handleDeleteAssignment}
+            onClose={() => {
+              setEditAssignmentModalOpen(false);
+              setEditAssignmentClassId(null);
+            }}
+          />
+        )}
 
       {editClassModalOpen && classToEdit && (
         <EditClassModal

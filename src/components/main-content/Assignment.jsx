@@ -4,7 +4,6 @@ function Assignment({
   priority,
   dueDate,
   completed,
-  onEdit,
   onToggle,
 }) {
   return (
@@ -22,14 +21,6 @@ function Assignment({
         )}
       </div>
 
-      <button
-        type="button"
-        className="assignment-edit-btn"
-        aria-label="Edit Assignment"
-        onClick={onEdit}
-      >
-        <i className="fa-solid fa-pencil"></i>
-      </button>
     </div>
   );
 }
