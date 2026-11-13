@@ -1,3 +1,5 @@
+import "./assignment.css";
+
 function Assignment({
   id,
   name,

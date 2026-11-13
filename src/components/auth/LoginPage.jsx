@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import "./auth.css";
 import lyLight from "../../assets/lyweek-light.jpg";
 import lyDark from "../../assets/lyweek-dark.jpg";
 

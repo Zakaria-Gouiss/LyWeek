@@ -1,0 +1,308 @@
+.assignment-class {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: var(--card-color);
+  border: 1px solid var(--blue-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.class-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.class-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  gap: 0.75rem;
+  container: class-title / inline-size;
+}
+
+.class-title-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.course-assignment-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.4rem;
+}
+
+.course-assignment-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 8px;
+  background: var(--card-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.course-assignment-action:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.course-assignment-action:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
+
+.class-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 10px;
+  background: var(--card-color);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.class-badge:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.class-badge:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
+
+.class-onenote-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-left: 0;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 8px;
+  background: var(--onenote-btn-bg);
+  color: var(--onenote-btn-color);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.class-onenote-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.class-onenote-btn:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
+
+.class-meta-toggle-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 5px;
+  background: var(--card-color);
+  color: var(--main-blue);
+  font-size: 0.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.class-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  color: var(--class-meta-text);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.class-meta span {
+  position: relative;
+}
+
+.class-meta span:not(:last-child)::after {
+  content: "•";
+  margin-left: 0.75rem;
+  color: var(--class-meta-bullet);
+}
+
+.class-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  padding: 0;
+  border: 1px solid var(--blue-border);
+  border-radius: 5px;
+  background: var(--card-color);
+  color: var(--main-blue);
+  font-size: 0.6rem;
+  cursor: pointer;
+}
+
+.class-edit-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
+}
+
+.class-title-row--compact-actions .course-assignment-action {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+
+.class-title-row--compact-actions .course-assignment-action-label,
+.class-title-row--compact-onenote .class-onenote-label {
+  display: none;
+}
+
+.class-title-row--compact-onenote .class-onenote-btn {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+
+@container class-title (max-width: 420px) {
+  .course-assignment-action {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+
+  .course-assignment-action-label {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .assignment-class {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .class-title-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .class-title-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .class-badge {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .course-assignment-actions {
+    gap: 0.3rem;
+  }
+
+  .class-meta {
+    gap: 0.4rem 0.6rem;
+  }
+
+  .class-meta span {
+    display: inline-block;
+  }
+
+  .class-meta span:not(:last-child)::after {
+    margin-left: 0.55rem;
+  }
+}
+
+@media (max-width: 549px) {
+  .class-onenote-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .class-badge {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .class-title-row {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .class-title-controls {
+    display: flex;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .class-badge {
+    padding: 0.38rem 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .class-meta {
+    gap: 0.3rem 0.45rem;
+    font-size: 0.68rem;
+  }
+
+  .class-meta span:not(:last-child)::after {
+    margin-left: 0.45rem;
+  }
+}

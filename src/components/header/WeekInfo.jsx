@@ -1,3 +1,4 @@
+import "./header.css";
 import { getWeekInfo } from "../../utils/dateUtils";
 
 function WeekInfo({

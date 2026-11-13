@@ -1,3 +1,5 @@
+import "./header.css";
+
 function WeekButton({ position, onClick }) {
   return (
     <button

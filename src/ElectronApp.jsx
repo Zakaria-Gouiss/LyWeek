@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import "./index.css";
+import "./electron.css";
 import Assignment from "./components/main-content/Assignment.jsx";
 import Class from "./components/main-content/Class.jsx";
 import LogoWelcome from "./components/header/LogoWelcome.jsx";

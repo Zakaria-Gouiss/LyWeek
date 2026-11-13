@@ -1,3 +1,5 @@
+import "./footer.css";
+
 function AddButton({ type, onClick }) {
   if (type === "save") {
     return (

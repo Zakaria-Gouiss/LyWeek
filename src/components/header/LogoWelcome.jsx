@@ -1,3 +1,4 @@
+import "./header.css";
 import lyLight from "../../assets/lyweek-light.jpg";
 import lyDark from "../../assets/lyweek-dark.jpg";
 

@@ -1,0 +1,134 @@
+.assignment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.75rem;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.assignment-main {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.assignment-priority {
+  color: var(--main-blue);
+  font-size: 0.8rem;
+}
+
+.assignment-name {
+  overflow-wrap: anywhere;
+}
+
+.assignment input[type="checkbox"] {
+  display: grid;
+  place-content: center;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--white);
+  cursor: pointer;
+}
+
+.assignment input[type="checkbox"]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  transform: scale(0);
+  background-color: var(--main-text-color);
+  clip-path: polygon(
+    14% 44%,
+    0 59%,
+    38% 100%,
+    100% 16%,
+    84% 0%,
+    38% 75%
+  );
+}
+
+.assignment input[type="checkbox"]:checked {
+  background-color: var(--main-blue);
+  border-color: var(--main-blue);
+}
+
+.assignment input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.dark .assignment input[type="checkbox"] {
+  background-color: var(--card-color);
+  border-color: var(--dark-border);
+}
+
+.dark .assignment input[type="checkbox"]::before {
+  background-color: var(--white);
+}
+
+.dark .assignment input[type="checkbox"]:checked {
+  background-color: var(--main-blue);
+  border-color: var(--main-blue);
+}
+
+.assignment input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .assignment {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .assignment-main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .assignment {
+    gap: 0.5rem;
+  }
+
+  .assignment-name {
+    font-size: 0.9rem;
+  }
+
+  .assignment-priority {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .assignment {
+    gap: 0.4rem;
+  }
+
+  .assignment-main {
+    gap: 0.35rem;
+  }
+
+  .assignment-name {
+    font-size: 0.8rem;
+  }
+
+  .assignment-priority {
+    font-size: 0.7rem;
+  }
+
+  .assignment input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+  }
+}

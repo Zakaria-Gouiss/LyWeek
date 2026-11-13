@@ -1,3 +1,5 @@
+import "./footer.css";
+
 function NoteText({ notes, setNotes }) {
   return (
     <textarea

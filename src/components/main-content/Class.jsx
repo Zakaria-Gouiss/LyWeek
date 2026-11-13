@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./class.css";
 import Assignment from "./Assignment";
 
 function Class({
