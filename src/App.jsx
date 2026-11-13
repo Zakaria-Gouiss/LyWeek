@@ -41,6 +41,15 @@ import {
 } from "./utils/api/assignments.js";
 import { getNotes, updateNotes } from "./utils/api/notes.js";
 
+function SiteFooter() {
+  return (
+    <footer className="site-footer">
+      <span>© Zakaria Gouiss 2026. All Rights Reserved.</span>
+      <span>v1.0.0</span>
+    </footer>
+  );
+}
+
 function App() {
   const [viewingWeek, setViewingWeek] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -356,6 +365,7 @@ function App() {
             }}
           />
         )}
+        <SiteFooter />
       </main>
     );
   }
@@ -472,6 +482,7 @@ function App() {
             onSave={handleSaveSemester}
           />
         )}
+        <SiteFooter />
       </main>
     </>
   );
