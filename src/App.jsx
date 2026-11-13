@@ -1,16 +1,12 @@
-import { useState, useEffect } from "react";
-
-import lyLight from "./assets/lyweek-light.jpg";
-import lyDark from "./assets/lyweek-dark.jpg";
+import useAppController from "./hooks/useAppController.js";
 import "./index.css";
-import Assignment from "./components/main-content/Assignment.jsx";
 import Class from "./components/main-content/Class.jsx";
 import LogoWelcome from "./components/header/LogoWelcome.jsx";
 import WeekInfo from "./components/header/WeekInfo.jsx";
 import WeekButton from "./components/header/WeekButton.jsx";
 import AddContent from "./components/footer/AddButton.jsx";
 import NoteText from "./components/footer/NoteText.jsx";
-import { getSemesterWeek, getWeekInfo } from "./utils/dateUtils.js";
+import SiteFooter from "./components/footer/SiteFooter.jsx";
 import AddAssignmentModal from "./components/footer/AddAssignmentModal.jsx";
 import AddClassModal from "./components/footer/AddClassModal.jsx";
 import EditAssignmentModal from "./components/main-content/EditAssignmentModal.jsx";
@@ -19,321 +15,55 @@ import SemesterModal from "./components/header/SemesterModal.jsx";
 import LoginPage from "./components/auth/LoginPage.jsx";
 import RegisterPage from "./components/auth/RegisterPage.jsx";
 
-// API imports
-import {
-  checkAuthentication,
-  login,
-  register,
-  logout,
-} from "./utils/api/auth.js";
-import { getSemesters, updateSemester } from "./utils/api/semesters.js";
-import {
-  getClasses,
-  createClass,
-  updateClass,
-  deleteClass,
-} from "./utils/api/classes.js";
-import {
-  getAssignments,
-  createAssignment,
-  updateAssignment,
-  deleteAssignment,
-} from "./utils/api/assignments.js";
-import { getNotes, updateNotes } from "./utils/api/notes.js";
-
-function SiteFooter() {
-  return (
-    <footer className="site-footer">
-      <span>© LyWeek 2026. All Rights Reserved.</span>
-      <span>v1.0.0</span>
-    </footer>
-  );
-}
-
 function App() {
-  const [viewingWeek, setViewingWeek] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [authError, setAuthError] = useState("");
-  const [authView, setAuthView] = useState("login");
-  const [user, setUser] = useState(null);
-
-  const [assignmentModalOpen, setAssignmentModalOpen] = useState(false);
-  const [classModalOpen, setClassModalOpen] = useState(false);
-  const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
-  const [editClassModalOpen, setEditClassModalOpen] = useState(false);
-  const [semesterModalOpen, setSemesterModalOpen] = useState(false);
-  const [assignmentClassId, setAssignmentClassId] = useState(null);
-  const [editAssignmentClassId, setEditAssignmentClassId] = useState(null);
-  const [classToEdit, setClassToEdit] = useState(null);
-  const [assignmentList, setAssignmentList] = useState([]);
-  const [classList, setClassList] = useState([]);
-  const [notes, setNotes] = useState("");
-  const [semester, setSemester] = useState(null);
-
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedMode = localStorage.getItem("darkMode");
-
-    return savedMode === null ? true : savedMode === "true";
-  });
-  useEffect(() => {
-    localStorage.setItem("darkMode", darkMode);
-  }, [darkMode]);
-  useEffect(() => {
-    async function setupAuth() {
-      try {
-        const user = await checkAuthentication();
-        if (user) {
-          setUser(user);
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Failed to check authentication:", error);
-        setIsAuthenticated(false);
-      } finally {
-        setAuthLoading(false);
-      }
-    }
-
-    setupAuth();
-  }, []);
-
-  async function handleLogin(loginData) {
-    setAuthLoading(true);
-    setAuthError("");
-
-    try {
-      const user = await login(loginData.email, loginData.password);
-      setUser(user);
-      setIsAuthenticated(true);
-      setAuthView("login");
-    } catch (error) {
-      setAuthError(error.message || "Login failed");
-      setIsAuthenticated(false);
-    } finally {
-      setAuthLoading(false);
-    }
-  }
-
-  async function handleRegister(registerData) {
-    setAuthLoading(true);
-    setAuthError("");
-
-    try {
-      const user = await register(registerData);
-      console.log("REGISTERED USER:", user);
-      setUser(user);
-      setIsAuthenticated(true);
-    } catch (error) {
-      setAuthError(error.message || "Registration failed");
-      setIsAuthenticated(false);
-    } finally {
-      setAuthLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      return;
-    }
-
-    async function fetchInitialData() {
-      try {
-        const [semesterData, classesData, assignmentsData, notesData] =
-          await Promise.all([
-            getSemesters(),
-            getClasses(),
-            getAssignments(),
-            getNotes(),
-          ]);
-
-        console.log("SEMESTER DATA:", semesterData);
-        setSemester(semesterData);
-
-        const currentWeek = getSemesterWeek(semesterData.startDate, new Date());
-
-        console.log("CURRENT WEEK:", currentWeek);
-        setViewingWeek(currentWeek);
-        setClassList(classesData);
-        setAssignmentList(assignmentsData);
-        setNotes(notesData[0]?.content || "");
-      } catch (error) {
-        console.error("Failed to fetch initial data:", error);
-      }
-    }
-
-    fetchInitialData();
-  }, [isAuthenticated]);
-
-  async function handleLogout() {
-    try {
-      await logout();
-      setUser(null);
-      setIsAuthenticated(false);
-      setSemester(null);
-      setClassList([]);
-      setAssignmentList([]);
-      setNotes("");
-    } catch (error) {
-      console.error("Failed to log out:", error);
-    }
-  }
-  async function handleAddAssignment(newAssignment) {
-    try {
-      const savedAssignment = await createAssignment(newAssignment);
-      setAssignmentList((currentAssignments) => [
-        ...currentAssignments,
-        savedAssignment,
-      ]);
-      setAssignmentModalOpen(false);
-      setAssignmentClassId(null);
-    } catch (error) {
-      console.error("Failed to add assignment:", error);
-    }
-  }
-  function handleOpenAddAssignment(classId = null) {
-    setAssignmentClassId(classId);
-    setAssignmentModalOpen(true);
-  }
-
-  function handleCloseAddAssignment() {
-    setAssignmentModalOpen(false);
-    setAssignmentClassId(null);
-  }
-
-  async function handleSaveNotes() {
-    try {
-      const savedNotes = await updateNotes(notes);
-      setNotes(savedNotes.content);
-    } catch (error) {
-      console.error("Failed to save notes:", error);
-    }
-  }
-  async function handleAddClass(newClass) {
-    try {
-      const savedClass = await createClass(newClass);
-      setClassList((currentClasses) => [...currentClasses, savedClass]);
-      setClassModalOpen(false);
-    } catch (error) {
-      console.error("Failed to add class:", error);
-    }
-  }
-
-  function handleEditAssignments(classId) {
-    setEditAssignmentClassId(classId);
-    setEditAssignmentModalOpen(true);
-  }
-
-  async function handleSaveAssignment(updatedAssignment) {
-    try {
-      const savedAssignment = await updateAssignment(
-        updatedAssignment.id,
-        updatedAssignment,
-      );
-
-      setAssignmentList((currentAssignments) =>
-        currentAssignments.map((assignment) =>
-          assignment.id === savedAssignment.id ? savedAssignment : assignment,
-        ),
-      );
-
-      setEditAssignmentModalOpen(false);
-      setEditAssignmentClassId(null);
-    } catch (error) {
-      console.error("Failed to update assignment:", error);
-    }
-  }
-
-  async function handleDeleteAssignment(assignmentId) {
-    try {
-      await deleteAssignment(assignmentId);
-      setAssignmentList((currentAssignments) =>
-        currentAssignments.filter(
-          (assignment) => assignment.id !== assignmentId,
-        ),
-      );
-      setEditAssignmentModalOpen(false);
-      setEditAssignmentClassId(null);
-    } catch (error) {
-      console.error("Failed to delete assignment:", error);
-    }
-  }
-
-  function handleEditClass(course) {
-    setClassToEdit(course);
-    setEditClassModalOpen(true);
-  }
-
-  async function handleToggleAssignment(assignmentId) {
-    // Visually check the box first
-    setAssignmentList((currentAssignments) =>
-      currentAssignments.map((assignment) =>
-        assignment.id === assignmentId
-          ? { ...assignment, completed: true }
-          : assignment,
-      ),
-    );
-
-    // Wait 1 second
-    await new Promise((resolve) => setTimeout(resolve, 390));
-
-    // Then delete it
-    await handleDeleteAssignment(assignmentId);
-  }
-
-  async function handleSaveClass(updatedClass) {
-    try {
-      const savedClass = await updateClass(updatedClass.id, updatedClass);
-      setClassList((currentClasses) =>
-        currentClasses.map((course) =>
-          course.id === savedClass.id ? savedClass : course,
-        ),
-      );
-      setEditClassModalOpen(false);
-      setClassToEdit(null);
-    } catch (error) {
-      console.error("Failed to update class:", error);
-    }
-  }
-
-  async function handleDeleteClass(classId) {
-    try {
-      await deleteClass(classId);
-      setClassList((currentClasses) =>
-        currentClasses.filter((course) => course.id !== classId),
-      );
-      setAssignmentList((currentAssignments) =>
-        currentAssignments.filter(
-          (assignment) => assignment.classId !== classId,
-        ),
-      );
-      setEditClassModalOpen(false);
-      setClassToEdit(null);
-    } catch (error) {
-      console.error("Failed to delete class:", error);
-    }
-  }
-
-  async function handleSaveSemester(updatedSemester) {
-    try {
-      const savedSemester = await updateSemester(
-        updatedSemester.id ?? 1,
-        updatedSemester,
-      );
-      setSemester(savedSemester);
-      const nextWeek = getSemesterWeek(savedSemester.startDate, new Date());
-      setViewingWeek(nextWeek);
-    } catch (error) {
-      console.error("Failed to update semester:", error);
-      setSemester(updatedSemester);
-      const nextWeek = getSemesterWeek(updatedSemester.startDate, new Date());
-      setViewingWeek(nextWeek);
-    } finally {
-      setSemesterModalOpen(false);
-    }
-  }
+  const {
+    assignmentClassId,
+    assignmentList,
+    assignmentModalOpen,
+    authError,
+    authLoading,
+    authView,
+    classList,
+    classModalOpen,
+    classToEdit,
+    darkMode,
+    editAssignmentClassId,
+    editAssignmentModalOpen,
+    editClassModalOpen,
+    handleAddAssignment,
+    handleAddClass,
+    handleCloseAddAssignment,
+    handleDeleteAssignment,
+    handleDeleteClass,
+    handleEditAssignments,
+    handleEditClass,
+    handleLogin,
+    handleLogout,
+    handleOpenAddAssignment,
+    handleRegister,
+    handleSaveAssignment,
+    handleSaveClass,
+    handleSaveNotes,
+    handleSaveSemester,
+    handleToggleAssignment,
+    isAuthenticated,
+    notes,
+    semester,
+    semesterModalOpen,
+    setAuthError,
+    setAuthView,
+    setClassModalOpen,
+    setClassToEdit,
+    setDarkMode,
+    setEditAssignmentClassId,
+    setEditAssignmentModalOpen,
+    setEditClassModalOpen,
+    setNotes,
+    setSemesterModalOpen,
+    setViewingWeek,
+    user,
+    viewingWeek,
+  } = useAppController();
   if (authLoading) {
     return null;
   }
