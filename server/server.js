@@ -53,24 +53,14 @@ cron.schedule("*/10 * * * *", async () => {
   }
 });
 
-// Health check
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
-});
-//maintenance mode check
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    maintenance: process.env.MAINTENANCE_MODE === "true"
-  });
-});
+
+// 1. CORS runs first so both /api/health and 503 responses include CORS headers
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:3000", // vercel dev
   "http://localhost:5173", // vite dev
   "http://localhost:4173"  // vite preview
-].filter(Boolean); // removes undefined if FRONTEND_URL isn't set locally
-
+].filter(Boolean);
 
 app.use(
   cors({
@@ -84,6 +74,14 @@ app.use(
     credentials: true
   })
 );
+
+// 2. Single Health + Maintenance check (exempt from 503 block)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    maintenance: process.env.MAINTENANCE_MODE === "true"
+  });
+});
 
 // 3. Maintenance Mode Gate (blocks all routes below this line)
 app.use((req, res, next) => {
@@ -118,9 +116,7 @@ app.use(
 
 console.log("About to start Express...");
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
 
 // Root endpoint
 app.get("/", (req, res) => {
@@ -145,3 +141,6 @@ app.use("/api/semesters", semesterRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/notes", notesRoutes);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
