@@ -44,7 +44,7 @@ import { getNotes, updateNotes } from "./utils/api/notes.js";
 function SiteFooter() {
   return (
     <footer className="site-footer">
-      <span>© Zakaria Gouiss 2026. All Rights Reserved.</span>
+      <span>© LyWeek 2026. All Rights Reserved.</span>
       <span>v1.0.0</span>
     </footer>
   );
