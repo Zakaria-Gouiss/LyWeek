@@ -57,11 +57,20 @@ cron.schedule("*/10 * * * *", async () => {
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok" });
 });
-
+//maintenance mode check
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    maintenance: process.env.MAINTENANCE_MODE === "true"
+  });
+});
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "http://localhost:4173"
-];
+  "http://localhost:3000", // vercel dev
+  "http://localhost:5173", // vite dev
+  "http://localhost:4173"  // vite preview
+].filter(Boolean); // removes undefined if FRONTEND_URL isn't set locally
+
 
 app.use(
   cors({
@@ -75,6 +84,18 @@ app.use(
     credentials: true
   })
 );
+
+// 3. Maintenance Mode Gate (blocks all routes below this line)
+app.use((req, res, next) => {
+  if (process.env.MAINTENANCE_MODE === "true") {
+    res.set("Retry-After", "3600");
+    return res.status(503).json({
+      status: "maintenance",
+      message: "LyWeek is currently undergoing scheduled maintenance. Please check back soon."
+    });
+  }
+  next();
+});
 
 app.use(express.json());
 
