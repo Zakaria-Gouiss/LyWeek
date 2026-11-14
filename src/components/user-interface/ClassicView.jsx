@@ -10,6 +10,7 @@ import WeekButton from "../header/WeekButton.jsx";
 import AddContent from "../footer/AddButton.jsx";
 import NoteText from "../footer/NoteText.jsx";
 import SiteFooter from "../footer/SiteFooter.jsx";
+import NotesSavedToast from "../footer/NotesSavedToast.jsx";
 import "../../index.css";
 
 function ClassicView({
@@ -40,6 +41,7 @@ function ClassicView({
   notes,
   semester,
   semesterModalOpen,
+  toastMessage,
   setClassModalOpen,
   setClassToEdit,
   setDarkMode,
@@ -111,6 +113,7 @@ function ClassicView({
             <AddContent type="save" onClick={handleSaveNotes} />
           </section>
         </nav>
+        <NotesSavedToast message={toastMessage} />
         {assignmentModalOpen && (
           <AddAssignmentModal
             classes={classList}

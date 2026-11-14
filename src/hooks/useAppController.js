@@ -20,8 +20,10 @@ import {
 import { getNotes, updateNotes } from "../utils/api/notes.js";
 import { getSemesters, updateSemester } from "../utils/api/semesters.js";
 import { getSemesterWeek } from "../utils/dateUtils.js";
+import useNotesSavedToast from "./useNotesSavedToast.js";
 
 export default function useAppController() {
+  const { toastMessage, showNotesSavedToast } = useNotesSavedToast();
   const [viewingWeek, setViewingWeek] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -184,8 +186,10 @@ export default function useAppController() {
     try {
       const savedNotes = await updateNotes(notes);
       setNotes(savedNotes.content);
+      showNotesSavedToast("Notes successfully saved!");
     } catch (error) {
       console.error("Failed to save notes:", error);
+      showNotesSavedToast("Failed to save notes");
     }
   }
 
@@ -310,6 +314,7 @@ export default function useAppController() {
   }
 
   return {
+    toastMessage,
     assignmentClassId,
     assignmentList,
     assignmentModalOpen,

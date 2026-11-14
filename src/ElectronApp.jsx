@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import NotesSavedToast from "./components/footer/NotesSavedToast.jsx";
+import useNotesSavedToast from "./hooks/useNotesSavedToast.js";
 
 import "./index.css";
 import "./electron.css";
@@ -39,6 +41,7 @@ import {
 import { getNotes, updateNotes } from "./utils/api/notes.js";
 
 function ElectronApp() {
+  const { toastMessage, showNotesSavedToast } = useNotesSavedToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
@@ -209,8 +212,10 @@ function ElectronApp() {
     try {
       const savedNotes = await updateNotes(notes);
       setNotes(savedNotes.content);
+      showNotesSavedToast("Notes successfully saved!");
     } catch (error) {
       console.error("Failed to save notes:", error);
+      showNotesSavedToast("Failed to save notes");
     }
   }
 
@@ -395,6 +400,7 @@ function ElectronApp() {
           <AddContent type="save" onClick={handleSaveNotes} />
         </section>
       </nav>
+      <NotesSavedToast message={toastMessage} />
 
       {assignmentModalOpen && (
         <AddAssignmentModal
