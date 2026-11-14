@@ -73,3 +73,22 @@ export async function logout() {
 
   return response.json();
 }
+
+export async function updateUserName(name) {
+  const response = await fetch(`${API_URL}${API_PREFIX}/me`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to update name");
+  }
+
+  return data;
+}

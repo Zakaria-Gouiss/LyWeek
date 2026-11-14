@@ -1,24 +1,33 @@
 import { useState, useEffect } from "react";
 
 function SemesterModal({ semester, onClose, onSave }) {
+  const [name, setName] = useState(semester?.name ?? "");
   const [startDate, setStartDate] = useState(semester?.startDate ?? "");
   const [endDate, setEndDate] = useState(semester?.endDate ?? "");
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    setName(semester?.name ?? "");
     setStartDate(semester?.startDate ?? "");
     setEndDate(semester?.endDate ?? "");
   }, [semester]);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setError("");
 
     const updatedSemester = {
       ...semester,
+      name,
       startDate,
       endDate,
     };
 
-    onSave(updatedSemester);
+    try {
+      await onSave(updatedSemester);
+    } catch (saveError) {
+      setError(saveError.message || "Failed to save semester");
+    }
   }
 
   return (
@@ -45,6 +54,17 @@ function SemesterModal({ semester, onClose, onSave }) {
 
         <form className="assignment-form" onSubmit={handleSubmit}>
           <div className="form-group">
+            <label htmlFor="semester-name">Semester Name</label>
+            <input
+              id="semester-name"
+              name="semester-name"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
             <label htmlFor="semester-start-date">Start Date</label>
             <input
               id="semester-start-date"
@@ -54,6 +74,12 @@ function SemesterModal({ semester, onClose, onSave }) {
               onChange={(event) => setStartDate(event.target.value)}
             />
           </div>
+
+          {error && (
+            <p className="settings-error" role="alert">
+              {error}
+            </p>
+          )}
 
           <div className="form-group">
             <label htmlFor="semester-end-date">End Date</label>

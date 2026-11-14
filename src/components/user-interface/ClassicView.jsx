@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
 import AddAssignmentModal from "../footer/AddAssignmentModal.jsx";
 import AddClassModal from "../footer/AddClassModal.jsx";
 import EditAssignmentModal from "../main-content/EditAssignmentModal.jsx";
 import EditClassModal from "../main-content/EditClassModal.jsx";
-import SemesterModal from "../header/SemesterModal.jsx";
 import Class from "../main-content/Class.jsx";
 import LogoWelcome from "../header/LogoWelcome.jsx";
 import WeekInfo from "../header/WeekInfo.jsx";
@@ -11,6 +11,7 @@ import AddContent from "../footer/AddButton.jsx";
 import NoteText from "../footer/NoteText.jsx";
 import SiteFooter from "../footer/SiteFooter.jsx";
 import NotesSavedToast from "../footer/NotesSavedToast.jsx";
+import SettingsModal from "./SettingsModal.jsx";
 import "../../index.css";
 
 function ClassicView({
@@ -35,12 +36,12 @@ function ClassicView({
   handleOpenAddAssignment,
   handleSaveAssignment,
   handleSaveClass,
+  handleSaveName,
   handleSaveNotes,
   handleSaveSemester,
   handleToggleAssignment,
   notes,
   semester,
-  semesterModalOpen,
   toastMessage,
   setClassModalOpen,
   setClassToEdit,
@@ -49,11 +50,22 @@ function ClassicView({
   setEditAssignmentModalOpen,
   setEditClassModalOpen,
   setNotes,
-  setSemesterModalOpen,
   setViewingWeek,
+  showNotesSavedToast,
   user,
   viewingWeek,
 }) {
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [returnToSettingsAfterClassEdit, setReturnToSettingsAfterClassEdit] =
+    useState(false);
+
+  useEffect(() => {
+    if (returnToSettingsAfterClassEdit && !editClassModalOpen) {
+      setSettingsModalOpen(true);
+      setReturnToSettingsAfterClassEdit(false);
+    }
+  }, [editClassModalOpen, returnToSettingsAfterClassEdit]);
+
   return (
     <>
       <main className={darkMode ? "dark" : ""}>
@@ -62,7 +74,7 @@ function ClassicView({
             userName={user?.name}
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            onLogout={handleLogout}
+            onOpenSettings={() => setSettingsModalOpen(true)}
           />
           <section className="week-and-nav">
             {semester && viewingWeek !== null && (
@@ -71,7 +83,6 @@ function ClassicView({
                 semesterStartDate={semester.startDate}
                 semesterEndDate={semester.endDate}
                 week={viewingWeek}
-                onEditSemester={() => setSemesterModalOpen(true)}
               />
             )}
           </section>
@@ -160,11 +171,21 @@ function ClassicView({
           />
         )}
 
-        {semesterModalOpen && semester && (
-          <SemesterModal
+        {settingsModalOpen && (
+          <SettingsModal
+            user={user}
             semester={semester}
-            onClose={() => setSemesterModalOpen(false)}
-            onSave={handleSaveSemester}
+            classList={classList}
+            onClose={() => setSettingsModalOpen(false)}
+            onSaveName={handleSaveName}
+            onSaveSemester={handleSaveSemester}
+            onEditClass={(course) => {
+              setReturnToSettingsAfterClassEdit(true);
+              setSettingsModalOpen(false);
+              handleEditClass(course);
+            }}
+            onLogout={handleLogout}
+            onNotify={showNotesSavedToast}
           />
         )}
         <SiteFooter />

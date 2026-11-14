@@ -46,6 +46,7 @@
 .notes-input {
   flex: 1;
   min-height: 120px;
+  scrollbar-width: none;
   padding: 1rem;
   resize: vertical;
   border: 1px solid var(--blue-border);
@@ -59,6 +60,10 @@
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease;
+}
+
+.notes-input::-webkit-scrollbar {
+  display: none;
 }
 
 .notes-input:focus {

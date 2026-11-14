@@ -180,4 +180,42 @@ router.get("/me", (req, res, next) => {
   }
 });
 
+router.put("/me", async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({
+      error: "Not authenticated",
+    });
+  }
+
+  const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+  if (!name) {
+    return res.status(400).json({
+      error: "Name is required",
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE users
+       SET name = $1
+       WHERE id = $2
+       RETURNING id, name, email`,
+      [name, req.session.userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "User not found",
+      });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Failed to update name",
+    });
+  }
+});
+
 module.exports = router;

@@ -59,29 +59,35 @@
   text-shadow: 0 2px 18px var(--blue-shadow);
 }
 
-.logout-button {
+.settings-button {
   justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 68px;
-  padding: 0.35rem 0.7rem;
-  border: 1px solid rgba(255, 92, 92, 0.25);
-  border-radius: 999px;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.45rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
-  color: #d93b3b;
-  font-family: inherit;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  color: var(--main-blue);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.logout-button:hover {
+.settings-button svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.settings-button:hover {
   transform: translateY(-1px);
-  border-color: rgba(255, 92, 92, 0.6);
-  box-shadow: 0 4px 12px rgba(217, 59, 59, 0.12);
+  border-color: var(--main-blue);
+  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 .week-and-nav {
@@ -113,28 +119,6 @@
   font-size: 1.05rem;
   font-weight: 600;
   text-align: center;
-}
-
-.week-edit-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.15rem;
-  height: 1.15rem;
-  padding: 0;
-  border: 1px solid var(--blue-border);
-  border-radius: 5px;
-  background: var(--card-color);
-  color: var(--main-blue);
-  font-size: 0.55rem;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.week-edit-btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--main-blue);
-  box-shadow: 0 4px 12px var(--blue-shadow);
 }
 
 #week-date {

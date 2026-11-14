@@ -121,6 +121,88 @@ main {
   box-shadow: 0 14px 38px rgba(26, 26, 26, 0.2);
 }
 
+.settings-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-height: min(90vh, 760px);
+  overflow-y: auto;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.settings-section-title {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.settings-date-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.settings-class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-height: 10rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-class-list::-webkit-scrollbar {
+  display: none;
+}
+
+.settings-class-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 9px;
+  color: var(--text-color);
+}
+
+.settings-edit-class {
+  flex: 0 0 auto;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 7px;
+  background: var(--card-color);
+  color: var(--main-blue-strong);
+  font: inherit;
+  cursor: pointer;
+}
+
+.settings-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.settings-error {
+  margin: 0;
+  color: #d93b3b;
+  font-size: 0.9rem;
+}
+
+.settings-logout {
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--blue-border);
+}
+
 .assignment-modal-header {
   display: flex;
   align-items: center;
@@ -340,6 +422,10 @@ main {
 
   .assignment-modal-header {
     gap: 0.75rem;
+  }
+
+  .settings-date-fields {
+    grid-template-columns: 1fr;
   }
 
   .assignment-modal-title {

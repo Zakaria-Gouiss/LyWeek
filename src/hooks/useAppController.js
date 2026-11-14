@@ -4,6 +4,7 @@ import {
   login,
   logout,
   register,
+  updateUserName,
 } from "../utils/api/auth.js";
 import {
   createAssignment,
@@ -35,7 +36,6 @@ export default function useAppController() {
   const [classModalOpen, setClassModalOpen] = useState(false);
   const [editAssignmentModalOpen, setEditAssignmentModalOpen] = useState(false);
   const [editClassModalOpen, setEditClassModalOpen] = useState(false);
-  const [semesterModalOpen, setSemesterModalOpen] = useState(false);
   const [assignmentClassId, setAssignmentClassId] = useState(null);
   const [editAssignmentClassId, setEditAssignmentClassId] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
@@ -155,6 +155,16 @@ export default function useAppController() {
       setNotes("");
     } catch (error) {
       console.error("Failed to log out:", error);
+    }
+  }
+
+  async function handleSaveName(name) {
+    try {
+      const updatedUser = await updateUserName(name);
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Failed to update name:", error);
+      throw error;
     }
   }
 
@@ -305,11 +315,7 @@ export default function useAppController() {
       setViewingWeek(nextWeek);
     } catch (error) {
       console.error("Failed to update semester:", error);
-      setSemester(updatedSemester);
-      const nextWeek = getSemesterWeek(updatedSemester.startDate, new Date());
-      setViewingWeek(nextWeek);
-    } finally {
-      setSemesterModalOpen(false);
+      throw error;
     }
   }
 
@@ -342,12 +348,12 @@ export default function useAppController() {
     handleSaveAssignment,
     handleSaveClass,
     handleSaveNotes,
+    handleSaveName,
     handleSaveSemester,
     handleToggleAssignment,
     isAuthenticated,
     notes,
     semester,
-    semesterModalOpen,
     setAuthError,
     setAuthView,
     setClassModalOpen,
@@ -357,8 +363,8 @@ export default function useAppController() {
     setEditAssignmentModalOpen,
     setEditClassModalOpen,
     setNotes,
-    setSemesterModalOpen,
     setViewingWeek,
+    showNotesSavedToast,
     user,
     viewingWeek,
   };

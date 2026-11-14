@@ -34,13 +34,13 @@ function App() {
     handleRegister,
     handleSaveAssignment,
     handleSaveClass,
+    handleSaveName,
     handleSaveNotes,
     handleSaveSemester,
     handleToggleAssignment,
     isAuthenticated,
     notes,
     semester,
-    semesterModalOpen,
     setAuthError,
     setAuthView,
     setClassModalOpen,
@@ -50,7 +50,6 @@ function App() {
     setEditAssignmentModalOpen,
     setEditClassModalOpen,
     setNotes,
-    setSemesterModalOpen,
     setViewingWeek,
     user,
     viewingWeek,
@@ -91,7 +90,7 @@ function App() {
     );
   }
 
-  return <ClassicView {...controller} />;
+  return <ClassicView {...controller} handleSaveName={handleSaveName} />;
 }
 
 export default App;
