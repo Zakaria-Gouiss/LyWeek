@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ViewToggle from "../header/ViewToggle.jsx";
 
 function SettingsModal({
   user,
@@ -10,11 +11,15 @@ function SettingsModal({
   onEditClass,
   onLogout,
   onNotify,
+  viewMode,
+  onViewModeChange,
+  isOrbitSupported = true,
 }) {
   const [name, setName] = useState(user?.name ?? "");
   const [semesterName, setSemesterName] = useState(semester?.name ?? "");
   const [startDate, setStartDate] = useState(semester?.startDate ?? "");
   const [endDate, setEndDate] = useState(semester?.endDate ?? "");
+  const [selectedViewMode, setSelectedViewMode] = useState(viewMode);
   const [isSaving, setIsSaving] = useState(false);
 
   async function handleSubmit(event) {
@@ -22,8 +27,17 @@ function SettingsModal({
     setIsSaving(true);
 
     try {
-      await onSaveName(name.trim());
-      if (semester) {
+      const updatedName = name.trim();
+      if (updatedName !== user?.name) {
+        await onSaveName(updatedName);
+      }
+
+      const semesterChanged =
+        semester &&
+        (semesterName.trim() !== semester.name ||
+          startDate !== semester.startDate ||
+          endDate !== semester.endDate);
+      if (semesterChanged) {
         await onSaveSemester({
           ...semester,
           name: semesterName.trim(),
@@ -31,13 +45,16 @@ function SettingsModal({
           endDate,
         });
       }
-      onClose();
-      onNotify("Settings successfuly saved!");
     } catch {
-      onNotify("Failed to save preferences");
-    } finally {
       setIsSaving(false);
+      onNotify("Failed to save preferences");
+      return;
     }
+
+    setIsSaving(false);
+    onViewModeChange(selectedViewMode);
+    onClose();
+    onNotify("Settings successfuly saved!");
   }
 
   return (
@@ -76,6 +93,15 @@ function SettingsModal({
                 required
               />
             </div>
+          </section>
+
+          <section className="settings-section">
+            <h3 className="settings-section-title">Classic vs Orbit</h3>
+            <ViewToggle
+              viewMode={selectedViewMode}
+              onViewModeChange={setSelectedViewMode}
+              orbitDisabled={!isOrbitSupported}
+            />
           </section>
 
           {semester && (

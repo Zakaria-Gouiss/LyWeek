@@ -55,6 +55,7 @@ function ElectronApp() {
 
   const [assignmentClassId, setAssignmentClassId] = useState(null);
   const [editAssignmentClassId, setEditAssignmentClassId] = useState(null);
+  const [editAssignmentId, setEditAssignmentId] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
 
   const [assignmentList, setAssignmentList] = useState([]);
@@ -219,8 +220,9 @@ function ElectronApp() {
     }
   }
 
-  function handleEditAssignments(classId) {
+  function handleEditAssignments(classId, assignmentId = null) {
     setEditAssignmentClassId(classId);
+    setEditAssignmentId(assignmentId);
     setEditAssignmentModalOpen(true);
   }
 
@@ -239,8 +241,10 @@ function ElectronApp() {
 
       setEditAssignmentModalOpen(false);
       setEditAssignmentClassId(null);
+      setEditAssignmentId(null);
     } catch (error) {
       console.error("Failed to update assignment:", error);
+      throw error;
     }
   }
 
@@ -256,6 +260,7 @@ function ElectronApp() {
 
       setEditAssignmentModalOpen(false);
       setEditAssignmentClassId(null);
+      setEditAssignmentId(null);
     } catch (error) {
       console.error("Failed to delete assignment:", error);
     }
@@ -424,6 +429,7 @@ function ElectronApp() {
             course={classList.find(
               (course) => course.id === editAssignmentClassId,
             )}
+            initialAssignmentId={editAssignmentId}
             assignments={assignmentList.filter(
               (assignment) => assignment.classId === editAssignmentClassId,
             )}
@@ -432,6 +438,7 @@ function ElectronApp() {
             onClose={() => {
               setEditAssignmentModalOpen(false);
               setEditAssignmentClassId(null);
+              setEditAssignmentId(null);
             }}
           />
         )}

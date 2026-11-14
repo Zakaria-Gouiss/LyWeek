@@ -23,6 +23,7 @@ function ClassicView({
   classToEdit,
   darkMode,
   editAssignmentClassId,
+  editAssignmentId,
   editAssignmentModalOpen,
   editClassModalOpen,
   handleAddAssignment,
@@ -47,6 +48,7 @@ function ClassicView({
   setClassToEdit,
   setDarkMode,
   setEditAssignmentClassId,
+  setEditAssignmentId,
   setEditAssignmentModalOpen,
   setEditClassModalOpen,
   setNotes,
@@ -54,6 +56,9 @@ function ClassicView({
   showNotesSavedToast,
   user,
   viewingWeek,
+  viewMode,
+  onViewModeChange,
+  isOrbitSupported,
 }) {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [returnToSettingsAfterClassEdit, setReturnToSettingsAfterClassEdit] =
@@ -75,6 +80,7 @@ function ClassicView({
             darkMode={darkMode}
             setDarkMode={setDarkMode}
             onOpenSettings={() => setSettingsModalOpen(true)}
+            logoClickable={false}
           />
           <section className="week-and-nav">
             {semester && viewingWeek !== null && (
@@ -147,6 +153,7 @@ function ClassicView({
               course={classList.find(
                 (course) => course.id === editAssignmentClassId,
               )}
+              initialAssignmentId={editAssignmentId}
               assignments={assignmentList.filter(
                 (assignment) => assignment.classId === editAssignmentClassId,
               )}
@@ -155,6 +162,7 @@ function ClassicView({
               onClose={() => {
                 setEditAssignmentModalOpen(false);
                 setEditAssignmentClassId(null);
+                setEditAssignmentId(null);
               }}
             />
           )}
@@ -186,6 +194,9 @@ function ClassicView({
             }}
             onLogout={handleLogout}
             onNotify={showNotesSavedToast}
+            viewMode={viewMode}
+            onViewModeChange={onViewModeChange}
+            isOrbitSupported={isOrbitSupported}
           />
         )}
         <SiteFooter />

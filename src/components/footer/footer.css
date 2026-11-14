@@ -18,7 +18,7 @@
   color: var(--text-color);
   font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition:
     transform 0.15s ease,
@@ -89,7 +89,7 @@
   color: var(--white);
   font-family: inherit;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition:
     transform 0.15s ease,

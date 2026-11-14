@@ -22,6 +22,30 @@
   font-size: 0.8rem;
 }
 
+.assignment-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 50%;
+  background: var(--card-color);
+  color: var(--main-blue);
+  cursor: pointer;
+}
+
+.assignment-edit:hover {
+  border-color: var(--main-blue);
+  box-shadow: 0 2px 8px var(--blue-shadow);
+}
+
+.assignment-edit:focus-visible {
+  outline: 2px solid var(--main-blue);
+  outline-offset: 2px;
+}
+
 .assignment-name {
   overflow-wrap: anywhere;
 }

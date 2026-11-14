@@ -7,6 +7,7 @@ function Assignment({
   dueDate,
   completed,
   onToggle,
+  onEdit,
 }) {
   return (
     <div className="assignment">
@@ -20,6 +21,17 @@ function Assignment({
         <span className="assignment-name">{name}</span>
         {dueDate && (
           <span className="assignment-due-date">by {dueDate}</span>
+        )}
+        {onEdit && (
+          <button
+            type="button"
+            className="assignment-edit"
+            aria-label={`Edit ${name}`}
+            title="Edit assignment"
+            onClick={onEdit}
+          >
+            <i className="fa-solid fa-pencil" aria-hidden="true"></i>
+          </button>
         )}
       </div>
 

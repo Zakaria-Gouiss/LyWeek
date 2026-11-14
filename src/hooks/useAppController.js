@@ -38,6 +38,7 @@ export default function useAppController() {
   const [editClassModalOpen, setEditClassModalOpen] = useState(false);
   const [assignmentClassId, setAssignmentClassId] = useState(null);
   const [editAssignmentClassId, setEditAssignmentClassId] = useState(null);
+  const [editAssignmentId, setEditAssignmentId] = useState(null);
   const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState([]);
   const [classList, setClassList] = useState([]);
@@ -213,8 +214,9 @@ export default function useAppController() {
     }
   }
 
-  function handleEditAssignments(classId) {
+  function handleEditAssignments(classId, assignmentId = null) {
     setEditAssignmentClassId(classId);
+    setEditAssignmentId(assignmentId);
     setEditAssignmentModalOpen(true);
   }
 
@@ -233,8 +235,10 @@ export default function useAppController() {
 
       setEditAssignmentModalOpen(false);
       setEditAssignmentClassId(null);
+      setEditAssignmentId(null);
     } catch (error) {
       console.error("Failed to update assignment:", error);
+      throw error;
     }
   }
 
@@ -248,6 +252,7 @@ export default function useAppController() {
       );
       setEditAssignmentModalOpen(false);
       setEditAssignmentClassId(null);
+      setEditAssignmentId(null);
     } catch (error) {
       console.error("Failed to delete assignment:", error);
     }
@@ -332,6 +337,7 @@ export default function useAppController() {
     classToEdit,
     darkMode,
     editAssignmentClassId,
+    editAssignmentId,
     editAssignmentModalOpen,
     editClassModalOpen,
     handleAddAssignment,
@@ -360,6 +366,7 @@ export default function useAppController() {
     setClassToEdit,
     setDarkMode,
     setEditAssignmentClassId,
+    setEditAssignmentId,
     setEditAssignmentModalOpen,
     setEditClassModalOpen,
     setNotes,

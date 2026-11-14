@@ -39,7 +39,7 @@
 .electron-app .electron-header .welcome {
   flex: 1;
   font-size: 1rem;
-  font-weight: 430;
+  font-weight: 400;
   text-align: left;
   white-space: nowrap;
 }

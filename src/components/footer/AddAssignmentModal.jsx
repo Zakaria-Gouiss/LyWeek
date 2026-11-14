@@ -5,6 +5,7 @@ function AddAssignmentModal({
   onAdd,
   classes,
   initialClassId = null,
+  forceUndated = false,
 }) {
   const [name, setName] = useState("");
   const [classId, setClassId] = useState(
@@ -108,24 +109,26 @@ function AddAssignmentModal({
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="assignment-duedate">Due Date (optional)</label>
-            <select
-              id="assignment-duedate"
-              name="assignment-duedate"
-              value={dueDate}
-              onChange={(event) => setDueDate(event.target.value)}
-            >
-              <option value="">Select a day</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-              <option value="Sunday">Sunday</option>
-            </select>
-          </div>
+          {!forceUndated && (
+            <div className="form-group">
+              <label htmlFor="assignment-duedate">Due Date (optional)</label>
+              <select
+                id="assignment-duedate"
+                name="assignment-duedate"
+                value={dueDate}
+                onChange={(event) => setDueDate(event.target.value)}
+              >
+                <option value="">No due date</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+              </select>
+            </div>
+          )}
 
           <div className="form-actions">
             <button type="submit" className="modal-submit">
