@@ -12,6 +12,16 @@
   color: var(--white);
   font-size: 0.9rem;
   box-shadow: 0 4px 14px rgba(98, 98, 99, 0.16);
+  opacity: 1;
+  transition:
+    opacity 1s ease,
+    transform 2s ease;
+}
+
+.notes-saved-toast.is-fading {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.35rem);
 }
 
 .dark .notes-saved-toast {
@@ -19,3 +29,4 @@
   background: rgba(40, 40, 51, 0.93);
   color: var(--white);
 }
+

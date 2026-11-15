@@ -1,6 +1,6 @@
 import "./footer.css";
 
-function AddButton({ type, onClick, iconOnly = false }) {
+function AddButton({ type, onClick, iconOnly = false, label }) {
   if (type === "save") {
     return (
       <button className="save-notes" onClick={onClick}>
@@ -17,7 +17,7 @@ function AddButton({ type, onClick, iconOnly = false }) {
       title={iconOnly ? `Add ${type}` : undefined}
     >
       <i className="fa-solid fa-plus"></i>
-      {!iconOnly && <span>Add {type}</span>}
+      {!iconOnly && <span>{label ?? `Add ${type}`}</span>}
     </button>
   );
 }

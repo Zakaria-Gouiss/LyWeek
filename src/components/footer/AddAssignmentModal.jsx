@@ -29,9 +29,9 @@ function AddAssignmentModal({
     onAdd(newAssignment);
   }
   return (
-    <div className="assignment-modal-overlay">
+    <div className="assignment-modal-overlay add-assignment-modal-overlay">
       <div
-        className="assignment-modal"
+        className="assignment-modal add-assignment-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-assignment-title"

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import useAppController from "./hooks/useAppController.js";
 import "./index.css";
+import "./electron.css";
 import SiteFooter from "./components/footer/SiteFooter.jsx";
 import LoginPage from "./components/auth/LoginPage.jsx";
 import RegisterPage from "./components/auth/RegisterPage.jsx";
@@ -9,7 +10,7 @@ import OrbitView from "./components/user-interface/OrbitView.jsx";
 
 const VIEW_MODE_STORAGE_KEY = "lyweek-view-mode";
 
-function App() {
+function App({ isElectron = false }) {
   const controller = useAppController();
   const [viewMode, setViewMode] = useState(() =>
     localStorage.getItem(VIEW_MODE_STORAGE_KEY) === "orbit"
@@ -85,7 +86,11 @@ function App() {
   }
   if (!isAuthenticated) {
     return (
-      <main className={darkMode ? "dark" : ""}>
+      <main
+        className={`${darkMode ? "dark " : ""}${
+          isElectron ? "electron-view" : ""
+        }`.trim()}
+      >
         {authView === "login" ? (
           <LoginPage
             onLogin={handleLogin}
@@ -119,6 +124,7 @@ function App() {
   const viewProps = {
     ...controller,
     handleSaveName,
+    isElectron,
     viewMode: isOrbitSupported ? viewMode : "classic",
     isOrbitSupported,
     onViewModeChange: setViewMode,

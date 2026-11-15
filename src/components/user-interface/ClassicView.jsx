@@ -48,6 +48,7 @@ function ClassicView({
   notes,
   semester,
   toastMessage,
+  isToastFading,
   setClassModalOpen,
   setClassToEdit,
   setDarkMode,
@@ -63,6 +64,7 @@ function ClassicView({
   viewMode,
   onViewModeChange,
   isOrbitSupported,
+  isElectron,
 }) {
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [returnToSettingsAfterClassEdit, setReturnToSettingsAfterClassEdit] =
@@ -76,8 +78,12 @@ function ClassicView({
   }, [editClassModalOpen, returnToSettingsAfterClassEdit]);
 
   return (
-    <>
-      <main className={darkMode ? "dark" : ""}>
+    <div className={isElectron ? "electron-view-shell" : undefined}>
+      <main
+        className={`${darkMode ? "dark " : ""}${
+          isElectron ? "electron-view" : ""
+        }`.trim()}
+      >
         <nav className="header">
           <LogoWelcome
             userName={user?.name}
@@ -93,19 +99,22 @@ function ClassicView({
                 semesterStartDate={semester.startDate}
                 semesterEndDate={semester.endDate}
                 week={viewingWeek}
+                showDate={!isElectron}
               />
             )}
           </section>
-          <div className="week-nav">
-            <WeekButton
-              position="left"
-              onClick={() => setViewingWeek(viewingWeek - 1)}
-            />
-            <WeekButton
-              position="right"
-              onClick={() => setViewingWeek(viewingWeek + 1)}
-            />
-          </div>
+          {!isElectron && (
+            <div className="week-nav">
+              <WeekButton
+                position="left"
+                onClick={() => setViewingWeek(viewingWeek - 1)}
+              />
+              <WeekButton
+                position="right"
+                onClick={() => setViewingWeek(viewingWeek + 1)}
+              />
+            </div>
+          )}
         </nav>
         <nav className="main-content">
           {classList.map((course) => (
@@ -128,9 +137,14 @@ function ClassicView({
           <section className="add-content">
             <AddContent
               type="Assignment"
+              label={isElectron ? "Assignment" : undefined}
               onClick={() => handleOpenAddAssignment()}
             />
-            <AddContent type="Class" onClick={() => setClassModalOpen(true)} />
+            <AddContent
+              type="Class"
+              label={isElectron ? "Class" : undefined}
+              onClick={() => setClassModalOpen(true)}
+            />
           </section>
           <section className="misc-notes">
             <NoteText notes={notes} setNotes={setNotes} />
@@ -138,7 +152,7 @@ function ClassicView({
             <AddContent type="save" onClick={handleSaveNotes} />
           </section>
         </nav>
-        <NotesSavedToast message={toastMessage} />
+        <NotesSavedToast message={toastMessage} isFading={isToastFading} />
         {assignmentModalOpen && (
           <AddAssignmentModal
             classes={classList}
@@ -209,7 +223,7 @@ function ClassicView({
         )}
         <SiteFooter />
       </main>
-    </>
+    </div>
   );
 }
 export default ClassicView;

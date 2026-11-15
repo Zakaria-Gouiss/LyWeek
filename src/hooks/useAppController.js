@@ -30,7 +30,8 @@ import { getSemesterWeek } from "../utils/dateUtils.js";
 import useNotesSavedToast from "./useNotesSavedToast.js";
 
 export default function useAppController() {
-  const { toastMessage, showNotesSavedToast } = useNotesSavedToast();
+  const { toastMessage, isToastFading, showNotesSavedToast } =
+    useNotesSavedToast();
   const [viewingWeek, setViewingWeek] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
@@ -417,6 +418,7 @@ export default function useAppController() {
 
   return {
     toastMessage,
+    isToastFading,
     assignmentClassId,
     assignmentList,
     assignmentModalOpen,

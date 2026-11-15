@@ -48,7 +48,8 @@ import {
 import { getNotes, updateNotes } from "./utils/api/notes.js";
 
 function ElectronApp() {
-  const { toastMessage, showNotesSavedToast } = useNotesSavedToast();
+  const { toastMessage, isToastFading, showNotesSavedToast } =
+    useNotesSavedToast();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState("");
@@ -493,7 +494,7 @@ function ElectronApp() {
           <AddContent type="save" onClick={handleSaveNotes} />
         </section>
       </nav>
-      <NotesSavedToast message={toastMessage} />
+      <NotesSavedToast message={toastMessage} isFading={isToastFading} />
 
       {assignmentModalOpen && (
         <AddAssignmentModal

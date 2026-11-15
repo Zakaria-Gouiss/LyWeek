@@ -17,14 +17,40 @@ import SettingsModal from "./SettingsModal.jsx";
 import "../../index.css";
 import "./orbit.css";
 
-function getAssignmentGroups(classList, assignmentList, undated) {
+const ELECTRON_ORBIT_SPLIT_KEY = "lyweek-electron-orbit-split";
+const MIN_ELECTRON_ASSIGNMENTS_PERCENT = 20;
+const MAX_ELECTRON_ASSIGNMENTS_PERCENT = 70;
+
+function getSavedElectronAssignmentsPercent() {
+  const savedValue = window.localStorage.getItem(ELECTRON_ORBIT_SPLIT_KEY);
+  if (savedValue === null) {
+    return 40;
+  }
+
+  const percentage = Number(savedValue);
+  return Number.isFinite(percentage)
+    ? Math.min(
+        MAX_ELECTRON_ASSIGNMENTS_PERCENT,
+        Math.max(MIN_ELECTRON_ASSIGNMENTS_PERCENT, percentage),
+      )
+    : 40;
+}
+
+function getAssignmentGroups(
+  classList,
+  assignmentList,
+  undated,
+  includeUndated = false,
+) {
   return classList
     .map((course) => ({
       course,
       assignments: assignmentList.filter(
         (assignment) =>
           assignment.classId === course.id &&
-          (undated ? !assignment.dueDate : Boolean(assignment.dueDate)),
+          (undated
+            ? !assignment.dueDate
+            : includeUndated || Boolean(assignment.dueDate)),
       ),
     }))
     .filter((group) => group.assignments.length > 0);
@@ -103,17 +129,29 @@ function OrbitView({
   setViewingWeek,
   showNotesSavedToast,
   toastMessage,
+  isToastFading,
   user,
   viewingWeek,
   viewMode,
   onViewModeChange,
   isOrbitSupported,
+  isElectron,
 }) {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [electronAssignmentsPercent, setElectronAssignmentsPercent] =
+    useState(() =>
+      isElectron ? getSavedElectronAssignmentsPercent() : 40,
+    );
+  const electronAssignmentsPercentRef = useRef(electronAssignmentsPercent);
+  const compactViewportRef = useRef(null);
+  const [courseDetailsOpen, setCourseDetailsOpen] = useState(
+    () => window.innerHeight > 700,
+  );
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [returnToSettingsAfterClassEdit, setReturnToSettingsAfterClassEdit] =
     useState(false);
   const [forceUndatedAssignment, setForceUndatedAssignment] = useState(false);
+  const orbitWorkspaceRef = useRef(null);
   const bubbleScrollRef = useRef(null);
   const bubbleStageRef = useRef(null);
   const [bubbleViewportWidth, setBubbleViewportWidth] = useState(0);
@@ -133,6 +171,21 @@ function OrbitView({
       setSelectedCourseId(null);
     }
   }, [classList, selectedCourseId]);
+
+  useEffect(() => {
+    compactViewportRef.current = window.innerHeight <= 700;
+
+    function handleResize() {
+      const isCompactViewport = window.innerHeight <= 700;
+      if (isCompactViewport !== compactViewportRef.current) {
+        compactViewportRef.current = isCompactViewport;
+        setCourseDetailsOpen(!isCompactViewport);
+      }
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const bubbleScroll = bubbleScrollRef.current;
@@ -163,6 +216,7 @@ function OrbitView({
     classList,
     assignmentList,
     false,
+    isElectron,
   );
   const undatedGroups = getAssignmentGroups(classList, assignmentList, true);
 
@@ -181,10 +235,16 @@ function OrbitView({
     380,
     Math.ceil(baseBubbleRadius * 2 + baseBubbleSize + 48),
   );
+  const electronBubbleScale = isElectron ? 0.78 : 1;
   const bubbleScale =
-    window.innerWidth < 750 && bubbleViewportWidth > 0
-      ? Math.min(1, bubbleViewportWidth / baseBubbleStageSize)
-      : 1;
+    (window.innerWidth < 750 || isElectron) && bubbleViewportWidth > 0
+      ? electronBubbleScale *
+        Math.min(
+          1,
+          bubbleViewportWidth /
+            (baseBubbleStageSize * electronBubbleScale),
+        )
+      : electronBubbleScale;
   const bubbleSize = baseBubbleSize * bubbleScale;
   const bubbleRadius = baseBubbleRadius * bubbleScale;
   const bubbleStageSize = Math.floor(baseBubbleStageSize * bubbleScale);
@@ -196,29 +256,19 @@ function OrbitView({
       return;
     }
 
-    const driftDistance = Math.min(22 * bubbleScale, bubbleRadius * 0.3);
-    const bubbleRadiusOnScreen = bubbleSize / 2;
     const states = Array.from(
       stage.querySelectorAll(".orbit-course-bubble-wrap"),
-      (element, index) => {
-        const angle =
-          classList.length === 1
-            ? 0
-            : (2 * Math.PI * index) / classList.length - Math.PI / 2;
-        const anchorX =
-          stage.clientWidth / 2 + Math.cos(angle) * bubbleRadius;
-        const anchorY =
-          stage.clientHeight / 2 + Math.sin(angle) * bubbleRadius;
+      (element) => {
         const velocityAngle = Math.random() * 2 * Math.PI;
         const speed = 7 + Math.random() * 4;
 
         element.style.willChange = "transform";
         return {
           element,
-          anchorX,
-          anchorY,
-          x: anchorX,
-          y: anchorY,
+          anchorX: 0,
+          anchorY: 0,
+          x: 0,
+          y: 0,
           vx: Math.cos(velocityAngle) * speed,
           vy: Math.sin(velocityAngle) * speed,
         };
@@ -233,6 +283,8 @@ function OrbitView({
       lastTime = timestamp;
 
       states.forEach((state) => {
+        state.anchorX = state.element.offsetLeft + state.element.offsetWidth / 2;
+        state.anchorY = state.element.offsetTop + state.element.offsetHeight / 2;
         state.x += state.vx * delta;
         state.y += state.vy * delta;
       });
@@ -241,10 +293,11 @@ function OrbitView({
         for (let second = first + 1; second < states.length; second += 1) {
           const a = states[first];
           const b = states[second];
-          const dx = b.x - a.x;
-          const dy = b.y - a.y;
+          const dx = b.anchorX + b.x - a.anchorX - a.x;
+          const dy = b.anchorY + b.y - a.anchorY - a.y;
           const distance = Math.hypot(dx, dy);
-          const minDistance = bubbleRadiusOnScreen * 2;
+          const minDistance =
+            (a.element.offsetWidth + b.element.offsetWidth) / 2;
 
           if (distance >= minDistance) {
             continue;
@@ -271,16 +324,18 @@ function OrbitView({
       }
 
       states.forEach((state) => {
-        const offsetX = state.x - state.anchorX;
-        const offsetY = state.y - state.anchorY;
-        const offsetDistance = Math.hypot(offsetX, offsetY);
+        const driftDistance = Math.min(
+          22,
+          (state.element.offsetWidth / 2) * 0.3,
+        );
+        const offsetDistance = Math.hypot(state.x, state.y);
 
         if (offsetDistance > driftDistance) {
-          const normalX = offsetX / offsetDistance;
-          const normalY = offsetY / offsetDistance;
+          const normalX = state.x / offsetDistance;
+          const normalY = state.y / offsetDistance;
           const outwardVelocity = state.vx * normalX + state.vy * normalY;
-          state.x = state.anchorX + normalX * driftDistance;
-          state.y = state.anchorY + normalY * driftDistance;
+          state.x = normalX * driftDistance;
+          state.y = normalY * driftDistance;
 
           if (outwardVelocity > 0) {
             state.vx -= 2 * outwardVelocity * normalX;
@@ -289,8 +344,7 @@ function OrbitView({
         }
 
         state.element.style.transform =
-          `translate(-50%, -50%) translate3d(${state.x - state.anchorX}px, ` +
-          `${state.y - state.anchorY}px, 0)`;
+          `translate(-50%, -50%) translate3d(${state.x}px, ${state.y}px, 0)`;
       });
 
       frameId = window.requestAnimationFrame(updatePositions);
@@ -305,9 +359,6 @@ function OrbitView({
       });
     };
   }, [
-    bubbleScale,
-    bubbleSize,
-    bubbleRadius,
     classList.length,
     courseOrderKey,
   ]);
@@ -323,8 +374,81 @@ function OrbitView({
     );
   }
 
+  function setAssignmentsPercent(value, persist = true) {
+    const percentage = Math.min(
+      MAX_ELECTRON_ASSIGNMENTS_PERCENT,
+      Math.max(MIN_ELECTRON_ASSIGNMENTS_PERCENT, value),
+    );
+    electronAssignmentsPercentRef.current = percentage;
+    setElectronAssignmentsPercent(percentage);
+    if (persist) {
+      window.localStorage.setItem(
+        ELECTRON_ORBIT_SPLIT_KEY,
+        String(percentage),
+      );
+    }
+  }
+
+  function persistAssignmentsPercent() {
+    window.localStorage.setItem(
+      ELECTRON_ORBIT_SPLIT_KEY,
+      String(electronAssignmentsPercentRef.current),
+    );
+  }
+
+  function handleOrbitResizePointerMove(event) {
+    const workspace = orbitWorkspaceRef.current;
+    const separator = event.currentTarget;
+    if (!workspace || !separator.hasPointerCapture(event.pointerId)) {
+      return;
+    }
+
+    const isStacked = window.matchMedia("(max-width: 740px)").matches;
+    const coursePanel = workspace.querySelector(".orbit-course-panel");
+    const coursePanelWidth =
+      selectedCourse && !isStacked && coursePanel
+        ? coursePanel.getBoundingClientRect().width
+        : 0;
+    const columnGap = Number.parseFloat(
+      window.getComputedStyle(workspace).columnGap,
+    );
+    const gap = Number.isFinite(columnGap) ? columnGap : 0;
+    const columnCount = selectedCourse && !isStacked ? 4 : 3;
+    const availableWidth =
+      workspace.clientWidth -
+      gap * (columnCount - 1) -
+      separator.getBoundingClientRect().width -
+      coursePanelWidth;
+    const assignmentsWidth =
+      event.clientX -
+      workspace.getBoundingClientRect().left -
+      gap -
+      separator.getBoundingClientRect().width / 2;
+
+    if (availableWidth > 0) {
+      setAssignmentsPercent(
+        Math.round((assignmentsWidth / availableWidth) * 100),
+        false,
+      );
+    }
+  }
+
+  function handleOrbitResizeKeyDown(event) {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+      return;
+    }
+
+    event.preventDefault();
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    setAssignmentsPercent(electronAssignmentsPercent + direction * 2);
+  }
+
   return (
-    <main className={`orbit-view${darkMode ? " dark" : ""}`}>
+    <main
+      className={`orbit-view${darkMode ? " dark" : ""}${
+        isElectron ? " electron-view" : ""
+      }`}
+    >
       <header className="orbit-header">
         <div className="orbit-header-brand">
           <LogoWelcome
@@ -358,13 +482,23 @@ function OrbitView({
 
       <div
         className={`orbit-workspace${selectedCourse ? " has-selected-course" : ""}`}
+        ref={orbitWorkspaceRef}
+        style={
+          isElectron
+            ? {
+                "--electron-assignments-fr": `${electronAssignmentsPercent}fr`,
+                "--electron-orbit-fr": `${100 - electronAssignmentsPercent}fr`,
+              }
+            : undefined
+        }
       >
         <aside className="orbit-sidebar">
           <section className="orbit-sidebar-section orbit-upcoming">
             <div className="orbit-section-heading">
-              <h2>Upcoming Assignments</h2>
+              <h2>{isElectron ? "Assignments" : "Upcoming Assignments"}</h2>
               <AddContent
                 type="Assignment"
+                iconOnly={isElectron}
                 onClick={() => openAddAssignment()}
               />
             </div>
@@ -377,25 +511,67 @@ function OrbitView({
             </div>
           </section>
 
-          <section className="orbit-sidebar-section orbit-undated">
-            <div className="orbit-section-heading">
-              <h2>Undated Assignments</h2>
-              <AddContent
-                type="Undated Assignment"
-                iconOnly
-                onClick={() => openAddAssignment(null, true)}
-              />
-            </div>
-            <div className="orbit-assignment-scroll">
-              <AssignmentGroups
-                groups={undatedGroups}
-                onEditAssignments={handleEditAssignments}
-                onToggleAssignment={handleToggleAssignment}
-                showCourseName={false}
-              />
-            </div>
-          </section>
+          {!isElectron && (
+            <section className="orbit-sidebar-section orbit-undated">
+              <div className="orbit-section-heading">
+                <h2>Undated Assignments</h2>
+                <AddContent
+                  type="Undated Assignment"
+                  iconOnly
+                  onClick={() => openAddAssignment(null, true)}
+                />
+              </div>
+              <div className="orbit-assignment-scroll">
+                <AssignmentGroups
+                  groups={undatedGroups}
+                  onEditAssignments={handleEditAssignments}
+                  onToggleAssignment={handleToggleAssignment}
+                  showCourseName={false}
+                />
+              </div>
+            </section>
+          )}
+
+          {isElectron && (
+            <section className="orbit-sidebar-section orbit-notes orbit-sidebar-notes">
+              <div className="orbit-section-heading orbit-notes-heading">
+                <h2>Notes</h2>
+                <button
+                  type="button"
+                  className="orbit-clear-notes"
+                  onClick={() => setNotes("")}
+                >
+                  Clear
+                </button>
+                <AddContent type="save" onClick={handleSaveNotes} />
+              </div>
+              <div className="orbit-notes-editor">
+                <NoteText notes={notes} setNotes={setNotes} />
+              </div>
+            </section>
+          )}
         </aside>
+
+        {isElectron && (
+          <div
+            className="electron-orbit-resizer"
+            role="separator"
+            aria-label="Resize assignments and orbit panels"
+            aria-orientation="vertical"
+            aria-valuemin={MIN_ELECTRON_ASSIGNMENTS_PERCENT}
+            aria-valuemax={MAX_ELECTRON_ASSIGNMENTS_PERCENT}
+            aria-valuenow={electronAssignmentsPercent}
+            tabIndex={0}
+            onPointerDown={(event) =>
+              event.button === 0 &&
+              event.currentTarget.setPointerCapture(event.pointerId)
+            }
+            onPointerMove={handleOrbitResizePointerMove}
+            onPointerUp={persistAssignmentsPercent}
+            onPointerCancel={persistAssignmentsPercent}
+            onKeyDown={handleOrbitResizeKeyDown}
+          />
+        )}
 
         <section className="orbit-center">
           <div className="orbit-bubble-scroll" ref={bubbleScrollRef}>
@@ -470,28 +646,30 @@ function OrbitView({
             </div>
           </div>
 
-          <section className="orbit-notes">
-            <div className="orbit-section-heading orbit-notes-heading">
-              <h2>Notes</h2>
-              <button
-                type="button"
-                className="orbit-clear-notes"
-                onClick={() => setNotes("")}
-              >
-                Clear
-              </button>
-              <AddContent type="save" onClick={handleSaveNotes} />
-            </div>
-            <div className="orbit-notes-editor">
-              <NoteText notes={notes} setNotes={setNotes} />
-            </div>
-          </section>
+          {!isElectron && (
+            <section className="orbit-notes">
+              <div className="orbit-section-heading orbit-notes-heading">
+                <h2>Notes</h2>
+                <button
+                  type="button"
+                  className="orbit-clear-notes"
+                  onClick={() => setNotes("")}
+                >
+                  Clear
+                </button>
+                <AddContent type="save" onClick={handleSaveNotes} />
+              </div>
+              <div className="orbit-notes-editor">
+                <NoteText notes={notes} setNotes={setNotes} />
+              </div>
+            </section>
+          )}
         </section>
 
         {selectedCourse && (
           <aside className="orbit-course-panel">
             <div className="orbit-panel-heading">
-              <h2>{selectedCourse.name}</h2>
+              <h2 className="orbit-course-name">{selectedCourse.name}</h2>
               <button
                 type="button"
                 className="orbit-panel-close"
@@ -502,71 +680,84 @@ function OrbitView({
               </button>
             </div>
 
-            <section className="orbit-course-metadata">
-              <h3>Course details</h3>
-              {selectedCourse.courseCode && (
-                <p>
-                  <strong>Course code:</strong> {selectedCourse.courseCode}
-                </p>
-              )}
-              {selectedCourse.professor && (
-                <p>
-                  <strong>Professor:</strong> {selectedCourse.professor}
-                </p>
-              )}
-              {selectedCourse.courseHours && (
-                <p>
-                  <strong>Course hours:</strong> {selectedCourse.courseHours}
-                </p>
-              )}
-              {selectedCourse.officeHours && (
-                <p>
-                  <strong>Office hours:</strong> {selectedCourse.officeHours}
-                </p>
-              )}
-              <div className="orbit-course-actions">
-                <button
-                  type="button"
-                  className="orbit-secondary-button"
-                  onClick={() => handleEditClass(selectedCourse)}
-                >
-                  Edit Course
-                </button>
-              </div>
-            </section>
-
-            <section className="orbit-panel-assignments">
-              <div className="orbit-section-heading">
-                <h3>Assignments</h3>
-                <AddContent
-                  type="Assignment"
-                  onClick={() => openAddAssignment(selectedCourse.id)}
-                />
-              </div>
-              <div className="orbit-panel-assignment-list">
-                {assignmentList
-                  .filter(
-                    (assignment) => assignment.classId === selectedCourse.id,
-                  )
-                  .map((assignment) => (
-                    <Assignment
-                      key={assignment.id}
-                      {...assignment}
-                      onToggle={handleToggleAssignment}
-                      onEdit={() =>
-                        handleEditAssignments(selectedCourse.id, assignment.id)
-                      }
-                    />
-                  ))}
-                {!assignmentList.some(
-                  (assignment) => assignment.classId === selectedCourse.id,
-                ) && (
-                  <p className="orbit-empty-message">
-                    No assignments for this course yet.
+            <details
+              className="orbit-course-metadata"
+              open={courseDetailsOpen}
+              onToggle={(event) =>
+                setCourseDetailsOpen(event.currentTarget.open)
+              }
+            >
+              <summary>Course details</summary>
+              <div className="orbit-course-metadata-content">
+                {selectedCourse.courseCode && (
+                  <p>
+                    <strong>Course code:</strong> {selectedCourse.courseCode}
                   </p>
                 )}
+                {selectedCourse.professor && (
+                  <p>
+                    <strong>Professor:</strong> {selectedCourse.professor}
+                  </p>
+                )}
+                {selectedCourse.courseHours && (
+                  <p>
+                    <strong>Course hours:</strong> {selectedCourse.courseHours}
+                  </p>
+                )}
+                {selectedCourse.officeHours && (
+                  <p>
+                    <strong>Office hours:</strong> {selectedCourse.officeHours}
+                  </p>
+                )}
+                <div className="orbit-course-actions">
+                  <button
+                    type="button"
+                    className="orbit-secondary-button"
+                    onClick={() => handleEditClass(selectedCourse)}
+                  >
+                    Edit Course
+                  </button>
+                </div>
               </div>
-            </section>
+            </details>
+
+            {!isElectron && (
+              <section className="orbit-panel-assignments">
+                <div className="orbit-section-heading">
+                  <h3>Assignments</h3>
+                  <AddContent
+                    type="Assignment"
+                    onClick={() => openAddAssignment(selectedCourse.id)}
+                  />
+                </div>
+                <div className="orbit-panel-assignment-list">
+                  {assignmentList
+                    .filter(
+                      (assignment) => assignment.classId === selectedCourse.id,
+                    )
+                    .map((assignment) => (
+                      <Assignment
+                        key={assignment.id}
+                        {...assignment}
+                        onToggle={handleToggleAssignment}
+                        onEdit={() =>
+                          handleEditAssignments(
+                            selectedCourse.id,
+                            assignment.id,
+                          )
+                        }
+                      />
+                    ))}
+                  {!assignmentList.some(
+                    (assignment) => assignment.classId === selectedCourse.id,
+                  ) && (
+                    <p className="orbit-empty-message">
+                      No assignments for this course yet.
+                    </p>
+                  )}
+                </div>
+              </section>
+            )}
 
             <LinksSection
               classId={selectedCourse.id}
@@ -581,7 +772,7 @@ function OrbitView({
         )}
       </div>
 
-      <NotesSavedToast message={toastMessage} />
+      <NotesSavedToast message={toastMessage} isFading={isToastFading} />
       <SiteFooter />
 
       {assignmentModalOpen && (

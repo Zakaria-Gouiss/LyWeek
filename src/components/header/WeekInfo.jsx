@@ -9,6 +9,7 @@ function WeekInfo({
   week,
   onPreviousWeek,
   onNextWeek,
+  showDate = true,
 }) {
   const { weekNumber, weekStart, weekEnd } = getWeekInfo(
     semesterStartDate,
@@ -23,19 +24,20 @@ function WeekInfo({
         </span>
       </div>
 
-      {onPreviousWeek && onNextWeek ? (
-        <div className="week-date-row">
-          <WeekButton position="left" onClick={onPreviousWeek} />
+      {showDate &&
+        (onPreviousWeek && onNextWeek ? (
+          <div className="week-date-row">
+            <WeekButton position="left" onClick={onPreviousWeek} />
+            <p id="week-date">
+              {weekStart.toDateString()} -&gt; {weekEnd.toDateString()}
+            </p>
+            <WeekButton position="right" onClick={onNextWeek} />
+          </div>
+        ) : (
           <p id="week-date">
             {weekStart.toDateString()} -&gt; {weekEnd.toDateString()}
           </p>
-          <WeekButton position="right" onClick={onNextWeek} />
-        </div>
-      ) : (
-        <p id="week-date">
-          {weekStart.toDateString()} -&gt; {weekEnd.toDateString()}
-        </p>
-      )}
+        ))}
     </div>
   );
 }

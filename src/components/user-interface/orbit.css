@@ -372,7 +372,8 @@
 .orbit-course-panel {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .orbit-panel-heading {
@@ -411,11 +412,15 @@
   border-bottom: 1px solid var(--blue-border);
 }
 
-.orbit-course-metadata h3,
+.orbit-course-metadata > summary,
 .orbit-panel-assignments h3 {
   margin: 0;
   color: var(--text-color);
   font-size: 0.9rem;
+}
+
+.orbit-course-metadata > summary {
+  cursor: pointer;
 }
 
 .orbit-course-metadata p {
@@ -447,7 +452,7 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  min-height: 0;
+  min-height: 10rem;
   padding: 0.85rem 0.9rem;
 }
 

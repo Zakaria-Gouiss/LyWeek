@@ -38,9 +38,9 @@ function AddClassModal({ onClose, onAdd }) {
     onAdd(newClass);
   }
   return (
-    <div className="assignment-modal-overlay">
+    <div className="assignment-modal-overlay add-class-modal-overlay">
       <div
-        className="assignment-modal"
+        className="assignment-modal add-class-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-class-title"
