@@ -996,6 +996,11 @@
   height: 1rem;
 }
 
+.electron-view.orbit-view .orbit-assignment-group .assignment-edit i {
+  font-size: 0.57rem;
+  line-height: 1;
+}
+
 .electron-view.orbit-view .orbit-upcoming .add-button--icon-only {
   width: 1.8rem;
   height: 1.8rem;
