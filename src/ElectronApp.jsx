@@ -109,7 +109,9 @@ function ElectronApp() {
         ]);
 
         setClassList(classesData);
-        setAssignmentList(assignmentsData);
+        setAssignmentList(
+          assignmentsData.filter((assignment) => !assignment.completed),
+        );
         setNotes(notesData[0]?.content || "");
       } catch (error) {
         console.error("Failed to fetch initial data:", error);
@@ -267,20 +269,51 @@ function ElectronApp() {
   }
 
   async function handleToggleAssignment(assignmentId) {
-    // Visually check the box first
+    const assignment = assignmentList.find(
+      (currentAssignment) => currentAssignment.id === assignmentId,
+    );
+    if (!assignment || assignment.completed) {
+      return;
+    }
+
+    const completedAssignment = { ...assignment, completed: true };
     setAssignmentList((currentAssignments) =>
       currentAssignments.map((assignment) =>
         assignment.id === assignmentId
-          ? { ...assignment, completed: true }
+          ? completedAssignment
           : assignment,
       ),
     );
 
-    // Wait 1 second
-    await new Promise((resolve) => setTimeout(resolve, 390));
+    try {
+      const savedAssignment = await updateAssignment(
+        assignmentId,
+        completedAssignment,
+      );
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.map((currentAssignment) =>
+          currentAssignment.id === assignmentId
+            ? savedAssignment
+            : currentAssignment,
+        ),
+      );
 
-    // Then delete it
-    await handleDeleteAssignment(assignmentId);
+      await new Promise((resolve) => setTimeout(resolve, 390));
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.filter(
+          (currentAssignment) => currentAssignment.id !== assignmentId,
+        ),
+      );
+    } catch (error) {
+      setAssignmentList((currentAssignments) =>
+        currentAssignments.map((currentAssignment) =>
+          currentAssignment.id === assignmentId
+            ? assignment
+            : currentAssignment,
+        ),
+      );
+      console.error("Failed to complete assignment:", error);
+    }
   }
 
   function handleEditClass(course) {

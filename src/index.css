@@ -89,7 +89,7 @@ strong {
   --text-color: var(--light-text);
   --card-color: var(--dark-surface);
   --border-color: var(--dark-border);
-  --dark-surface: #333333;
+  --dark-surface: #2e2e2e;
   --dark-surface-alt: #1f2a35;
   --class-meta-text: #dfeeff;
   --class-meta-bullet: #b8d9f3;
