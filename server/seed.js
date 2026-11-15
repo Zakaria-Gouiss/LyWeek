@@ -189,7 +189,7 @@ const noteContents = [
   "Review notes from this week's lectures.",
   "Start working on upcoming project.",
   "Remember to submit everything before the deadline.",
-  "Check OneNote for additional materials.",
+  "Check course materials for additional resources.",
 ];
 
 // -------------------------
@@ -302,11 +302,10 @@ async function seed() {
                 professor,
                 course_hours,
                 office_hours,
-                onenote_url,
                 color,
                 user_id
               )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id
           `
           : `
@@ -317,10 +316,9 @@ async function seed() {
                 professor,
                 course_hours,
                 office_hours,
-                onenote_url,
                 user_id
               )
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
           `,
         hasColorColumn
@@ -330,7 +328,6 @@ async function seed() {
               randomItem(professors),
               randomItem(courseHours),
               randomItem(officeHours),
-              "https://onenote.com/",
               classColor,
               userId,
             ]
@@ -340,7 +337,6 @@ async function seed() {
               randomItem(professors),
               randomItem(courseHours),
               randomItem(officeHours),
-              "https://onenote.com/",
               userId,
             ],
       );
@@ -353,6 +349,23 @@ async function seed() {
         `Created class: ${shuffledClasses[i]} (${courseCodes[i]})`,
       );
     }
+
+    for (let i = 0; i < classIds.length; i++) {
+      const courseSlug = courseCodes[i].toLowerCase().replace(/\s+/g, "-");
+      await client.query(
+        `INSERT INTO links (class_id, name, url, sort_order)
+         VALUES
+           ($1, 'Course website', $2, 0),
+           ($1, 'Course materials', $3, 1)`,
+        [
+          classIds[i],
+          `https://example.edu/courses/${courseSlug}`,
+          `https://example.edu/materials/${courseSlug}`,
+        ],
+      );
+    }
+
+    console.log(`Created ${classIds.length * 2} course links`);
 
     // -------------------------
     // Assignments
@@ -372,7 +385,7 @@ async function seed() {
       const priority = randomBool();
       const completed = randomBool();
 
-      const dueDate = randomItem(weekdays);
+      const dueDate = i % 2 === 0 ? randomItem(weekdays) : null;
 
       await client.query(
         `

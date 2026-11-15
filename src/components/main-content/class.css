@@ -105,39 +105,6 @@
   outline-offset: 2px;
 }
 
-.class-onenote-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  margin-left: 0;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--blue-border);
-  border-radius: 8px;
-  background: var(--onenote-btn-bg);
-  color: var(--onenote-btn-color);
-  font-family: inherit;
-  font-size: 0.72rem;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.class-onenote-btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--main-blue);
-  box-shadow: 0 4px 12px var(--blue-shadow);
-}
-
-.class-onenote-btn:focus-visible {
-  outline: 2px solid var(--main-blue);
-  outline-offset: 2px;
-}
-
 .class-meta-toggle-box {
   display: inline-flex;
   align-items: center;
@@ -199,15 +166,8 @@
   padding: 0;
 }
 
-.class-title-row--compact-actions .course-assignment-action-label,
-.class-title-row--compact-onenote .class-onenote-label {
+.class-title-row--compact-actions .course-assignment-action-label {
   display: none;
-}
-
-.class-title-row--compact-onenote .class-onenote-btn {
-  width: 2rem;
-  height: 2rem;
-  padding: 0;
 }
 
 @container class-title (max-width: 420px) {
@@ -264,12 +224,6 @@
 
   .class-meta span:not(:last-child)::after {
     margin-left: 0.55rem;
-  }
-}
-
-@media (max-width: 549px) {
-  .class-onenote-btn {
-    display: none;
   }
 }
 

@@ -38,6 +38,13 @@ import {
   deleteAssignment,
 } from "./utils/api/assignments.js";
 
+import {
+  getLinks,
+  createLink,
+  updateLink,
+  deleteLink,
+} from "./utils/api/links.js";
+
 import { getNotes, updateNotes } from "./utils/api/notes.js";
 
 function ElectronApp() {
@@ -60,6 +67,7 @@ function ElectronApp() {
 
   const [assignmentList, setAssignmentList] = useState([]);
   const [classList, setClassList] = useState([]);
+  const [linkList, setLinkList] = useState([]);
   const [notes, setNotes] = useState("");
 
   const [darkMode, setDarkMode] = useState(() => {
@@ -102,13 +110,16 @@ function ElectronApp() {
 
     async function fetchInitialData() {
       try {
-        const [classesData, assignmentsData, notesData] = await Promise.all([
-          getClasses(),
-          getAssignments(),
-          getNotes(),
-        ]);
+        const [classesData, assignmentsData, linksData, notesData] =
+          await Promise.all([
+            getClasses(),
+            getAssignments(),
+            getLinks(),
+            getNotes(),
+          ]);
 
         setClassList(classesData);
+        setLinkList(linksData);
         setAssignmentList(
           assignmentsData.filter((assignment) => !assignment.completed),
         );
@@ -167,6 +178,7 @@ function ElectronApp() {
       setIsAuthenticated(false);
       setClassList([]);
       setAssignmentList([]);
+      setLinkList([]);
       setNotes("");
     } catch (error) {
       console.error("Failed to log out:", error);
@@ -208,6 +220,42 @@ function ElectronApp() {
       setClassModalOpen(false);
     } catch (error) {
       console.error("Failed to add class:", error);
+    }
+  }
+
+  async function handleAddLink(newLink) {
+    try {
+      const savedLink = await createLink(newLink);
+      setLinkList((currentLinks) => [...currentLinks, savedLink]);
+    } catch (error) {
+      console.error("Failed to add link:", error);
+      throw error;
+    }
+  }
+
+  async function handleUpdateLink(linkId, updatedLink) {
+    try {
+      const savedLink = await updateLink(linkId, updatedLink);
+      setLinkList((currentLinks) =>
+        currentLinks.map((link) =>
+          link.id === savedLink.id ? savedLink : link,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to update link:", error);
+      throw error;
+    }
+  }
+
+  async function handleDeleteLink(linkId) {
+    try {
+      await deleteLink(linkId);
+      setLinkList((currentLinks) =>
+        currentLinks.filter((link) => link.id !== linkId),
+      );
+    } catch (error) {
+      console.error("Failed to delete link:", error);
+      throw error;
     }
   }
 
@@ -351,6 +399,9 @@ function ElectronApp() {
           (assignment) => assignment.classId !== classId,
         ),
       );
+      setLinkList((currentLinks) =>
+        currentLinks.filter((link) => link.classId !== classId),
+      );
 
       setEditClassModalOpen(false);
       setClassToEdit(null);
@@ -414,10 +465,14 @@ function ElectronApp() {
             key={course.id}
             {...course}
             assignments={assignmentList}
+            links={linkList}
             onEditClass={handleEditClass}
             onEditAssignments={handleEditAssignments}
             onAddAssignment={handleOpenAddAssignment}
             onToggleAssignment={handleToggleAssignment}
+            onAddLink={handleAddLink}
+            onUpdateLink={handleUpdateLink}
+            onDeleteLink={handleDeleteLink}
           />
         ))}
       </nav>

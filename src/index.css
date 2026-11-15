@@ -15,8 +15,6 @@
   --placeholder-color: #777777;
   --class-meta-text: var(--text-secondary);
   --class-meta-bullet: var(--text-muted);
-  --onenote-btn-bg: var(--blue-ice);
-  --onenote-btn-color: var(--main-blue-strong);
   --border-color: #d0d0d0;
   --dark-border: #555555;
   --blue-border: rgba(56, 182, 255, 0.35);
@@ -93,8 +91,6 @@ strong {
   --dark-surface-alt: #1f2a35;
   --class-meta-text: #dfeeff;
   --class-meta-bullet: #b8d9f3;
-  --onenote-btn-bg: var(--dark-surface-alt);
-  --onenote-btn-color: var(--light-text);
   --dark-color: var(--light-color);
   --date-icon-filter: brightness(0) invert(1);
   --scrollbar-thumb: rgba(56, 182, 255, 0.24);

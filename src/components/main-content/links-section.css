@@ -1,0 +1,145 @@
+.class-links {
+  color: var(--text-color);
+  font-size: 0.8rem;
+}
+
+.class-links h3 {
+  margin: 0 0 0.55rem;
+  font-size: 0.9rem;
+}
+
+.class-links-collapsible {
+  width: 100%;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--blue-border);
+}
+
+.class-links-collapsible > summary {
+  width: fit-content;
+  color: var(--main-blue-strong);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.class-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0.55rem 0;
+  padding-left: 1.25rem;
+}
+
+.class-links-list li {
+  padding-left: 0.1rem;
+}
+
+.class-links-list a {
+  color: var(--main-blue-strong);
+  overflow-wrap: anywhere;
+}
+
+.dark .class-links-list a,
+.dark .class-links-collapsible > summary {
+  color: var(--main-blue);
+}
+
+.class-link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.class-link-actions,
+.class-link-form-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0.3rem;
+}
+
+.class-link-actions button,
+.class-link-form-actions button,
+.class-link-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 6px;
+  background: var(--card-color);
+  color: var(--text-color);
+  font: inherit;
+  cursor: pointer;
+}
+
+.class-link-actions button:disabled,
+.class-link-form-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.class-link-add {
+  color: var(--main-blue-strong);
+}
+
+.class-link-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.55rem 0;
+}
+
+.class-link-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.class-link-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid var(--blue-border);
+  border-radius: 6px;
+  background: var(--card-color);
+  color: var(--text-color);
+  font: inherit;
+}
+
+.class-links-empty,
+.class-links-error {
+  color: var(--class-meta-text);
+}
+
+.class-links-error {
+  margin: 0.45rem 0;
+}
+
+.orbit-course-panel .class-links {
+  flex: 0 0 auto;
+  max-height: 40%;
+  overflow-y: auto;
+  padding: 0.85rem 0.9rem;
+  border-top: 1px solid var(--blue-border);
+}
+
+.orbit-course-panel .class-link-row {
+  flex-wrap: wrap;
+}
+
+.orbit-course-panel .class-links-list {
+  margin-bottom: 0.65rem;
+}
+
+@media (max-width: 829px) {
+  .orbit-course-panel .class-link-actions button {
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+  }
+
+  .orbit-course-panel .class-link-actions button span {
+    display: none;
+  }
+}

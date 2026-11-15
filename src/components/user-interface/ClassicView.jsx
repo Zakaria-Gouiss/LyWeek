@@ -19,6 +19,7 @@ function ClassicView({
   assignmentList,
   assignmentModalOpen,
   classList,
+  linkList,
   classModalOpen,
   classToEdit,
   darkMode,
@@ -28,6 +29,7 @@ function ClassicView({
   editClassModalOpen,
   handleAddAssignment,
   handleAddClass,
+  handleAddLink,
   handleCloseAddAssignment,
   handleDeleteAssignment,
   handleDeleteClass,
@@ -41,6 +43,8 @@ function ClassicView({
   handleSaveNotes,
   handleSaveSemester,
   handleToggleAssignment,
+  handleUpdateLink,
+  handleDeleteLink,
   notes,
   semester,
   toastMessage,
@@ -109,10 +113,14 @@ function ClassicView({
               key={course.id}
               {...course}
               assignments={assignmentList}
+              links={linkList}
               onEditClass={handleEditClass}
               onEditAssignments={handleEditAssignments}
               onAddAssignment={handleOpenAddAssignment}
               onToggleAssignment={handleToggleAssignment}
+              onAddLink={handleAddLink}
+              onUpdateLink={handleUpdateLink}
+              onDeleteLink={handleDeleteLink}
             />
           ))}
         </nav>

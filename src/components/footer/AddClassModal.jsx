@@ -6,7 +6,6 @@ function AddClassModal({ onClose, onAdd }) {
   const [professor, setProfessor] = useState("");
   const [courseHours, setCourseHours] = useState("");
   const [officeHours, setOfficeHours] = useState("");
-  const [oneNoteUrl, setOneNoteUrl] = useState("");
   const [color, setColor] = useState("");
 
   function normalizeHexColor(value) {
@@ -33,7 +32,6 @@ function AddClassModal({ onClose, onAdd }) {
       professor,
       courseHours,
       officeHours,
-      onenoteUrl: oneNoteUrl,
       color: normalizeHexColor(color),
     };
 
@@ -122,18 +120,6 @@ function AddClassModal({ onClose, onAdd }) {
               placeholder="Example: MTWRF, 1:00 PM - 2:00 PM"
               value={officeHours}
               onChange={(event) => setOfficeHours(event.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="class-onenote-url">Link a OneNote notebook</label>
-            <input
-              id="class-onenote-url"
-              name="class-onenote-url"
-              type="url"
-              placeholder="Example: onenote:https://..."
-              value={oneNoteUrl}
-              onChange={(event) => setOneNoteUrl(event.target.value)}
             />
           </div>
 

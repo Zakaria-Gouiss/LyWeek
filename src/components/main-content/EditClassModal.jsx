@@ -6,7 +6,6 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
   const [professor, setProfessor] = useState(course?.professor ?? "");
   const [courseHours, setCourseHours] = useState(course?.courseHours ?? "");
   const [officeHours, setOfficeHours] = useState(course?.officeHours ?? "");
-  const [onenoteUrl, setOneNoteUrl] = useState(course?.onenoteUrl ?? "");
   const [color, setColor] = useState(course?.color ?? "");
 
   function normalizeHexColor(value) {
@@ -29,7 +28,6 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
     setProfessor(course?.professor ?? "");
     setCourseHours(course?.courseHours ?? "");
     setOfficeHours(course?.officeHours ?? "");
-    setOneNoteUrl(course?.onenoteUrl ?? "");
     setColor(course?.color ?? "");
   }, [course]);
 
@@ -43,7 +41,6 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
       professor,
       courseHours,
       officeHours,
-      onenoteUrl,
       color: normalizeHexColor(color),
     };
 
@@ -140,20 +137,6 @@ function EditClassModal({ course, onClose, onSave, onDelete }) {
               value={officeHours}
               onChange={(event) => setOfficeHours(event.target.value)}
               placeholder="Example: MTWRF, 1:00 PM - 2:00 PM"
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="edit-class-onenote-url">
-              Link a OneNote notebook
-            </label>
-            <input
-              id="edit-class-onenote-url"
-              name="edit-class-onenote-url"
-              type="url"
-              value={onenoteUrl}
-              onChange={(event) => setOneNoteUrl(event.target.value)}
-              placeholder="Example: onenote:https://..."
             />
           </div>
 

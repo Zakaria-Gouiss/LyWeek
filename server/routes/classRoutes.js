@@ -21,7 +21,6 @@ router.get("/", requireAuth, async (req, res) => {
       `SELECT id, name, course_code AS "courseCode",
         professor, course_hours AS "courseHours",
         office_hours AS "officeHours",
-        onenote_url AS "onenoteUrl",
         color
        FROM classes
        WHERE user_id = $1;`,
@@ -45,7 +44,6 @@ router.post("/", requireAuth, async (req, res) => {
       professor,
       courseHours,
       officeHours,
-      onenoteUrl,
       color,
       semesterId,
     } = req.body;
@@ -53,12 +51,11 @@ router.post("/", requireAuth, async (req, res) => {
     const result = await pool.query(
       `INSERT INTO classes
         (name, course_code, professor, course_hours,
-         office_hours, onenote_url, color, semester_id, user_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         office_hours, color, semester_id, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id, name, course_code AS "courseCode",
                  professor, course_hours AS "courseHours",
                  office_hours AS "officeHours",
-                 onenote_url AS "onenoteUrl",
                  color, semester_id AS "semesterId";`,
       [
         name,
@@ -66,7 +63,6 @@ router.post("/", requireAuth, async (req, res) => {
         professor,
         courseHours,
         officeHours,
-        onenoteUrl,
         color,
         semesterId,
         userId,
@@ -91,7 +87,6 @@ router.put("/:id", requireAuth, async (req, res) => {
       professor,
       courseHours,
       officeHours,
-      onenoteUrl,
       color,
       semesterId,
     } = req.body;
@@ -103,14 +98,12 @@ router.put("/:id", requireAuth, async (req, res) => {
            professor = $3,
            course_hours = $4,
            office_hours = $5,
-           onenote_url = $6,
-           color = $7,
-           semester_id = $8
-       WHERE id = $9 AND user_id = $10
+           color = $6,
+           semester_id = $7
+       WHERE id = $8 AND user_id = $9
        RETURNING id, name, course_code AS "courseCode",
                  professor, course_hours AS "courseHours",
                  office_hours AS "officeHours",
-                 onenote_url AS "onenoteUrl",
                  color, semester_id AS "semesterId";`,
       [
         name,
@@ -118,7 +111,6 @@ router.put("/:id", requireAuth, async (req, res) => {
         professor,
         courseHours,
         officeHours,
-        onenoteUrl,
         color,
         semesterId,
         id,

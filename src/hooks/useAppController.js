@@ -18,6 +18,12 @@ import {
   getClasses,
   updateClass,
 } from "../utils/api/classes.js";
+import {
+  createLink,
+  deleteLink,
+  getLinks,
+  updateLink,
+} from "../utils/api/links.js";
 import { getNotes, updateNotes } from "../utils/api/notes.js";
 import { getSemesters, updateSemester } from "../utils/api/semesters.js";
 import { getSemesterWeek } from "../utils/dateUtils.js";
@@ -42,6 +48,7 @@ export default function useAppController() {
   const [classToEdit, setClassToEdit] = useState(null);
   const [assignmentList, setAssignmentList] = useState([]);
   const [classList, setClassList] = useState([]);
+  const [linkList, setLinkList] = useState([]);
   const [notes, setNotes] = useState("");
   const [semester, setSemester] = useState(null);
 
@@ -119,13 +126,19 @@ export default function useAppController() {
 
     async function fetchInitialData() {
       try {
-        const [semesterData, classesData, assignmentsData, notesData] =
-          await Promise.all([
-            getSemesters(),
-            getClasses(),
-            getAssignments(),
-            getNotes(),
-          ]);
+        const [
+          semesterData,
+          classesData,
+          assignmentsData,
+          linksData,
+          notesData,
+        ] = await Promise.all([
+          getSemesters(),
+          getClasses(),
+          getAssignments(),
+          getLinks(),
+          getNotes(),
+        ]);
 
         console.log("SEMESTER DATA:", semesterData);
         setSemester(semesterData);
@@ -135,6 +148,7 @@ export default function useAppController() {
         console.log("CURRENT WEEK:", currentWeek);
         setViewingWeek(currentWeek);
         setClassList(classesData);
+        setLinkList(linksData);
         setAssignmentList(
           assignmentsData.filter((assignment) => !assignment.completed),
         );
@@ -155,6 +169,7 @@ export default function useAppController() {
       setSemester(null);
       setClassList([]);
       setAssignmentList([]);
+      setLinkList([]);
       setNotes("");
     } catch (error) {
       console.error("Failed to log out:", error);
@@ -213,6 +228,42 @@ export default function useAppController() {
       setClassModalOpen(false);
     } catch (error) {
       console.error("Failed to add class:", error);
+    }
+  }
+
+  async function handleAddLink(newLink) {
+    try {
+      const savedLink = await createLink(newLink);
+      setLinkList((currentLinks) => [...currentLinks, savedLink]);
+    } catch (error) {
+      console.error("Failed to add link:", error);
+      throw error;
+    }
+  }
+
+  async function handleUpdateLink(linkId, updatedLink) {
+    try {
+      const savedLink = await updateLink(linkId, updatedLink);
+      setLinkList((currentLinks) =>
+        currentLinks.map((link) =>
+          link.id === savedLink.id ? savedLink : link,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to update link:", error);
+      throw error;
+    }
+  }
+
+  async function handleDeleteLink(linkId) {
+    try {
+      await deleteLink(linkId);
+      setLinkList((currentLinks) =>
+        currentLinks.filter((link) => link.id !== linkId),
+      );
+    } catch (error) {
+      console.error("Failed to delete link:", error);
+      throw error;
     }
   }
 
@@ -339,6 +390,9 @@ export default function useAppController() {
           (assignment) => assignment.classId !== classId,
         ),
       );
+      setLinkList((currentLinks) =>
+        currentLinks.filter((link) => link.classId !== classId),
+      );
       setEditClassModalOpen(false);
       setClassToEdit(null);
     } catch (error) {
@@ -370,6 +424,7 @@ export default function useAppController() {
     authLoading,
     authView,
     classList,
+    linkList,
     classModalOpen,
     classToEdit,
     darkMode,
@@ -379,6 +434,7 @@ export default function useAppController() {
     editClassModalOpen,
     handleAddAssignment,
     handleAddClass,
+    handleAddLink,
     handleCloseAddAssignment,
     handleDeleteAssignment,
     handleDeleteClass,
@@ -394,6 +450,8 @@ export default function useAppController() {
     handleSaveName,
     handleSaveSemester,
     handleToggleAssignment,
+    handleUpdateLink,
+    handleDeleteLink,
     isAuthenticated,
     notes,
     semester,

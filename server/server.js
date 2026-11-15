@@ -11,6 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const semesterRoutes = require("./routes/semesterRoutes");
 const classRoutes = require("./routes/classRoutes");
 const assignmentRoutes = require("./routes/assignmentRoutes");
+const linkRoutes = require("./routes/linkRoutes");
 const notesRoutes = require("./routes/notesRoutes");
 
 const app = express();
@@ -140,6 +141,7 @@ app.use("/api", authRoutes);
 app.use("/api/semesters", semesterRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/assignments", assignmentRoutes);
+app.use("/api/links", linkRoutes);
 app.use("/api/notes", notesRoutes);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

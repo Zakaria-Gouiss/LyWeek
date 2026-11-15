@@ -9,6 +9,7 @@ import SettingsButton from "../header/SettingsButton.jsx";
 import WeekInfo from "../header/WeekInfo.jsx";
 import ThemeToggle from "../header/ThemeToggle.jsx";
 import Assignment from "../main-content/Assignment.jsx";
+import LinksSection from "../main-content/LinksSection.jsx";
 import EditAssignmentModal from "../main-content/EditAssignmentModal.jsx";
 import EditClassModal from "../main-content/EditClassModal.jsx";
 import LogoWelcome from "../header/LogoWelcome.jsx";
@@ -63,6 +64,7 @@ function OrbitView({
   assignmentList,
   assignmentModalOpen,
   classList,
+  linkList,
   classModalOpen,
   classToEdit,
   darkMode,
@@ -72,6 +74,7 @@ function OrbitView({
   editClassModalOpen,
   handleAddAssignment,
   handleAddClass,
+  handleAddLink,
   handleCloseAddAssignment,
   handleDeleteAssignment,
   handleDeleteClass,
@@ -85,6 +88,8 @@ function OrbitView({
   handleSaveNotes,
   handleSaveSemester,
   handleToggleAssignment,
+  handleUpdateLink,
+  handleDeleteLink,
   notes,
   semester,
   setClassModalOpen,
@@ -318,12 +323,6 @@ function OrbitView({
     );
   }
 
-  function handleOpenOneNote() {
-    if (selectedCourse?.onenoteUrl) {
-      window.location.href = selectedCourse.onenoteUrl;
-    }
-  }
-
   return (
     <main className={`orbit-view${darkMode ? " dark" : ""}`}>
       <header className="orbit-header">
@@ -533,15 +532,6 @@ function OrbitView({
                 >
                   Edit Course
                 </button>
-                {selectedCourse.onenoteUrl && (
-                  <button
-                    type="button"
-                    className="orbit-secondary-button"
-                    onClick={handleOpenOneNote}
-                  >
-                    Open in OneNote
-                  </button>
-                )}
               </div>
             </section>
 
@@ -577,6 +567,16 @@ function OrbitView({
                 )}
               </div>
             </section>
+
+            <LinksSection
+              classId={selectedCourse.id}
+              links={linkList.filter(
+                (link) => link.classId === selectedCourse.id,
+              )}
+              onAddLink={handleAddLink}
+              onUpdateLink={handleUpdateLink}
+              onDeleteLink={handleDeleteLink}
+            />
           </aside>
         )}
       </div>

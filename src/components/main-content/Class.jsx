@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./class.css";
 import Assignment from "./Assignment";
+import LinksSection from "./LinksSection.jsx";
 
 function Class({
   id,
@@ -10,11 +11,14 @@ function Class({
   courseHours,
   officeHours,
   assignments,
-  onenoteUrl,
+  links = [],
   onEditAssignments,
   onAddAssignment,
   onEditClass,
   onToggleAssignment,
+  onAddLink,
+  onUpdateLink,
+  onDeleteLink,
   color,
 }) {
   const badgeColor =
@@ -22,18 +26,11 @@ function Class({
     /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color)
       ? color
       : "var(--card-color)";
-  function openOneNote() {
-    window.location.href = onenoteUrl;
-  }
-
   const [classExpanded, classSetExpanded] = useState(true);
   const [metaExpanded, metaSetExpanded] = useState(false);
   const [courseNameWrapped, setCourseNameWrapped] = useState(false);
-  const [oneNoteCompact, setOneNoteCompact] = useState(false);
   const courseNameRef = useRef(null);
   const classTitleRowRef = useRef(null);
-  const classTitleControlsRef = useRef(null);
-  const oneNoteButtonRef = useRef(null);
 
   useEffect(() => {
     const courseName = courseNameRef.current;
@@ -69,44 +66,10 @@ function Class({
     return () => resizeObserver.disconnect();
   }, [name]);
 
-  useEffect(() => {
-    const classTitleRow = classTitleRowRef.current;
-    const classTitleControls = classTitleControlsRef.current;
-    const oneNoteButton = oneNoteButtonRef.current;
-    if (!classTitleRow || !classTitleControls || !oneNoteButton) {
-      return;
-    }
-
-    const updateOneNoteLayout = () => {
-      const hadCompactOneNote = classTitleRow.classList.contains(
-        "class-title-row--compact-onenote",
-      );
-      if (hadCompactOneNote) {
-        classTitleRow.classList.remove("class-title-row--compact-onenote");
-      }
-
-      const controlsRect = classTitleControls.getBoundingClientRect();
-      const oneNoteRect = oneNoteButton.getBoundingClientRect();
-      const isOnNextLine = oneNoteRect.top >= controlsRect.bottom - 1;
-
-      if (hadCompactOneNote) {
-        classTitleRow.classList.add("class-title-row--compact-onenote");
-      }
-
-      setOneNoteCompact(isOnNextLine);
-    };
-
-    const resizeObserver = new ResizeObserver(updateOneNoteLayout);
-    resizeObserver.observe(classTitleRow);
-    resizeObserver.observe(classTitleControls);
-    updateOneNoteLayout();
-
-    return () => resizeObserver.disconnect();
-  }, []);
-
   const classAssignments = assignments.filter(
     (assignment) => assignment.classId === id,
   );
+  const classLinks = links.filter((link) => link.classId === id);
 
   return (
     <div className="assignment-class">
@@ -115,9 +78,9 @@ function Class({
           ref={classTitleRowRef}
           className={`class-title-row${
             courseNameWrapped ? " class-title-row--compact-actions" : ""
-          }${oneNoteCompact ? " class-title-row--compact-onenote" : ""}`}
+          }`}
         >
-          <div ref={classTitleControlsRef} className="class-title-controls">
+          <div className="class-title-controls">
             <button
               type="button"
               className="class-badge"
@@ -166,19 +129,6 @@ function Class({
               </span>
             </button>
           </div>
-
-          <button
-            ref={oneNoteButtonRef}
-            type="button"
-            className="class-onenote-btn"
-            aria-label="Open in OneNote"
-            onClick={openOneNote}
-          >
-            <i className="fa-solid fa-book" aria-hidden="true"></i>
-            <span className="class-onenote-label">
-              &nbsp;&nbsp;Open in OneNote
-            </span>
-          </button>
         </div>
 
         {classExpanded && metaExpanded && (
@@ -200,7 +150,6 @@ function Class({
                   professor,
                   courseHours,
                   officeHours,
-                  onenoteUrl,
                   color,
                 })
               }
@@ -208,6 +157,17 @@ function Class({
               <i className="fa-solid fa-pencil"></i>
             </button>
           </div>
+        )}
+
+        {classExpanded && metaExpanded && (
+          <LinksSection
+            classId={id}
+            links={classLinks}
+            onAddLink={onAddLink}
+            onUpdateLink={onUpdateLink}
+            onDeleteLink={onDeleteLink}
+            collapsible
+          />
         )}
 
         {classExpanded &&
