@@ -8,6 +8,9 @@ function createWindow() {
     width: 800,
     height: 540,
     icon: iconPath,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.cjs"),
+    },
   });
 
   win.setAppDetails({
@@ -61,9 +64,9 @@ function createWindow() {
   });
 
   if (!app.isPackaged) {
-    win.loadURL("http://localhost:5173?electron=true");
+    win.loadURL("http://localhost:5173");
   } else {
-    win.loadURL("https://vercel.app?electron=true");
+    win.loadURL("https://vercel.app");
   }
 }
 
