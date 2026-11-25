@@ -20,7 +20,7 @@ function createWindow() {
 
   const appOrigin = !app.isPackaged
     ? "http://localhost:5173"
-    : "https://vercel.app";
+    : "https://lyweek.vercel.app";
 
   // Helper to decide if a URL belongs to your app or should open externally
   const isExternalUrl = (url) => {
