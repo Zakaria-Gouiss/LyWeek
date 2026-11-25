@@ -3,6 +3,7 @@ import AddAssignmentModal from "../footer/AddAssignmentModal.jsx";
 import AddClassModal from "../footer/AddClassModal.jsx";
 import AddContent from "../footer/AddButton.jsx";
 import NoteText from "../footer/NoteText.jsx";
+import NotesHeading from "../footer/NotesHeading.jsx";
 import NotesSavedToast from "../footer/NotesSavedToast.jsx";
 import SiteFooter from "../footer/SiteFooter.jsx";
 import SettingsButton from "../header/SettingsButton.jsx";
@@ -64,9 +65,7 @@ function AssignmentGroups({
 }) {
   if (groups.length === 0) {
     return (
-      <p className="orbit-empty-message">
-        No assignments in this section.
-      </p>
+      <p className="orbit-empty-message">No assignments in this section.</p>
     );
   }
 
@@ -138,10 +137,9 @@ function OrbitView({
   isElectron,
 }) {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
-  const [electronAssignmentsPercent, setElectronAssignmentsPercent] =
-    useState(() =>
-      isElectron ? getSavedElectronAssignmentsPercent() : 40,
-    );
+  const [electronAssignmentsPercent, setElectronAssignmentsPercent] = useState(
+    () => (isElectron ? getSavedElectronAssignmentsPercent() : 40),
+  );
   const electronAssignmentsPercentRef = useRef(electronAssignmentsPercent);
   const compactViewportRef = useRef(null);
   const [courseDetailsOpen, setCourseDetailsOpen] = useState(
@@ -241,8 +239,7 @@ function OrbitView({
       ? electronBubbleScale *
         Math.min(
           1,
-          bubbleViewportWidth /
-            (baseBubbleStageSize * electronBubbleScale),
+          bubbleViewportWidth / (baseBubbleStageSize * electronBubbleScale),
         )
       : electronBubbleScale;
   const bubbleSize = baseBubbleSize * bubbleScale;
@@ -283,8 +280,10 @@ function OrbitView({
       lastTime = timestamp;
 
       states.forEach((state) => {
-        state.anchorX = state.element.offsetLeft + state.element.offsetWidth / 2;
-        state.anchorY = state.element.offsetTop + state.element.offsetHeight / 2;
+        state.anchorX =
+          state.element.offsetLeft + state.element.offsetWidth / 2;
+        state.anchorY =
+          state.element.offsetTop + state.element.offsetHeight / 2;
         state.x += state.vx * delta;
         state.y += state.vy * delta;
       });
@@ -343,8 +342,7 @@ function OrbitView({
           }
         }
 
-        state.element.style.transform =
-          `translate(-50%, -50%) translate3d(${state.x}px, ${state.y}px, 0)`;
+        state.element.style.transform = `translate(-50%, -50%) translate3d(${state.x}px, ${state.y}px, 0)`;
       });
 
       frameId = window.requestAnimationFrame(updatePositions);
@@ -358,10 +356,7 @@ function OrbitView({
         state.element.style.transform = "";
       });
     };
-  }, [
-    classList.length,
-    courseOrderKey,
-  ]);
+  }, [classList.length, courseOrderKey]);
 
   function openAddAssignment(classId = null, forceUndated = false) {
     setForceUndatedAssignment(forceUndated);
@@ -382,10 +377,7 @@ function OrbitView({
     electronAssignmentsPercentRef.current = percentage;
     setElectronAssignmentsPercent(percentage);
     if (persist) {
-      window.localStorage.setItem(
-        ELECTRON_ORBIT_SPLIT_KEY,
-        String(percentage),
-      );
+      window.localStorage.setItem(ELECTRON_ORBIT_SPLIT_KEY, String(percentage));
     }
   }
 
@@ -535,7 +527,7 @@ function OrbitView({
           {isElectron && (
             <section className="orbit-sidebar-section orbit-notes orbit-sidebar-notes">
               <div className="orbit-section-heading orbit-notes-heading">
-                <h2>Notes</h2>
+                <NotesHeading />
                 <button
                   type="button"
                   className="orbit-clear-notes"
@@ -546,7 +538,11 @@ function OrbitView({
                 <AddContent type="save" onClick={handleSaveNotes} />
               </div>
               <div className="orbit-notes-editor">
-                <NoteText notes={notes} setNotes={setNotes} />
+                <NoteText
+                  notes={notes}
+                  setNotes={setNotes}
+                  onSave={handleSaveNotes}
+                />
               </div>
             </section>
           )}
@@ -595,8 +591,7 @@ function OrbitView({
                   const angle =
                     classList.length === 1
                       ? 0
-                      : (2 * Math.PI * index) / classList.length -
-                        Math.PI / 2;
+                      : (2 * Math.PI * index) / classList.length - Math.PI / 2;
                   const x = Math.round(Math.cos(angle) * bubbleRadius);
                   const y = Math.round(Math.sin(angle) * bubbleRadius);
                   const hasCourseColor =
@@ -649,7 +644,7 @@ function OrbitView({
           {!isElectron && (
             <section className="orbit-notes">
               <div className="orbit-section-heading orbit-notes-heading">
-                <h2>Notes</h2>
+                <NotesHeading />
                 <button
                   type="button"
                   className="orbit-clear-notes"
@@ -660,7 +655,11 @@ function OrbitView({
                 <AddContent type="save" onClick={handleSaveNotes} />
               </div>
               <div className="orbit-notes-editor">
-                <NoteText notes={notes} setNotes={setNotes} />
+                <NoteText
+                  notes={notes}
+                  setNotes={setNotes}
+                  onSave={handleSaveNotes}
+                />
               </div>
             </section>
           )}

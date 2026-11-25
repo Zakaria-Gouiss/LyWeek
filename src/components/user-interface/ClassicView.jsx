@@ -9,6 +9,7 @@ import WeekInfo from "../header/WeekInfo.jsx";
 import WeekButton from "../header/WeekButton.jsx";
 import AddContent from "../footer/AddButton.jsx";
 import NoteText from "../footer/NoteText.jsx";
+import NotesHeading from "../footer/NotesHeading.jsx";
 import SiteFooter from "../footer/SiteFooter.jsx";
 import NotesSavedToast from "../footer/NotesSavedToast.jsx";
 import SettingsModal from "./SettingsModal.jsx";
@@ -147,9 +148,15 @@ function ClassicView({
             />
           </section>
           <section className="misc-notes">
-            <NoteText notes={notes} setNotes={setNotes} />
-
-            <AddContent type="save" onClick={handleSaveNotes} />
+            <NotesHeading />
+            <div className="misc-notes-editor">
+              <NoteText
+                notes={notes}
+                setNotes={setNotes}
+                onSave={handleSaveNotes}
+              />
+              <AddContent type="save" onClick={handleSaveNotes} />
+            </div>
           </section>
         </nav>
         <NotesSavedToast message={toastMessage} isFading={isToastFading} />

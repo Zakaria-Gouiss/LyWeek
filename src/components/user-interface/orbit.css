@@ -215,6 +215,7 @@
 }
 
 .orbit-course-heading {
+  position: sticky;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -343,6 +344,20 @@
 .orbit-notes-heading {
   flex: 0 0 auto;
   padding-bottom: 0.55rem;
+}
+
+.orbit-notes-heading .notes-heading {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.orbit-notes-heading .notes-heading h2 {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.orbit-notes-heading .notes-save-hint {
+  font-size: 0.58rem;
 }
 
 .orbit-clear-notes {

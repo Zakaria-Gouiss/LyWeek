@@ -126,11 +126,36 @@
 
 .electron-app .electron-notes {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   flex: 1;
   min-width: 0;
-  min-height: 56px;
+  min-height: 0;
+  gap: 3px;
+}
+
+.electron-app .electron-notes-editor {
+  display: flex;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
   gap: 8px;
+}
+
+.electron-app .electron-notes .notes-heading {
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+.electron-app .electron-notes .notes-heading h2 {
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.electron-app .electron-notes .notes-save-hint {
+  font-size: 0.48rem;
+  line-height: 1;
 }
 
 .electron-app .electron-notes textarea {
@@ -839,10 +864,32 @@
 
 .electron-view:not(.orbit-view) .misc-notes {
   flex: 1 1 auto;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: stretch;
   min-width: 0;
   width: auto;
+  gap: 0.1rem;
+}
+
+.electron-view:not(.orbit-view) .misc-notes-editor {
+  flex: 1 1 auto;
+  flex-direction: row;
+  min-width: 0;
   gap: 0.3rem;
+}
+
+.electron-view:not(.orbit-view) .misc-notes .notes-heading {
+  gap: 0;
+}
+
+.electron-view:not(.orbit-view) .misc-notes .notes-heading h2 {
+  font-size: 0.68rem;
+  line-height: 1;
+}
+
+.electron-view:not(.orbit-view) .misc-notes .notes-save-hint {
+  font-size: 0.48rem;
+  line-height: 1;
 }
 
 .electron-view:not(.orbit-view) .notes-input {
@@ -865,6 +912,148 @@
   min-height: 0;
   height: auto;
   overflow-y: auto;
+}
+
+.electron-view:not(.orbit-view) > .login-shell,
+.electron-app .login-shell {
+  display: grid;
+  place-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  padding: 0.5rem;
+  overflow-y: auto;
+}
+
+.electron-view:not(.orbit-view) .login-card,
+.electron-app .login-card {
+  width: min(100%, 360px);
+  max-width: 360px;
+  max-height: calc(100vh - 3rem);
+  max-height: calc(100dvh - 3rem);
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1.1rem 1rem;
+  border-radius: 14px;
+}
+
+.electron-view:not(.orbit-view) .login-branding,
+.electron-app .login-branding {
+  margin-bottom: 0.55rem;
+}
+
+.electron-view:not(.orbit-view) .login-logo-button,
+.electron-app .login-logo-button {
+  width: 56px;
+  height: 56px;
+}
+
+.electron-view:not(.orbit-view) .login-logo,
+.electron-app .login-logo {
+  width: 100%;
+  height: 100%;
+}
+
+.electron-view:not(.orbit-view) .login-copy,
+.electron-app .login-copy {
+  margin-bottom: 0.8rem;
+}
+
+.electron-view:not(.orbit-view) .login-copy h1,
+.electron-app .login-copy h1 {
+  font-size: clamp(1.3rem, 3vh, 1.7rem);
+}
+
+.electron-view:not(.orbit-view) .login-subtitle,
+.electron-app .login-subtitle {
+  margin-top: 0.35rem;
+  font-size: 0.76rem;
+}
+
+.electron-view:not(.orbit-view) .login-form,
+.electron-app .login-form {
+  gap: 0.6rem;
+}
+
+.electron-view:not(.orbit-view) .login-form .form-group,
+.electron-app .login-form .form-group {
+  gap: 0.18rem;
+}
+
+.electron-view:not(.orbit-view) .login-form .form-group label,
+.electron-app .login-form .form-group label {
+  font-size: 0.72rem;
+}
+
+.electron-view:not(.orbit-view) .login-form .form-group input,
+.electron-view:not(.orbit-view) .login-form .form-group select,
+.electron-app .login-form .form-group input,
+.electron-app .login-form .form-group select {
+  height: 2.1rem;
+  min-width: 0;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.electron-view:not(.orbit-view) .login-submit,
+.electron-app .login-submit {
+  min-height: 2.1rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+.electron-view:not(.orbit-view) .auth-toggle-link,
+.electron-app .auth-toggle-link {
+  padding: 0.15rem 0.35rem;
+  font-size: 0.72rem;
+}
+
+.electron-view:not(.orbit-view) .login-error,
+.electron-app .login-error {
+  padding: 0.45rem 0.55rem;
+  font-size: 0.72rem;
+}
+
+@media (max-height: 520px) {
+  .electron-view:not(.orbit-view) > .login-shell,
+  .electron-app .login-shell {
+    place-items: start center;
+    padding: 0.35rem;
+  }
+
+  .electron-view:not(.orbit-view) .login-card,
+  .electron-app .login-card {
+    padding: 0.75rem;
+  }
+
+  .electron-view:not(.orbit-view) .login-branding,
+  .electron-app .login-branding {
+    margin-bottom: 0.35rem;
+  }
+
+  .electron-view:not(.orbit-view) .login-logo-button,
+  .electron-app .login-logo-button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .electron-view:not(.orbit-view) .login-copy,
+  .electron-app .login-copy {
+    margin-bottom: 0.5rem;
+  }
+
+  .electron-view:not(.orbit-view) .login-form,
+  .electron-app .login-form {
+    gap: 0.45rem;
+  }
+
+  .electron-view:not(.orbit-view) .login-form .form-group input,
+  .electron-view:not(.orbit-view) .login-form .form-group select,
+  .electron-app .login-form .form-group input,
+  .electron-app .login-form .form-group select {
+    height: 1.9rem;
+  }
 }
 
 .electron-view .notes-saved-toast,
@@ -1018,6 +1207,11 @@
 
 .electron-view.orbit-view .orbit-sidebar-notes .orbit-section-heading h2 {
   font-size: 0.68rem;
+}
+
+.electron-view.orbit-view .orbit-sidebar-notes .notes-save-hint {
+  font-size: 0.44rem;
+  line-height: 1;
 }
 
 .electron-view.orbit-view .orbit-sidebar-notes .orbit-notes-heading {

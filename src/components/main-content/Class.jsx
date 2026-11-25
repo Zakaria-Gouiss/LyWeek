@@ -180,6 +180,7 @@ function Class({
               dueDate={assignment.dueDate}
               completed={assignment.completed}
               onToggle={onToggleAssignment}
+              onEdit={() => onEditAssignments(id, assignment.id)}
             />
           ))}
       </div>

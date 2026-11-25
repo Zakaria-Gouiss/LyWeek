@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import NotesSavedToast from "./components/footer/NotesSavedToast.jsx";
+import NotesHeading from "./components/footer/NotesHeading.jsx";
 import useNotesSavedToast from "./hooks/useNotesSavedToast.js";
 
 import "./index.css";
@@ -489,9 +490,15 @@ function ElectronApp() {
         </section>
 
         <section className="electron-notes">
-          <NoteText notes={notes} setNotes={setNotes} />
-
-          <AddContent type="save" onClick={handleSaveNotes} />
+          <NotesHeading />
+          <div className="electron-notes-editor">
+            <NoteText
+              notes={notes}
+              setNotes={setNotes}
+              onSave={handleSaveNotes}
+            />
+            <AddContent type="save" onClick={handleSaveNotes} />
+          </div>
         </section>
       </nav>
       <NotesSavedToast message={toastMessage} isFading={isToastFading} />
