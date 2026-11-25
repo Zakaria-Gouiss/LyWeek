@@ -1,11 +1,11 @@
 const path = require("path");
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, shell } = require("electron");
 
 const iconPath = path.join(__dirname, "../src/assets/lyweek.ico");
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 750,
+    width: 800,
     height: 540,
     icon: iconPath,
   });
@@ -15,12 +15,55 @@ function createWindow() {
     appIconPath: iconPath,
   });
 
-  // Development: use local Vite server
-  // Production: use deployed Vercel app
+  const appOrigin = !app.isPackaged
+    ? "http://localhost:5173"
+    : "https://vercel.app";
+
+  // Helper to decide if a URL belongs to your app or should open externally
+  const isExternalUrl = (url) => {
+    if (!url || url === "about:blank") return false;
+    return !url.startsWith(appOrigin);
+  };
+
+  // 1. Intercept new windows (target="_blank" or window.open)
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    // Allow temporary about:blank windows if your frontend opens a blank tab before redirecting
+    if (url === "about:blank") {
+      return { action: "allow" };
+    }
+
+    if (isExternalUrl(url)) {
+      // Passes http://, https://, AND custom app protocols (e.g., slack://, notion://) to the OS
+      shell.openExternal(url);
+      return { action: "deny" };
+    }
+
+    return { action: "allow" };
+  });
+
+  // 2. Intercept same-window navigation AND redirects inside temporary windows
+  win.webContents.on("will-navigate", (event, url) => {
+    if (isExternalUrl(url)) {
+      event.preventDefault();
+      shell.openExternal(url);
+    }
+  });
+
+  // 3. Catch secondary windows if your frontend uses window.open() + location.href
+  win.webContents.on("did-create-window", (childWindow) => {
+    childWindow.webContents.on("will-navigate", (event, url) => {
+      if (isExternalUrl(url)) {
+        event.preventDefault();
+        shell.openExternal(url);
+        childWindow.close(); // Close the blank popup window immediately
+      }
+    });
+  });
+
   if (!app.isPackaged) {
     win.loadURL("http://localhost:5173?electron=true");
   } else {
-    win.loadURL("https://lyweek.vercel.app?electron=true");
+    win.loadURL("https://vercel.app?electron=true");
   }
 }
 

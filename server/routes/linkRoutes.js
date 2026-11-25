@@ -57,6 +57,30 @@ router.post("/", requireAuth, async (req, res) => {
   }
 
   try {
+    const checks = await pool.query(
+      `SELECT
+         EXISTS (
+           SELECT 1
+           FROM classes
+           WHERE id = $1 AND user_id = $2
+         ) AS "classExists",
+         EXISTS (
+           SELECT 1
+           FROM links
+           JOIN classes ON classes.id = links.class_id
+           WHERE classes.user_id = $2 AND links.url = $3
+         ) AS "duplicateUrl"`,
+      [classId, req.session.userId, url.trim()],
+    );
+    if (!checks.rows[0].classExists) {
+      return res.status(404).json({ error: "Class not found" });
+    }
+    if (checks.rows[0].duplicateUrl) {
+      return res
+        .status(409)
+        .json({ error: "A link with this URL already exists" });
+    }
+
     const result = await pool.query(
       `INSERT INTO links (class_id, name, url, sort_order)
        SELECT classes.id, $2, $3,
