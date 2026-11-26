@@ -58,6 +58,8 @@ cron.schedule("*/10 * * * *", async () => {
 // 1. CORS runs first so both /api/health and 503 responses include CORS headers
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  "http://lyweek.vercel.app",
+  "http://lyweeek.gouiss.com",
   "http://localhost:3000", // vercel dev
   "http://localhost:5173", // vite dev
   "http://localhost:4173"  // vite preview
